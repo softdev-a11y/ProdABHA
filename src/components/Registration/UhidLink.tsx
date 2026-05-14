@@ -286,11 +286,10 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       }
       else{
-        toast.error(updateResponse.message || "Failed to link");
+        toast.error(updateResponse.message || "Failed to link"); 
       }
 
     } catch (err) {
-      console.error(err);
       toast.error("Failed to link patient");
     }
   };
