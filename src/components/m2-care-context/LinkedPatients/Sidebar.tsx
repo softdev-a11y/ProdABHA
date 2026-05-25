@@ -1,6 +1,5 @@
   import {
     Users,
-    Link2,
     History,
     X,
     PanelLeftClose,
@@ -104,11 +103,7 @@
                 label: "Patients",
                 path: "/linkedpatients",
               },
-              {
-                icon: Link2,
-                label: "Link Records",
-                path: "/patientrecords",
-              },
+        
               {
                 icon: History,
                 label: "Linked History",

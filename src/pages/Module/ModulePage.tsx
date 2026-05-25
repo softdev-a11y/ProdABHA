@@ -46,7 +46,7 @@ const ModulePage = () => {
           {/* M2 */}
           <div
             className="flex flex-col items-center justify-center border w-48 h-32 rounded-lg shadow-md cursor-pointer bg-white hover:shadow-lg hover:border-blue-700 hover:scale-105 transition"
-            onClick={() => setSelectedModule("M2")}
+          onClick={() => navigate("/linkedpatients")}
           >
             <Database size={32} className="mb-2 text-blue-600" />
             <h2 className="font-semibold text-blue-700">
