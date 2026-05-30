@@ -57,7 +57,7 @@ const ModulePage = () => {
           {/* M3 */}
           <div
             className="flex flex-col items-center justify-center border w-48 h-32 rounded-lg shadow-md cursor-pointer bg-white hover:shadow-lg hover:border-gray-700 hover:scale-105 transition"
-            onClick={() => setSelectedModule("M3")}
+             onClick={() => navigate("/m3/search-patient")}
           >
             <Settings size={32} className="mb-2 text-gray-600" />
             <h2 className="font-semibold text-gray-700">
