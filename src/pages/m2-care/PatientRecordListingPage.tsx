@@ -41,12 +41,26 @@
             selected: true,
         },
         ];
+        const patientData = {
+
+    name: "Harish",
+
+    uhid: "UH12345",
+
+    abhaNumber: 91324111341735,
+
+    abhaAddress: "harish@sbx",
+
+    gender: "M",
+
+    yearOfBirth: 1998,
+};
 
         const PatientRecordListingPage = () => {
         const [sidebarOpen, setSidebarOpen] = useState(false);
         const [collapsed, setCollapsed] = useState(false);
         const [openModal, setOpenModal] = useState(false);
-        const [, setTransactionId] = useState("");
+        // const [, setTransactionId] = useState("");
         const [workflowStatus, setWorkflowStatus] =useState("");
             const navigate = useNavigate();
             const { generateLinkToken, getWorkflowStatus, } = useM2();
@@ -75,22 +89,22 @@
 
 
 
-     const tokenPayload = {
+const tokenPayload = {
 
     abhaAddress:
-        "ravi@abdm",
+        patientData.abhaAddress,
 
     abhaNumber:
-        91999988887777,
+        patientData.abhaNumber,
 
     name:
-        "Ravi Kumar",
+        patientData.name,
 
     gender:
-        "M",
+        patientData.gender,
 
     yearOfBirth:
-        1998,
+        patientData.yearOfBirth,
 };
 
 
@@ -123,7 +137,7 @@ console.log(
     txnId
 );
 
-setTransactionId(txnId);
+// setTransactionId(txnId);
 
 
 if(!txnId){
@@ -138,8 +152,12 @@ if(!txnId){
 
 // WORKFLOW STATUS CHECK
 
+let retryCount = 0;
+
 const interval = setInterval(
 async () => {
+
+    retryCount++;
 
     const workflowResponse =
     await getWorkflowStatus(
@@ -154,22 +172,35 @@ async () => {
     const tokenReceived =
     workflowResponse?.data?.linkTokenReceived;
 
+    const workflowMessage =
+    workflowResponse?.data?.message;
+
+    if(workflowMessage){
+
+        setWorkflowStatus(
+            workflowMessage
+        );
+    }
+
     if(tokenReceived){
+
+        clearInterval(interval);
 
         setWorkflowStatus(
             "SUCCESS"
         );
 
-        clearInterval(interval);
-
         setOpenModal(false);
 
         navigate("/processing");
+    }
 
-    }else{
+    if(retryCount >= 10){
+
+        clearInterval(interval);
 
         setWorkflowStatus(
-            "WAITING FOR CALLBACK"
+            "Callback Timeout"
         );
     }
 
@@ -348,6 +379,7 @@ async () => {
     open={openModal}
     onClose={() => setOpenModal(false)}
     onConfirm={handleConfirmLinking}
+     patient={patientData}
     />
             </div>
         );
