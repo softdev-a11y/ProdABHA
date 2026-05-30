@@ -1,15 +1,20 @@
 import { useEffect } from "react";
-
 interface Props {
+
   open: boolean;
+
   onClose: () => void;
+
   onConfirm: () => void;
+
+  patient: any;
 }
 
 const ConfirmLinkModal = ({
   open,
   onClose,
   onConfirm,
+  patient,
 }: Props) => {
       useEffect(() => {
 
@@ -66,7 +71,7 @@ const ConfirmLinkModal = ({
                 </span>
 
                 <span className="font-medium text-right">
-                  Ravi Kumar
+                  {patient.name}
                 </span>
               </div>
 
@@ -76,7 +81,7 @@ const ConfirmLinkModal = ({
                 </span>
 
                 <span className="font-medium text-right">
-                  UH12345
+                  {patient.uhid}
                 </span>
               </div>
 
@@ -86,7 +91,7 @@ const ConfirmLinkModal = ({
                 </span>
 
                 <span className="font-medium text-right">
-                  91-9999-8888-7777
+                  {patient.abhaNumber}
                 </span>
               </div>
 
@@ -96,7 +101,7 @@ const ConfirmLinkModal = ({
                 </span>
 
                 <span className="font-medium text-right">
-                  ravi@abdm
+                  {patient.abhaAddress}
                 </span>
               </div>
 

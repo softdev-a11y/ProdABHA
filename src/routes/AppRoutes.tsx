@@ -17,7 +17,11 @@
         import SuccessPage from "../pages/m2-care/SuccessPage";
         import LinkedHistoryPage from "../pages/m2-care/LinkedHistoryPage";
 
-
+        import SearchPatientPage from "../pages/m3-consent/SearchPatientPage";
+        import SelectRecordsPage from "../pages/m3-consent/SelectRecordsPage";
+        import RequestConsentPage from "../pages/m3-consent/RequestConsentPage";
+        import PendingRequestsPage from "../pages/m3-consent/PendingRequestsPage";
+        import ViewRecordsPage from "../pages/m3-consent/ViewRecordsPage";
 
             const AppRoutes = () => {
 
@@ -121,6 +125,27 @@
                                     </ProtectedRoutes>
                                 }
                                 />
+
+                                <Route
+                                    path="/m3/search-patient"
+                                    element={<SearchPatientPage />}
+                                    />
+                                <Route
+                                path="/m3/select-records"
+                                element={<SelectRecordsPage />}
+                                />
+                                <Route
+                                    path="/m3/request-consent"
+                                    element={<RequestConsentPage />}
+                                    />
+                                    <Route
+                                      path="/m3/pending-requests"
+                                      element={<PendingRequestsPage />}
+                                     />
+                                     <Route
+                                      path="/m3/view-records"
+                                      element={<ViewRecordsPage />}
+                                      />
                                                     </Route>
 
 
