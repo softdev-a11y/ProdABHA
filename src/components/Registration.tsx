@@ -25,9 +25,9 @@ const Registration = () => {
   const [status, setStatus] = useState({
     aadhar: "active",
     mobile: "pending",
-    patient: "active",
-    abha: "active",  
-    uhid: "active",
+    patient: "pending",
+    abha: "pending",  
+    uhid: "pending",
   });
 
   const [patientData, setPatientData] = useState<any>({

@@ -114,12 +114,15 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
       return;
     }
 
+    console.log('send response', response);
+
     try {
       const parsed = JSON.parse(response.data);
 
       if (parsed.success) {
 
         setTxnId(parsed.transactionID);
+        console.log("OTP Sent, txnId:", parsed.transactionID);
 
         setStep("OTP");
         setOtp(Array(6).fill(""));
@@ -158,16 +161,21 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
       toast.error(error || "OTP verification failed");
       return;
     }
+    
+    console.log('verify response', response);
 
     try {
       const parsed = JSON.parse(response.data);
 
       if (parsed.success) {
 
+        console.log("OTP Verified, txnId:", parsed.transactionID);        
+
         toast.success(parsed.message || "Verified successfully");
 
         setStep("DONE");
 
+        debugger;
         onComplete?.({
           parsed,
           mobile,
