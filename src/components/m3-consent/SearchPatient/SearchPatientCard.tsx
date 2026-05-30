@@ -68,7 +68,7 @@ const SearchPatientCard = ({
 
           <button
             onClick={onSearch}
-            className="h-[42px] px-5 rounded-[10px] bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-[13px] font-semibold transition-all"
+            className="h-[42px] px-5 rounded-[10px] bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-[14px] font-semibold transition-all"
           >
             Search Patient
           </button>
