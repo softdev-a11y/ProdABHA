@@ -1,21 +1,27 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import LoginPage from "../pages/Login/LoginPage";
-import DashboardPage from "../pages/Dashboard/DashboardPage";
-import MainLayout from "../layouts/MainLayout";
-import ModulePage from "../pages/Module/ModulePage";
-import RegistrationPage from "../pages/Registration/RegistrationPage";
-import ProtectedRoutes from "./ProtectedRoute";
-import NotFound from "../pages/NotFound/NotFound";
-import GetDetailsPage from "../pages/Registration/GetDetailsPage";
-import UnitSubscriptionPage from "../pages/Module/UnitSubscriptionPage";
-import AbhaVerificationPage from "../pages/Registration/AbhaVerificationPage";
-import LinkAbhaPage from "../pages/Registration/LinkAbhaPage";
-import AbhaCardPage from "../pages/Card/AbhaCardPage";
-import LinkedPatientsPage from "../pages/m2-care/LinkedPatientsPage";
-import PatientRecordListingPage from "../pages/m2-care/PatientRecordListingPage";
-import ProcessingPage from "../pages/m2-care/ProcessingPage";
-import SuccessPage from "../pages/m2-care/SuccessPage";
-import LinkedHistoryPage from "../pages/m2-care/LinkedHistoryPage";
+            import { BrowserRouter, Routes, Route } from "react-router-dom"
+            import LoginPage from "../pages/Login/LoginPage"
+            import DashboardPage from "../pages/Dashboard/DashboardPage"
+            import MainLayout from "../layouts/MainLayout"
+            import ModulePage from "../pages/Module/ModulePage"
+            import RegistrationPage from "../pages/Registration/RegistrationPage"
+            import ProtectedRoutes from "./ProtectedRoute"
+            import NotFound from "../pages/NotFound/NotFound"
+            import GetDetailsPage from "../pages/Registration/GetDetailsPage"
+            import UnitSubscriptionPage from "../pages/Module/UnitSubscriptionPage"
+            import AbhaVerificationPage from "../pages/Registration/AbhaVerificationPage"
+            import LinkAbhaPage from "../pages/Registration/LinkAbhaPage"
+            import AbhaCardPage from "../pages/Card/AbhaCardPage"
+            import LinkedPatientsPage from "../pages/m2-care/LinkedPatientsPage";
+            import PatientRecordListingPage from "../pages/m2-care/PatientRecordListingPage";
+        import ProcessingPage from "../pages/m2-care/ProcessingPage";
+        import SuccessPage from "../pages/m2-care/SuccessPage";
+        import LinkedHistoryPage from "../pages/m2-care/LinkedHistoryPage";
+
+        import SearchPatientPage from "../pages/m3-consent/SearchPatientPage";
+        import SelectRecordsPage from "../pages/m3-consent/SelectRecordsPage";
+        import RequestConsentPage from "../pages/m3-consent/RequestConsentPage";
+        import PendingRequestsPage from "../pages/m3-consent/PendingRequestsPage";
+        import ViewRecordsPage from "../pages/m3-consent/ViewRecordsPage";
 
 const AppRoutes = () => {
   return (
@@ -131,15 +137,36 @@ const AppRoutes = () => {
             }
           />
 
-          <Route
-            path="/linkedhistory"
-            element={
-              <ProtectedRoutes>
-                <LinkedHistoryPage />
-              </ProtectedRoutes>
-            }
-          />
-        </Route>
+                                <Route
+                                path="/linkedhistory"
+                                element={
+                                    <ProtectedRoutes>
+                                    <LinkedHistoryPage />
+                                    </ProtectedRoutes>
+                                }
+                                />
+
+                                <Route
+                                    path="/m3/search-patient"
+                                    element={<SearchPatientPage />}
+                                    />
+                                <Route
+                                path="/m3/select-records"
+                                element={<SelectRecordsPage />}
+                                />
+                                <Route
+                                    path="/m3/request-consent"
+                                    element={<RequestConsentPage />}
+                                    />
+                                    <Route
+                                      path="/m3/pending-requests"
+                                      element={<PendingRequestsPage />}
+                                     />
+                                     <Route
+                                      path="/m3/view-records"
+                                      element={<ViewRecordsPage />}
+                                      />
+                                                    </Route>
 
         <Route path="*" element={<NotFound />} />
       </Routes>
