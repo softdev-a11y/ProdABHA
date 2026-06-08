@@ -41,19 +41,21 @@
             selected: true,
         },
         ];
-        const patientData = {
+//   const patientData = {
+//     name: "Pilli Harish Yadav",
+//     uhid: "UH12345",
+//     abhaNumber: 91324111341735,
+//     abhaAddress: "91324111341735@sbx",
+//     gender: "M",
+//     yearOfBirth: 1998,
+// };
 
-    name: "Harish",
-
-    uhid: "UH12345",
-
-    abhaNumber: 91324111341735,
-
-    abhaAddress: "harish@sbx",
-
-    gender: "M",
-
-    yearOfBirth: 1998,
+ const patientData = {
+  "abhaAddress": "dhananjay07@sbx",
+  "abhaNumber": 91178730682840,
+  "name": "Dhananjay Rajaram Dangadi",
+  "gender": "M", 
+  "yearOfBirth": 2002
 };
 
         const PatientRecordListingPage = () => {
@@ -182,18 +184,31 @@ async () => {
         );
     }
 
-    if(tokenReceived){
+  if(tokenReceived){
 
-        clearInterval(interval);
+    clearInterval(interval);
 
-        setWorkflowStatus(
-            "SUCCESS"
-        );
+    const linkToken =
+    workflowResponse?.data?.linkToken;
 
-        setOpenModal(false);
+    localStorage.setItem(
+        "transactionId",
+        txnId
+    );
 
-        navigate("/processing");
-    }
+    localStorage.setItem(
+        "linkToken",
+        linkToken
+    );
+
+    setWorkflowStatus(
+        "SUCCESS"
+    );
+
+    setOpenModal(false);
+
+    navigate("/processing");
+}
 
     if(retryCount >= 10){
 

@@ -4,15 +4,12 @@ import { useNavigate } from "react-router-dom";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
 import HealthInfoCard from "../../components/m3-consent/select-records/HealthInfoCard";
 
+
 const SelectRecordsPage = () => {
   const navigate = useNavigate();
 
-  const [selected, setSelected] = useState<string[]>([
-    "Prescription",
-    "Diagnostic Report",
-    "OP Consultation",
-  ]);
-
+  const [selected, setSelected] = useState<string[]>([]);
+const [error, setError] = useState("");
   const records = [
     {
       title: "Prescription",
@@ -59,6 +56,24 @@ const SelectRecordsPage = () => {
         : [...prev, title]
     );
   };
+
+  const handleNext = () => {
+
+  if (selected.length === 0) {
+
+    setError(
+      "Please select at least one health information type."
+    );
+
+    return;
+  }
+
+  setError("");
+
+  navigate(
+    "/m3/request-consent"
+  );
+};
 
   return (
     <ConsentLayout currentStep={2}>
@@ -137,24 +152,32 @@ const SelectRecordsPage = () => {
           </div>
         </div>
 
+        {error && (
+  <p className="mt-4 text-sm text-red-600 font-medium">
+    {error}
+  </p>
+)}
+
         {/* Buttons */}
         <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 mt-7">
 
           <button
-            onClick={() => navigate("/m3/search-patient")}
+        
+            onClick={() => navigate("/m3/request-consent")}
             className="h-[40px] w-full sm:w-auto px-4 rounded-[10px] border border-[#d1d5db] text-[#374151] text-[12px] font-semibold bg-white"
           >
             Back
           </button>
 
           <button
-            onClick={() => navigate("/m3/request-consent")}
+             onClick={handleNext}
            className="h-[36px]  sm:w-auto px-3 rounded-[8px] bg-[#2563eb] text-white text-[11px] font-semibold"
           >
             Next: Request Consent
           </button>
 
         </div>
+        
       </div>
     </ConsentLayout>
   );
