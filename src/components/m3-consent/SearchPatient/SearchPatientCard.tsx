@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Search } from "lucide-react";
 
 interface Props {
@@ -13,6 +14,119 @@ const SearchPatientCard = ({
   setAbhaAddress,
   onSearch,
 }: Props) => {
+
+  const [error, setError] =
+    useState("");
+
+  const [showHint, setShowHint] =
+    useState(false);
+
+  const validateAbhaAddress =
+    () => {
+
+      const value =
+        abhaAddress.trim();
+
+      if (!value) {
+        return "ABHA Address is required";
+      }
+
+      const abhaRegex =
+        /^[a-z][a-z0-9]*@[a-z]+$/;
+
+      if (
+        !abhaRegex.test(value)
+      ) {
+        return "Enter valid ABHA Address (e.g. dhananjay07@sbx)";
+      }
+
+      return "";
+    };
+
+  const handleChange = (
+    value: string
+  ) => {
+
+    let formattedValue =
+      value.toLowerCase();
+
+    // Remove spaces
+    formattedValue =
+      formattedValue.replace(
+        /\s/g,
+        ""
+      );
+
+    // Allow only a-z, 0-9 and @
+    formattedValue =
+      formattedValue.replace(
+        /[^a-z0-9@]/g,
+        ""
+      );
+
+    // First character should not be a number
+    if (
+      formattedValue.length === 1 &&
+      /[0-9]/.test(
+        formattedValue
+      )
+    ) {
+      return;
+    }
+
+    // Allow only one @
+    const parts =
+      formattedValue.split("@");
+
+    if (
+      parts.length > 2
+    ) {
+      return;
+    }
+
+    setAbhaAddress(
+      formattedValue
+    );
+
+    if (error) {
+      setError("");
+    }
+  };
+
+  const handleSearch =
+    () => {
+
+      const validationError =
+        validateAbhaAddress();
+
+      if (
+        validationError
+      ) {
+
+        setError(
+          validationError
+        );
+
+        return;
+      }
+
+      setError("");
+
+      onSearch();
+    };
+
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+
+    if (
+      e.key === "Enter"
+    ) {
+
+      handleSearch();
+    }
+  };
+
   return (
     <div className="bg-white border border-[#e5e7eb] rounded-[20px] px-8 py-8 shadow-sm max-w-[1100px]">
 
@@ -41,12 +155,25 @@ const SearchPatientCard = ({
           <input
             value={abhaAddress}
             onChange={(e) =>
-              setAbhaAddress(
+              handleChange(
                 e.target.value
               )
             }
-            placeholder="Enter ABHA address (e.g. john@sbx)"
-            className="w-full h-[52px] rounded-xl border border-[#d1d5db] bg-white px-4 pr-12 text-[14px] outline-none transition-all focus:border-[#2563eb] focus:ring-2 focus:ring-[#dbeafe]"
+            onKeyDown={
+              handleKeyDown
+            }
+            onFocus={() =>
+              setShowHint(true)
+            }
+            onBlur={() =>
+              setShowHint(false)
+            }
+            placeholder="Enter ABHA address (e.g. dhananjay07@sbx)"
+            className={`w-full h-[52px] rounded-xl bg-white px-4 pr-12 text-[14px] outline-none transition-all ${
+              error
+                ? "border border-red-500 focus:ring-2 focus:ring-red-100 focus:border-red-500"
+                : "border border-[#d1d5db] focus:border-[#2563eb] focus:ring-2 focus:ring-[#dbeafe]"
+            }`}
           />
 
           <Search
@@ -56,24 +183,35 @@ const SearchPatientCard = ({
 
         </div>
 
-        {/* Info Box */}
-        <div className="mt-5 border border-[#e5e7eb] bg-[#f9fafb] rounded-xl px-4 py-4 text-[13px] text-[#6b7280]">
-          Enter a valid ABHA address to
-          search for patient health
-          records.
-        </div>
+        {/* Error Message */}
+        {error && (
+          <p className="mt-2 text-sm text-red-600 font-medium">
+            {error}
+          </p>
+        )}
+
+        {/* Hint Message */}
+        {showHint && !error && (
+          <p className="mt-2 text-xs text-gray-500">
+            Enter a valid ABHA address
+            (e.g. dhananjay07@sbx)
+          </p>
+        )}
 
         {/* Button */}
         <div className="flex justify-end mt-8">
 
           <button
-            onClick={onSearch}
+            onClick={
+              handleSearch
+            }
             className="h-[42px] px-5 rounded-[10px] bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-[14px] font-semibold transition-all"
           >
             Search Patient
           </button>
 
         </div>
+
       </div>
     </div>
   );
