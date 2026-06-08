@@ -2,7 +2,15 @@ import { useEffect, useState } from "react";
 import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
 import { Menu, CheckCircle2, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useM2 } from "../../hooks/useM2";
 
+
+const {
+  linkCareContext,
+  getWorkflowStatus,
+  sendSMS,
+  notifyCareContext
+} = useM2();
 const processingSteps = [
   "Generating link token",
   "Link token received",
@@ -21,27 +29,219 @@ const ProcessingPage = () => {
   const [currentStep, setCurrentStep] =
     useState(0);
 
-  useEffect(() => {
+useEffect(() => {
 
-    const interval = setInterval(() => {
+   startLinking();
 
-      setCurrentStep((prev) => {
+}, []);
 
-        if (prev < processingSteps.length) {
-          return prev + 1;
+const startLinking = async () => {
+
+  try{
+
+    const transactionId =
+    localStorage.getItem(
+      "transactionId"
+    );
+
+    const linkToken =
+    localStorage.getItem(
+      "linkToken"
+    );
+
+    if(
+      !transactionId ||
+      !linkToken
+    ){
+      alert(
+        "Transaction or Link Token Missing"
+      );
+      return;
+    }
+
+    setCurrentStep(1);
+
+    const payload = {
+
+      abhaAddress:
+      "dhananjay07@sbx",
+
+      abhaNumber:
+      "91178730682840",
+
+      linkToken,
+
+      patient:[
+        {
+          referenceNumber:
+          "PATIENT-1001",
+
+          display:
+          "Dhananjay Rajaram Dangadi",
+
+          careContexts:[
+            {
+              referenceNumber:
+              "VISIT-001",
+
+              display:
+              "OP Consultation"
+            }
+          ],
+
+          hiType:
+          "Prescription",
+
+          count:1
         }
+      ]
+    };
 
-        clearInterval(interval);
-        navigate("/success");
-        return prev;
+    const response =
+    await linkCareContext(
+      payload
+    );
 
-      });
+    console.log(
+      "LINK CARE CONTEXT",
+      response
+    );
 
-    }, 2000);
+    setCurrentStep(2);
 
-    return () => clearInterval(interval);
+    pollWorkflow(
+      transactionId
+    );
 
-  }, []);
+  }catch(error){
+
+    console.log(error);
+  }
+};
+
+const pollWorkflow = (
+ transactionId:string
+) => {
+
+ const interval =
+ setInterval(async()=>{
+
+   const response =
+   await getWorkflowStatus(
+      transactionId
+   );
+
+   console.log(
+      "WORKFLOW STATUS",
+      response
+   );
+
+   const currentStep =
+   response?.data?.currentStep;
+
+   if(currentStep === 3){
+
+      setCurrentStep(3);
+
+   }
+
+ if(currentStep === 4){
+
+   clearInterval(interval);
+
+   setCurrentStep(4);
+
+   try{
+
+      const smsPayload = {
+
+         abhaAddress:
+         "dhananjay07@sbx",
+
+         notification:{
+            phoneNo:
+            "9876543210",
+
+            hip:{
+               id:"IN2010000642_2",
+               name:"SBX HIP"
+            }
+         }
+      };
+
+      const smsResponse =
+      await sendSMS(
+         smsPayload
+      );
+
+      console.log(
+         "SMS RESPONSE",
+         smsResponse
+      );
+
+      const notifyPayload = {
+
+         notification:{
+
+            patient:{
+               id:
+               "91324111341735@sbx"
+            },
+
+            careContext:{
+
+               patientReference:
+               "PATIENT-1001",
+
+               careContextReference:
+               "VISIT-OPD-2025-001"
+            },
+
+            hiTypes:[
+               "Prescription",
+               "DiagnosticReport"
+            ],
+
+            date:
+            new Date().toISOString(),
+
+            hip:{
+               id:
+               "IN2010000642_2"
+            }
+         }
+      };
+
+      const notifyResponse =
+      await notifyCareContext(
+         notifyPayload
+      );
+
+      console.log(
+         "NOTIFY RESPONSE",
+         notifyResponse
+      );
+
+   }catch(error){
+
+      console.log(
+         "SMS/NOTIFY ERROR",
+         error
+      );
+   }
+
+   navigate("/success");
+}
+
+   if(currentStep === 99){
+
+      clearInterval(interval);
+
+      alert("Workflow Failed");
+   }
+
+ },3000);
+};
 
   return (
 <div className="bg-[#f5f7fb] min-h-screen flex">
