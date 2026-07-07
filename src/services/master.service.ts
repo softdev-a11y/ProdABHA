@@ -30,3 +30,4 @@ export const GetAreasService = () => {
   return apiClient.get("/master/area");
 };
 
+

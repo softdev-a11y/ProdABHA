@@ -1,150 +1,54 @@
-import { useState } from "react";
+  import type { ReactNode } from "react";
+  import ConsentSidebar from "./ConsentSidebar";
 
-import {
-  Menu,
-  X,
-} from "lucide-react";
+  interface ConsentLayoutProps {
+    children: ReactNode;
+  }
 
-import type { ReactNode } from "react";
+  const ConsentLayout = ({ children }: ConsentLayoutProps) => {
+    return (
+      <div className="flex min-h-screen bg-[#F8FAFC]">
+        <ConsentSidebar />
 
-import ConsentSidebar from "./ConsentSidebar";
+        <div className="flex-1 min-w-0 flex flex-col">
+          <header className="h-16 sm:h-[70px] bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 flex items-center justify-between">
 
-interface Props {
-  children: ReactNode;
-  currentStep: number;
-}
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-lg font-semibold text-slate-800 truncate">
+                Ayushman Bharat Digital Mission
+              </h1>
 
-const ConsentLayout = ({
-  children,
-  currentStep,
-}: Props) => {
-  const [open, setOpen] =
-    useState(false);
+              <p className="text-xs sm:text-sm text-slate-500">
+                Consent Management
+              </p>
+            </div>
 
-  return (
-    <div className="min-h-screen bg-[#f8fafc] flex overflow-hidden">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <ConsentSidebar
-          currentStep={currentStep}
-        />
-      </div>
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center text-white font-semibold">
+                S
+              </div>
 
-      {/* Mobile Sidebar */}
-      {open && (
-        <>
-          {/* Overlay */}
-          <div
-            className="
-              fixed
-              inset-0
-              bg-black/40
-              z-40
-              lg:hidden
-            "
-            onClick={() =>
-              setOpen(false)
-            }
-          />
+              <div className="hidden sm:block">
+                <p className="text-sm font-semibold text-slate-700">
+                  SYSTEM
+                </p>
 
-          {/* Sidebar */}
-          <div
-            className="
-              fixed
-              left-0
-              top-0
-              z-50
-              lg:hidden
-              h-screen
-            "
-          >
-            <ConsentSidebar
-              currentStep={currentStep}
-            />
-          </div>
-        </>
-      )}
+                <p className="text-xs text-slate-400">
+                  Operator
+                </p>
+              </div>
+            </div>
 
-      {/* Main Content */}
-      <div className="flex-1 min-w-0 overflow-x-hidden">
-        {/* Mobile Header */}
-        <div
-          className="
-            lg:hidden
-            sticky
-            top-0
-            z-30
-            bg-white
-            border-b
-            border-[#e5e7eb]
-            px-4
-            py-3
-            flex
-            items-center
-            justify-between
-          "
-        >
-          {/* Hamburger */}
-          <button
-            onClick={() =>
-              setOpen(!open)
-            }
-            className="
-              w-10
-              h-10
-              rounded-xl
-              bg-white
-              border
-              border-[#e5e7eb]
-              flex
-              items-center
-              justify-center
-              shadow-sm
-            "
-          >
-            {open ? (
-              <X size={20} />
-            ) : (
-              <Menu size={20} />
-            )}
-          </button>
+          </header>
 
-          {/* Title */}
-          <h2
-            className="
-              text-[15px]
-              font-semibold
-              text-[#111827]
-            "
-          >
-            ABDM M3
-          </h2>
-
-          {/* Empty Space */}
-          <div className="w-10" />
-        </div>
-
-        {/* Page Wrapper */}
-        <div
-          className="
-            w-full
-            max-w-[1400px]
-            mx-auto
-            px-3
-            sm:px-5
-            md:px-6
-            lg:px-8
-            xl:px-10
-            py-4
-            sm:py-5
-            lg:py-6
-          "
-        >
-          {children}
+        <main
+    className=" flex-1 overflow-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 "
+  >
+    {children}
+  </main>
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
 
-export default ConsentLayout;
+  export default ConsentLayout;
