@@ -21,6 +21,8 @@
   import RequestListPage from "../pages/m3-consent/RequestListPage";
   import ConsentDetailsPage from "../pages/m3-consent/ConsentDetailsPage";
   import SearchPatientPage from "../pages/m3-consent/SearchPatientPage";
+  import ViewDataPage from "../pages/m3-consent/ViewDataPage";
+  import ViewHealthRecordPage from "../pages/m3-consent/ViewHealthRecordPage";
 
   const AppRoutes = () => {
     return (
@@ -137,9 +139,19 @@
             />
 
             <Route
-    path="/m3/search-patient"
-    element={<SearchPatientPage />}
-  />
+            path="/m3/search-patient"
+            element={<SearchPatientPage />}
+          />
+
+            <Route
+              path="/m3/view-data"
+              element={<ViewDataPage />}
+            />
+
+            <Route
+            path="/m3/view-health-record"
+            element={<ViewHealthRecordPage />}
+          />
 
             <Route
               path="/linkedhistory"
@@ -152,19 +164,19 @@
 
         
           <Route
-    path="/m3/request-consent"
-    element={<RequestConsentPage />}
-  />
+          path="/m3/request-consent"
+          element={<RequestConsentPage />}
+        />
 
-  <Route
-    path="/m3/request-list"
-    element={<RequestListPage />}
-  />
+        <Route
+          path="/m3/request-list"
+          element={<RequestListPage />}
+        />
 
-  <Route
-    path="/m3/consent-details"
-    element={<ConsentDetailsPage />}
-  />
+        <Route
+          path="/m3/consent-details"
+          element={<ConsentDetailsPage />}
+        />
           </Route>
 
           <Route path="*" element={<NotFound />} />

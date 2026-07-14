@@ -2,7 +2,6 @@
   import {
     FileText,
     Table2,
-    LogOut,
     Menu,
     X,
   } from "lucide-react";
@@ -15,7 +14,7 @@
       icon: FileText,
     },
     {
-      title: "Request List",
+      title: "Consent Request List",
       path: "/m3/request-list",
       icon: Table2,
     },
@@ -128,26 +127,6 @@
             </div>
 
           </nav>
-
-          {/* Logout */}
-          <div className="mt-auto border-t border-slate-700 p-4">
-
-            <button
-              onClick={() => {
-                console.log("Logout");
-                setOpen(false);
-              }}
-              className="flex items-center gap-3 text-slate-300 hover:text-white"
-            >
-              <LogOut size={18} />
-
-              <span>
-                Logout
-              </span>
-
-            </button>
-
-          </div>
 
         </aside>
       </>

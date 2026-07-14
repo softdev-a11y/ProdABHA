@@ -1,161 +1,256 @@
-  import { useNavigate } from "react-router-dom";
-  import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import useM3 from "../../hooks/useM3";
+import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
 
-  const ConsentDetailsPage = () => {
-    const navigate = useNavigate();
+const ConsentDetailsPage = () => {
+  const navigate = useNavigate();
 
-    return (
-      <ConsentLayout>
-        <div className="mx-auto w-full max-w-7xl rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-sm">
+  const location = useLocation();
 
-          {/* Header */}
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800">
-              Consent Details
-            </h1>
+const { getConsentDetails } = useM3();
 
-            <p className="mt-2 text-sm text-slate-500">
-              View complete consent request details.
-            </p>
-          </div>
+const requestId = location.state?.requestId;
 
-          {/* Patient Details */}
-          <div className="mt-8">
+const [consent, setConsent] = useState<any>(null);
 
-            <h2 className="mb-4 text-xl font-semibold text-center sm:text-left">
-              Patient Details
-            </h2>
+const [loading, setLoading] = useState(true);
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 justify-items-center xl:justify-items-stretch">
+useEffect(() => {
 
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  Patient Name
-                </p>
+    const loadConsent = async () => {
 
-                <p className="mt-1 font-semibold break-words">
-                  Ravi Kumar
-                </p>
-              </div>
+        if (!requestId) return;
 
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  MR No
-                </p>
+        const response =
+        await getConsentDetails(requestId);
 
-                <p className="mt-1 font-semibold break-all">
-                  MRN001234
-                </p>
-              </div>
+       setConsent(response.data);
 
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  ABHA ID
-                </p>
+        setLoading(false);
 
-                <p className="mt-1 font-semibold break-all">
-                  91-9999-8888-7777
-                </p>
-              </div>
+    };
 
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  ABHA Address
-                </p>
+    loadConsent();
 
-                <p className="mt-1 font-semibold break-all">
-                  ravi@abdm
-                </p>
-              </div>
+}, [requestId, ]);
 
+const isGranted = consent?.status === "GRANTED";
+
+if (loading) {
+    return <div>Loading...</div>;
+}
+
+console.log(consent);
+
+  return (
+    <ConsentLayout>
+      <div className="mx-auto w-full max-w-7xl rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 lg:p-6 shadow-sm">
+
+        {/* Header */}
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-800">
+            Consent Details
+          </h1>
+
+          <p className="mt-1 text-xs text-slate-500">
+            View complete consent request details.
+          </p>
+        </div>
+
+        {/* Patient Details */}
+       <div className="mt-6">
+
+          <h2 className="mb-4 text-xl font-semibold text-center sm:text-left">
+            Patient Details
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 justify-items-center xl:justify-items-stretch">
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                Patient Name
+              </p>
+
+              <p className="mt-1 font-semibold">
+               {consent.patientAbhaAddress}
+              </p>
             </div>
 
-          </div>
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                MR No
+              </p>
 
-          {/* Consent Details */}
-          <div className="mt-10">
-
-            <h2 className="mb-4 text-xl font-semibold text-center sm:text-left">
-              Consent Details
-            </h2>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center xl:justify-items-stretch">
-
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  Purpose
-                </p>
-
-                <p className="mt-1 font-semibold break-words">
-                  Care Management
-                </p>
-              </div>
-
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  HI Types
-                </p>
-
-                <p className="mt-1 font-semibold break-words">
-                  Prescription, Diagnostic
-                </p>
-              </div>
-
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  Status
-                </p>
-
-                <span className="mt-2 inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-700">
-                  Granted
-                </span>
-              </div>
-
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  Consent Created
-                </p>
-
-                <p className="mt-1 font-semibold">
-                  07 Jul 2026
-                </p>
-              </div>
-
-              <div className="w-full max-w-[260px] text-center sm:text-left">
-                <p className="text-sm text-slate-500">
-                  Consent Granted
-                </p>
-
-                <p className="mt-1 font-semibold">
-                  07 Jul 2026
-                </p>
-              </div>
-
+              <p className="mt-1 font-semibold">
+                 -
+              </p>
             </div>
 
-          </div>
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                ABHA ID
+              </p>
 
-          {/* Buttons */}
-          <div className="mt-10 flex flex-col-reverse sm:flex-row justify-center sm:justify-end gap-3">
+              <p className="mt-1 text-sm font-medium break-all">
+                {consent.patientAbhaAddress}
+              </p>
+            </div>
 
-            <button
-              onClick={() => navigate("/m3/request-list")}
-              className="w-full sm:w-auto rounded-lg border border-slate-300 px-6 py-3"
-            >
-              Back
-            </button>
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                ABHA Address
+              </p>
 
-            <button
-              className="w-full sm:w-auto rounded-lg bg-teal-600 px-6 py-3 text-white hover:bg-teal-700"
-            >
-              View Data
-            </button>
+              <p className="mt-1 font-semibold break-all">
+                {consent.patientAbhaAddress}
+              </p>
+            </div>
 
           </div>
 
         </div>
-      </ConsentLayout>
-    );
-  };
 
-  export default ConsentDetailsPage;
+        {/* Consent Details */}
+       <div className="mt-7">
+
+          <h2 className="mb-3 text-lg font-semibold text-center sm:text-left">
+            Consent Details
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 justify-items-center xl:justify-items-stretch">
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                Purpose
+              </p>
+
+              <p className="mt-1 font-semibold">
+              {consent.purposeText}
+              </p>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                HI Types
+              </p>
+
+          <div className="mt-2 flex flex-wrap gap-2 justify-center sm:justify-start">
+  {consent.hiTypesJson ? (
+    JSON.parse(consent.hiTypesJson).map((type: string) => (
+      <span
+        key={type}
+        className="rounded-full bg-teal-100 px-2.5 py-0.5 text-[11px] font-medium text-teal-700"
+      >
+        {type}
+      </span>
+    ))
+  ) : (
+    <span className="text-sm text-slate-500">
+      No HI Types Selected
+    </span>
+  )}
+</div>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                From Date
+              </p>
+
+              <p className="mt-1 font-semibold">
+             {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")}
+              </p>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                To Date
+              </p>
+
+              <p className="mt-1 font-semibold">
+              {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")}
+              </p>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                Status
+              </p>
+
+              <span className="mt-2 inline-block rounded-full bg-green-100 px-2.5 py-0.5 text-[11px] font-medium text-green-700">
+            {consent.status}
+              </span>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                Consent Created
+              </p>
+
+              <p className="mt-1 font-semibold">
+             {new Date(consent.createdAtUtc).toLocaleDateString("en-GB")}
+              </p>
+            </div>
+
+            <div className="w-full max-w-[260px] text-center sm:text-left">
+              <p className="text-xs text-slate-500">
+                Data Erase At
+              </p>
+
+              <p className="mt-1 text-xs font-medium">
+                01 May 2026
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Buttons */}
+        <div className="mt-7 flex flex-col-reverse sm:flex-row justify-center sm:justify-end gap-2">
+
+          <button
+            onClick={() => navigate("/m3/request-list")}
+           className="w-full sm:w-auto rounded-lg border border-slate-300 px-5 py-2.5 text-sm hover:bg-slate-50"
+          >
+            Back
+          </button>
+
+          {/* <button
+          className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-2.5 text-sm text-white hover:bg-blue-700"
+          >
+            Request Data
+          </button> */}
+
+      <button
+  disabled={!isGranted}
+  onClick={() =>
+    navigate("/m3/view-data", {
+      state: {
+        consentId: consent.consentId,
+      },
+    })
+  }
+  className={`w-full sm:w-auto rounded-lg px-5 py-2.5 text-sm text-white ${
+    isGranted
+      ? "bg-teal-600 hover:bg-teal-700"
+      : "bg-slate-300 cursor-not-allowed"
+  }`}
+>
+  View Data
+</button>
+{!isGranted && (
+  <p className="text-xs text-slate-500 mt-2">
+    Health records will be available after the patient grants consent.
+  </p>
+)}
+
+        </div>
+
+      </div>
+    </ConsentLayout>
+  );
+};
+
+export default ConsentDetailsPage;
