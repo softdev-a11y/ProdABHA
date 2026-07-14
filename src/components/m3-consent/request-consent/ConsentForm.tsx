@@ -1,179 +1,217 @@
-import { useState } from "react";
+  import { useState } from "react";
 
-interface Props {
-  onSubmit: () => void;
-  onBack: () => void;
-}
+  interface Props {
+    onSubmit: () => void;
+    onBack: () => void;
+  }
 
-const ConsentForm = ({
-  onSubmit,
-  onBack,
-}: Props) => {
+  const ConsentForm = ({ onSubmit, onBack }: Props) => {
+    const [purpose, setPurpose] = useState("Care Management");
+    const [hiType, setHiType] = useState("3 Selected");
+    const [frequency, setFrequency] = useState("One-time");
+    const [fromDate, setFromDate] = useState("2025-01-01");
+    const [expiryDate, setExpiryDate] = useState("2026-05-01");
+    const [remarks, setRemarks] = useState("");
 
-  const [purpose, setPurpose] =
-    useState("");
+    return (
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 lg:p-8">
 
-  const [fromDate, setFromDate] =
-    useState("2025-01-01");
+        {/* Heading */}
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
+          Request Consent
+        </h2>
 
-  const [toDate, setToDate] =
-    useState("2026-05-01");
+        <p className="mt-2 text-sm text-slate-500">
+          Fill the details below to request consent.
+        </p>
 
-  const [error, setError] =
-    useState("");
+        {/* Patient Details */}
 
-  const handleSubmit = () => {
+        <div className="mt-8">
 
-    if (!purpose) {
+          <h3 className="mb-4 font-semibold text-slate-800">
+            Patient Details
+          </h3>
 
-      setError(
-        "Please select purpose of access."
-      );
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
-      return;
-    }
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                Patient Name
+              </label>
 
-    if (
-      !fromDate ||
-      !toDate
-    ) {
+              <input
+                value="Ravi Kumar"
+                readOnly
+                className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3"
+              />
+            </div>
 
-      setError(
-        "Please select date range."
-      );
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                MR No
+              </label>
 
-      return;
-    }
+              <input
+                value="MRN001234"
+                readOnly
+                className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3"
+              />
+            </div>
 
-    if (
-      new Date(fromDate) >
-      new Date(toDate)
-    ) {
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                ABHA ID
+              </label>
 
-      setError(
-        "From date cannot be greater than To date."
-      );
+              <input
+                value="91-9999-8888-7777"
+                readOnly
+                className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3"
+              />
+            </div>
 
-      return;
-    }
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                ABHA Address
+              </label>
 
-    setError("");
+              <input
+                value="ravi@abdm"
+                readOnly
+                className="h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3"
+              />
+            </div>
 
-    onSubmit();
-  };
+          </div>
 
-  return (
-    <>
-      {/* Purpose */}
-      <div className="mt-6">
+        </div>
 
-        <label className="block text-[13px] sm:text-[14px] font-semibold text-[#111827] mb-2">
-          Purpose of Access
-        </label>
+        {/* Consent Details */}
 
-        <select
-          value={purpose}
-          onChange={(e) => {
-            setPurpose(
-              e.target.value
-            );
+        <div className="mt-8">
 
-            if (error) {
-              setError("");
-            }
-          }}
-          className="w-full h-[44px] border border-[#d1d5db] rounded-[12px] px-4 text-[13px] sm:text-[14px] outline-none bg-white"
-        >
-          <option value="">
-            Select Purpose
-          </option>
+          <h3 className="mb-4 font-semibold text-slate-800">
+            Consent Details
+          </h3>
 
-          <option>
-            Care Management
-          </option>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
 
-          <option>
-            Treatment
-          </option>
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                Purpose of Access
+              </label>
 
-          <option>
-            Insurance
-          </option>
+              <select
+                value={purpose}
+                onChange={(e) => setPurpose(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              >
+                <option>Care Management</option>
+                <option>Treatment</option>
+                <option>Insurance</option>
+              </select>
+            </div>
 
-        </select>
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                HI Types
+              </label>
 
-      </div>
+              <select
+                value={hiType}
+                onChange={(e) => setHiType(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              >
+                <option>3 Selected</option>
+                <option>Prescription</option>
+                <option>Diagnostic Report</option>
+                <option>OP Consultation</option>
+              </select>
+            </div>
 
-      {/* Date Range */}
-      <div className="mt-6">
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                Date Range
+              </label>
 
-        <h3 className="text-[13px] sm:text-[14px] font-semibold text-[#111827] mb-3">
-          Date Range
-        </h3>
+              <input
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              />
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                Frequency
+              </label>
 
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => {
-              setFromDate(
-                e.target.value
-              );
+              <select
+                value={frequency}
+                onChange={(e) => setFrequency(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              >
+                <option>One-time</option>
+                <option>Recurring</option>
+              </select>
+            </div>
 
-              if (error) {
-                setError("");
-              }
-            }}
-            className="w-full h-[44px] border border-[#d1d5db] rounded-[12px] px-4 text-[13px] sm:text-[14px] outline-none"
-          />
+            <div>
+              <label className="block text-sm text-slate-600 mb-2">
+                Expiry Date
+              </label>
 
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => {
-              setToDate(
-                e.target.value
-              );
+              <input
+                type="date"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              />
+            </div>
 
-              if (error) {
-                setError("");
-              }
-            }}
-            className="w-full h-[44px] border border-[#d1d5db] rounded-[12px] px-4 text-[13px] sm:text-[14px] outline-none"
-          />
+            <div className="sm:col-span-2 xl:col-span-3">
+
+              <label className="block text-sm text-slate-600 mb-2">
+                Remarks (Optional)
+              </label>
+
+              <input
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                placeholder="Enter remarks"
+                className="h-11 w-full rounded-lg border border-slate-300 px-3"
+              />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* Buttons */}
+
+        <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3">
+
+          <button
+            onClick={onBack}
+            className="h-11 w-full sm:w-auto rounded-lg border border-slate-300 bg-white px-6"
+          >
+            Cancel
+          </button>
+
+          <button
+            onClick={onSubmit}
+            className="h-11 w-full sm:w-auto rounded-lg bg-teal-600 px-6 text-white hover:bg-teal-700"
+          >
+            Submit Request
+          </button>
 
         </div>
 
       </div>
+    );
+  };
 
-      {/* Error Message */}
-      {error && (
-        <p className="mt-4 text-sm text-red-600 font-medium">
-          {error}
-        </p>
-      )}
-
-      {/* Buttons */}
-      <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 mt-8">
-
-        <button
-          onClick={onBack}
-          className="h-[36px] w-full sm:w-auto px-3 rounded-[8px] border border-[#d1d5db] text-[#374151] text-[11px] font-semibold bg-white"
-        >
-          Back
-        </button>
-
-        <button
-          onClick={handleSubmit}
-          className="h-[36px] sm:w-auto px-3 rounded-[8px] bg-[#2563eb] hover:bg-[#1d4ed8] text-white text-[11px] font-semibold"
-        >
-          Request Consent
-        </button>
-
-      </div>
-    </>
-  );
-};
-
-export default ConsentForm;
+  export default ConsentForm;

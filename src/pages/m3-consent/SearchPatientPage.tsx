@@ -1,28 +1,14 @@
-import { useState } from "react";
-
-import { useNavigate } from "react-router-dom";
-
-import SearchPatientCard from "../../components/m3-consent/SearchPatient/SearchPatientCard";
-
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
+import SearchPatientCard from "../../components/m3-consent/search-patient/SearchPatientCard";
+import PatientTable from "../../components/m3-consent/search-patient/PatientTable";
 
 const SearchPatientPage = () => {
-  const navigate = useNavigate();
-
-  const [abhaAddress, setAbhaAddress] =
-    useState("");
-
   return (
-    <ConsentLayout currentStep={1}>
-
-      <SearchPatientCard
-        abhaAddress={abhaAddress}
-        setAbhaAddress={setAbhaAddress}
-        onSearch={() =>
-          navigate("/m3/select-records")
-        }
-      />
-
+    <ConsentLayout>
+      <div className="w-full max-w-7xl space-y-6">
+        <SearchPatientCard />
+        <PatientTable />
+      </div>
     </ConsentLayout>
   );
 };

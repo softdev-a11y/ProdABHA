@@ -1,204 +1,157 @@
-import { useNavigate } from "react-router-dom";
+  import { useState } from "react";
+  import {
+    FileText,
+    Table2,
+    LogOut,
+    Menu,
+    X,
+  } from "lucide-react";
+  import { NavLink } from "react-router-dom";
 
-interface Props {
-  currentStep: number;
-}
+  const menus = [
+    {
+      title: "Request Consent",
+      path: "/m3/request-consent",
+      icon: FileText,
+    },
+    {
+      title: "Request List",
+      path: "/m3/request-list",
+      icon: Table2,
+    },
+  ];
 
-const directAccess = [
-  {
-    id: 4,
-    title: "Pending Requests",
-    subtitle: "Waiting for approval",
-    path: "/m3/pending-requests",
-  },
-  {
-    id: 5,
-    title: "View Records",
-    subtitle: "Fetch & View Data",
-    path: "/m3/view-records",
-  },
-];
+  const ConsentSidebar = () => {
+    const [open, setOpen] = useState(false);
 
-const requestFlow = [
-  {
-    id: 1,
-    title: "Search Patient",
-    subtitle: "Search using ABHA address",
-  },
-  {
-    id: 2,
-    title: "Select Records",
-    subtitle: "Choose HI Types",
-  },
-  {
-    id: 3,
-    title: "Request Consent",
-    subtitle: "Provide details",
-  },
-];
-
-const ConsentSidebar = ({
-  currentStep,
-}: Props) => {
-  const navigate = useNavigate();
-
-  const showRequestFlow =
-    currentStep === 1 ||
-    currentStep === 2 ||
-    currentStep === 3;
-
-  return (
-    <div className="w-[240px] h-screen bg-[#f8fafc] border-r border-[#e5e7eb] flex flex-col">
-
-      {/* Logo */}
-      <div className="px-6 pt-8 pb-6">
-        <h1 className="text-[22px] font-bold leading-none text-[#111827]">
-          ABDM M3
-        </h1>
-
-        <p className="mt-2 text-[12px] text-[#6b7280] leading-relaxed">
-          Health Information Exchange
-        </p>
-      </div>
-
-      {/* Sidebar Content */}
-      <div className="flex-1 px-5 overflow-y-auto">
-
-        {/* Direct Access */}
-        <div className="flex flex-col gap-5">
-
-          {directAccess.map((step) => {
-            const active =
-              currentStep === step.id;
-
-            return (
-              <button
-                key={step.id}
-                onClick={() =>
-                  navigate(step.path)
-                }
-                className={`w-full text-left flex items-start gap-3 rounded-[12px] px-3 py-3 transition-all ${
-                  active
-                    ? "bg-[#eff6ff]"
-                    : "hover:bg-[#f1f5f9]"
-                }`}
-              >
-                {/* Dot */}
-                <div
-                  className={`w-[10px] h-[10px] rounded-full mt-[7px] shrink-0 ${
-                    active
-                      ? "bg-[#2563eb]"
-                      : "bg-[#d1d5db]"
-                  }`}
-                />
-
-                {/* Text */}
-                <div>
-                  <h3
-                    className={`text-[15px] font-semibold leading-tight ${
-                      active
-                        ? "text-[#111827]"
-                        : "text-[#374151]"
-                    }`}
-                  >
-                    {step.title}
-                  </h3>
-
-                  <p className="mt-1 text-[11px] text-[#9ca3af] leading-relaxed">
-                    {step.subtitle}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
-
-        </div>
-
-        {/* Request Consent Expand */}
-        <div className="mt-8">
-
+    return (
+      <>
+        {/* Mobile Header */}
+        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
           <button
-            onClick={() =>
-              navigate("/m3/search-patient")
-            }
-            className={`w-full text-left rounded-[12px] px-3 py-3 ${
-              showRequestFlow
-                ? "bg-[#eff6ff]"
-                : "hover:bg-[#f1f5f9]"
-            }`}
+            onClick={() => setOpen(true)}
+            className="p-2 rounded hover:bg-slate-100"
           >
-            <h2
-              className={`text-[15px] font-semibold ${
-                showRequestFlow
-                  ? "text-[#111827]"
-                  : "text-[#374151]"
-              }`}
-            >
-              Request Consent
-            </h2>
-
-            <p className="mt-1 text-[11px] text-[#9ca3af]">
-              Create new consent request
-            </p>
+            <Menu size={22} />
           </button>
 
-          {/* Expanded Steps */}
-          {showRequestFlow && (
-            <div className="mt-5 ml-2 flex flex-col gap-6">
+          <span className="font-semibold text-slate-800">
+            ABDM M3
+          </span>
 
-              {requestFlow.map((step) => {
-                const active =
-                  currentStep === step.id;
+          <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center text-white font-semibold">
+            S
+          </div>
+        </div>
 
-                const completed =
-                  currentStep > step.id;
+        {/* Overlay */}
+        {open && (
+          <div
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          />
+        )}
+
+        {/* Sidebar */}
+        <aside
+          className={` fixed top-0 left-0 z-50 h-screen  w-[250px] bg-[#0F172A] text-white flex flex-col overflow-hidden transition-transform duration-300
+
+            ${
+              open
+                ? "translate-x-0"
+                : "-translate-x-full lg:translate-x-0"
+            }
+
+            lg:sticky
+            lg:top-0
+            lg:translate-x-0
+            lg:shrink-0
+          `}
+        >
+          {/* Logo */}
+          <div className="px-6 py-8 border-b border-slate-700 flex justify-between items-start">
+
+            <div>
+              <h1 className="text-2xl font-bold">
+                ABDM M3
+              </h1>
+
+              <p className="text-sm text-slate-400 mt-2">
+                Health Information Exchange
+              </p>
+            </div>
+
+            <button
+              onClick={() => setOpen(false)}
+              className="lg:hidden"
+            >
+              <X size={22} />
+            </button>
+
+          </div>
+
+          {/* Menu */}
+          <nav className="flex-1 overflow-y-auto px-4 py-6">
+
+            <p className="text-xs uppercase text-slate-500 mb-3">
+              Consent
+            </p>
+
+            <div className="space-y-2">
+
+              {menus.map((menu) => {
+                const Icon = menu.icon;
 
                 return (
-                  <div
-                    key={step.id}
-                    className="flex items-start gap-3"
+                  <NavLink
+                    key={menu.title}
+                    to={menu.path}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-lg px-4 py-3 transition ${
+                        isActive
+                          ? "bg-teal-600 text-white"
+                          : "text-slate-300 hover:bg-slate-800"
+                      }`
+                    }
                   >
-                    {/* Circle */}
-                    <div
-                      className={`w-[38px] h-[38px] rounded-full flex items-center justify-center text-[12px] font-semibold shrink-0 transition-all ${
-                        active
-                          ? "bg-[#2563eb] text-white shadow-sm"
-                          : completed
-                          ? "bg-[#16a34a] text-white"
-                          : "bg-white border border-[#d1d5db] text-[#9ca3af]"
-                      }`}
-                    >
-                      {step.id}
-                    </div>
+                    <Icon size={18} />
 
-                    {/* Text */}
-                    <div className="pt-[1px]">
-                      <h3
-                        className={`text-[14px] font-semibold leading-tight ${
-                          active
-                            ? "text-[#111827]"
-                            : "text-[#374151]"
-                        }`}
-                      >
-                        {step.title}
-                      </h3>
+                    <span className="text-sm font-medium">
+                      {menu.title}
+                    </span>
 
-                      <p className="mt-1 text-[11px] text-[#9ca3af] leading-relaxed">
-                        {step.subtitle}
-                      </p>
-                    </div>
-                  </div>
+                  </NavLink>
                 );
               })}
 
             </div>
-          )}
 
-        </div>
+          </nav>
 
-      </div>
-    </div>
-  );
-};
+          {/* Logout */}
+          <div className="mt-auto border-t border-slate-700 p-4">
 
-export default ConsentSidebar;
+            <button
+              onClick={() => {
+                console.log("Logout");
+                setOpen(false);
+              }}
+              className="flex items-center gap-3 text-slate-300 hover:text-white"
+            >
+              <LogOut size={18} />
+
+              <span>
+                Logout
+              </span>
+
+            </button>
+
+          </div>
+
+        </aside>
+      </>
+    );
+  };
+
+  export default ConsentSidebar;
