@@ -3,9 +3,8 @@
 
     import useM3 from "../../hooks/useM3";
     import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
-    import mockBundle from "../../mock/mockBundle";
-    import PatientDetails from "../../components/m3-consent/view-health-record/PatientDetails";
-    import HealthRecordTabs from "../../components/m3-consent/view-health-record/HealthRecordTabs";
+import { parseFhirBundle } from "../../utils/fhirParser";
+import ResourceRenderer from "../../components/m3-consent/resource-renderer/ResourceRenderer";
 
     const ViewHealthRecordPage = () => {
       const location = useLocation();
@@ -15,21 +14,10 @@
 
       const { viewHealthRecord } = useM3();
 
-      const [record, setRecord] = useState<any>(null);
 
       const [loading, setLoading] = useState(true);
-      const [bundle, setBundle] = useState<any>(null);
-      const [patient, setPatient] = useState<any>(null);
 
-    const [prescriptions, setPrescriptions] = useState<any[]>([]);
-
-    const [diagnosticReports, setDiagnosticReports] = useState<any[]>([]);
-
-    const [observations, setObservations] = useState<any[]>([]);
-
-    const [encounters, setEncounters] = useState<any[]>([]);
-
-    const [documents, setDocuments] = useState<any[]>([]);
+     const [resources, setResources] =useState<Record<string, any[]>>({});
 
 
 
@@ -44,70 +32,22 @@
 
           console.log("Health Record Response", response);
         console.log(response.data.bundleJson);
+        console.log(typeof response.data.bundleJson);
 
-          setRecord(response.data);
-          const parsedBundle = mockBundle;
+        const parsedBundle = JSON.parse(response.data.bundleJson);
 
 
         console.log(parsedBundle);
 
-        setBundle(parsedBundle);
-        const entries = parsedBundle.entry || [];
 
-    setPatient(
-      entries.find(
-        (item: any) =>
-          item.resource?.resourceType === "Patient"
-      )?.resource || null
-    );
+        const parsedResources =
+          parseFhirBundle(parsedBundle);
 
-    setPrescriptions(
-      entries
-        .filter(
-          (item: any) =>
-            item.resource?.resourceType === "MedicationRequest"
-        )
-        .map((item: any) => item.resource)
-    );
-
-    setDiagnosticReports(
-      entries
-        .filter(
-          (item: any) =>
-            item.resource?.resourceType === "DiagnosticReport"
-        )
-        .map((item: any) => item.resource)
-    );
-
-    setObservations(
-      entries
-        .filter(
-          (item: any) =>
-            item.resource?.resourceType === "Observation"
-        )
-        .map((item: any) => item.resource)
-    );
-
-    setEncounters(
-      entries
-        .filter(
-          (item: any) =>
-            item.resource?.resourceType === "Encounter"
-        )
-        .map((item: any) => item.resource)
-    );
-
-    setDocuments(
-      entries
-        .filter(
-          (item: any) =>
-            item.resource?.resourceType === "DocumentReference"
-        )
-        .map((item: any) => item.resource)
-    );
+        setResources(parsedResources);
 
 
-          setLoading(false);
+
+            setLoading(false);
         };
 
         loadHealthRecord();
@@ -130,14 +70,7 @@
             </p>
 
             <div className="mt-6 rounded-lg bg-slate-100 p-4 overflow-auto">
-                <PatientDetails patient={patient} />
-                <HealthRecordTabs
-              prescriptions={prescriptions}
-              diagnosticReports={diagnosticReports}
-              observations={observations}
-              encounters={encounters}
-              documents={documents}
-            />
+              <ResourceRenderer resources={resources} />
             </div>
             
           </div>

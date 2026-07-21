@@ -8,7 +8,7 @@ export const GenerateLinkTokenService = (
 ) => {
 
     return m2ApiClient.post(
-        "/api/v1/hip/link-token-generation",
+       "/api/v3/hip/link-token-generation",
         data
     );
 };
@@ -21,7 +21,7 @@ export const GetWorkflowStatusService = (
 ) => {
 
     return m2ApiClient.get(
-        `/api/v1/hip/workflow-status/${transactionId}`
+      `/api/v3/hip/workflow-status/${transactionId}`
     );
 };
 
@@ -33,7 +33,7 @@ export const LinkCareContextService = (
 ) => {
 
     return m2ApiClient.post(
-        "/api/v1/hip/link-care-context",
+        "/api/v3/hip/link-care-context",
         data
     );
 };
@@ -46,7 +46,7 @@ export const NotifyCareContextService = (
 ) => {
 
     return m2ApiClient.post(
-        "/api/v1/hip/notify-care-context",
+        "/api/v3/hip/notify-care-context",
         data
     );
 };
@@ -59,7 +59,69 @@ export const SendSMSService = (
 ) => {
 
     return m2ApiClient.post(
-        "/api/v1/hip/sms-notification",
+        "/api/v3/hip/sms-notification",
         data
     );
+};
+
+
+// GET CARE CONTEXTS
+
+export const GetCareContextsService = (
+  unitCode: string,
+  mrNo: string
+) => {
+  return m2ApiClient.get(
+    `/api/hip/internal/care-contexts/${unitCode}/${mrNo}`
+  );
+};
+
+// SEARCH PATIENT
+
+export const SearchPatientService = (
+  searchText: string
+) => {
+  return m2ApiClient.get(
+    `/api/HipInternal/search-patients?searchText=${searchText}`
+  );
+};
+
+// SEARCH PATIENT BY DATE RANGE
+
+export const SearchPatientByDateRangeService = (
+  unitCode: string,
+  startDate: string,
+  endDate: string
+) => {
+
+  return m2ApiClient.get(
+    `/api/HipInternal/search-patients-by-date-range?unitCode=${unitCode}&startDate=${startDate}&endDate=${endDate}`
+  );
+
+};
+ 
+ // LINKED HISTORY
+
+export const GetLinkedHistoryService = (
+  abhaAddress: string
+) => {
+
+  return m2ApiClient.get(
+    `/api/HipInternal/linked-care-context-history?abhaAddress=${abhaAddress}`
+  );
+
+};
+
+
+// LINKED HISTORY DATE RANGE
+
+export const GetLinkedHistoryByDateRangeService = (
+  startDate: string,
+  endDate: string
+) => {
+
+  return m2ApiClient.get(
+    `/api/HipInternal/linked-care-context-history/by-date-range?startDate=${startDate}&endDate=${endDate}`
+  );
+
 };

@@ -7,3 +7,8 @@ export interface PatientDetails {
   patientReference: string;
   discoveredOn: string;
 }
+
+export type ParsedFhirResources = Record<
+  string,
+  any[]
+>;

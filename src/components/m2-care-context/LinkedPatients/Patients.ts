@@ -1,12 +1,25 @@
 export const Patients = [
   {
-    id: 1,
-    name: "Ravi Kumar",
-    uhid: "UH12345",
-    abhaNumber: "91-9999-8888-7777",
-    abhaAddress: "ravi@abdm",
-    status: "Linked",
-  },
+  id: 1,
+  name: "Shiva Bala Rajan",
+  uhid: "UH12345",
+
+  mrno: "SV126001265",
+  unitCode: "02",
+
+  abhaNumber: "12345",
+  abhaAddress: "shiva@sbx",
+
+  status: "Linked",
+},
+  // {
+  //   id: 1,
+  //   name: "Ravi Kumar",
+  //   uhid: "UH12345",
+  //   abhaNumber: "91-9999-8888-7777",
+  //   abhaAddress: "ravi@abdm",
+  //   status: "Linked",
+  // },
   {
     id: 2,
     name: "Sita Devi",

@@ -1,232 +1,231 @@
-        import { useState } from "react";
+      import { useEffect, useState } from "react";
         import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
         import { Menu, ArrowLeft } from "lucide-react";
         import { useNavigate } from "react-router-dom";
     import ConfirmLinkModal from "../../components/m2-care-context/ConfirmationModal/ConfirmLinkModal";
     import { useM2 } from "../../hooks/useM2";
-        const records = [
-        {
-            id: 1,
-            title: "Prescription",
-            count: 2,
-            color: "text-purple-600",
-            selected: true,
-        },
-        {
-            id: 2,
-            title: "Lab Reports",
-            count: 3,
-            color: "text-green-600",
-            selected: true,
-        },
-        {
-            id: 3,
-            title: "OP Consultation",
-            count: 5,
-            color: "text-orange-500",
-            selected: true,
-        },
-        {
-            id: 4,
-            title: "Discharge Summary",
-            count: 1,
-            color: "text-red-500",
-            selected: false,
-        },
-        {
-            id: 5,
-            title: "Radiology",
-            count: 2,
-            color: "text-blue-600",
-            selected: true,
-        },
-        ];
-//   const patientData = {
-//     name: "Pilli Harish Yadav",
-//     uhid: "UH12345",
-//     abhaNumber: 91324111341735,
-//     abhaAddress: "91324111341735@sbx",
-//     gender: "M",
-//     yearOfBirth: 1998,
-// };
+    import { useLocation } from "react-router-dom";
+      
 
- const patientData = {
-  "abhaAddress": "dhananjay07@sbx",
-  "abhaNumber": 91178730682840,
-  "name": "Dhananjay Rajaram Dangadi",
-  "gender": "M", 
-  "yearOfBirth": 2002
-};
+
 
         const PatientRecordListingPage = () => {
         const [sidebarOpen, setSidebarOpen] = useState(false);
         const [collapsed, setCollapsed] = useState(false);
         const [openModal, setOpenModal] = useState(false);
+        const [hiTypes, setHiTypes] = useState<any[]>([]);
+        const location = useLocation();
+
+        const patientData = location.state as any;
         // const [, setTransactionId] = useState("");
         const [workflowStatus, setWorkflowStatus] =useState("");
-            const navigate = useNavigate();
-            const { generateLinkToken, getWorkflowStatus, } = useM2();
+         const navigate = useNavigate();
+         const { generateLinkToken, getWorkflowStatus, getCareContexts,  linkCareContext,} = useM2();
 
 
-        const [selectedRecords, setSelectedRecords] =
-            useState(records);
+         const [selectedCareContexts, setSelectedCareContexts] = useState<string[]>([]);
+         const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
-        const toggleSelection = (id: number) => {
-            setSelectedRecords((prev) =>
-            prev.map((record) =>
-                record.id === id
-                ? {
-                    ...record,
-                    selected: !record.selected,
-                    }
-                : record
-            )
+            const toggleSelection = (recordId: string) => {
+            setSelectedCareContexts((prev) =>
+                prev.includes(recordId)
+                ? prev.filter((id) => id !== recordId)
+                : [...prev, recordId]
             );
-        };
-        const handleConfirmLinking = async () => {
+            };
 
-    try {
+            useEffect(() => {
+            loadCareContexts();
+            }, []);
 
-        // SELECTED RECORDS
+            const loadCareContexts = async () => {
+            const response = await getCareContexts(
+            patientData.unitCode,
+            patientData.mrno
+            );
 
+            console.log(response);
 
+            if (response?.success) {
+                setHiTypes(response.data.careContextGroups);
+            }
+            };
+                    const handleConfirmLinking = async () => {
 
-const tokenPayload = {
+                try {
 
-    abhaAddress:
-        patientData.abhaAddress,
+                    // SELECTED RECORDS
 
-    abhaNumber:
-        patientData.abhaNumber,
+            console.log("PATIENT DATA", patientData);
 
-    name:
-        patientData.name,
+            const tokenPayload = {
 
-    gender:
-        patientData.gender,
+            abhaAddress: patientData?.abhaAddress,
 
-    yearOfBirth:
-        patientData.yearOfBirth,
-};
+            abhaNumber: patientData?.abhaNumber,
 
+            name: patientData?.patName,
 
-        console.log(
-        "TOKEN PAYLOAD",
-        tokenPayload
-        );
+            gender: patientData?.patSex,
 
+            yearOfBirth: Number(patientData?.dateOfBirth?.substring(0, 4)),
+            };
+            
+            const patientPayload = [
+            {
+                referenceNumber: patientData?.mrno,
+                display: patientData?.patName,
+                hiType: "Prescription",
+                count: selectedCareContexts.length,
 
-        // GENERATE TOKEN API
+                careContexts: hiTypes
+                .flatMap((section: any) => section.records)
+                .filter((record: any) =>
+                    selectedCareContexts.includes(record.referenceNumber)
+                )
+                .map((record: any) => ({
+                    referenceNumber: record.referenceNumber,
+                    display: record.display,
+                })),
+            },
+            ];
 
-        const tokenResponse =
-        await generateLinkToken(
+            console.log(
+            "TOKEN PAYLOAD",
             tokenPayload
-        );
+            );
 
 
-        console.log(
-        "TOKEN RESPONSE",
-        tokenResponse
-        );
+            // GENERATE TOKEN API
+
+            const tokenResponse =
+            await generateLinkToken(
+                tokenPayload
+            );
+
+
+            console.log(
+            "TOKEN RESPONSE",
+            tokenResponse
+            );
 
 
 
-const txnId =
-tokenResponse?.data?.transactionId;
+            const txnId =
+            tokenResponse?.data?.transactionId;
 
-console.log(
-    "TRANSACTION ID",
-    txnId
-);
+            console.log(
+                "TRANSACTION ID",
+                txnId
+            );
 
-// setTransactionId(txnId);
-
-
-if(!txnId){
-
-    alert(
-        "Transaction ID not received"
-    );
-
-    return;
-}
+            // setTransactionId(txnId);
 
 
-// WORKFLOW STATUS CHECK
+            if(!txnId){
 
-let retryCount = 0;
+                alert(
+                    "Transaction ID not received"
+                );
 
-const interval = setInterval(
-async () => {
+                return;
+            }
 
-    retryCount++;
 
-    const workflowResponse =
-    await getWorkflowStatus(
-        txnId
-    );
+            // WORKFLOW STATUS CHECK
 
-    console.log(
-        "WORKFLOW RESPONSE",
-        workflowResponse
-    );
+            let retryCount = 0;
 
-    const tokenReceived =
-    workflowResponse?.data?.linkTokenReceived;
+            const interval = setInterval(
+            async () => {
 
-    const workflowMessage =
-    workflowResponse?.data?.message;
+                retryCount++;
 
-    if(workflowMessage){
+                const workflowResponse =
+                await getWorkflowStatus(
+                    txnId
+                );
 
-        setWorkflowStatus(
-            workflowMessage
-        );
-    }
+                console.log(
+                    "WORKFLOW RESPONSE",
+                    workflowResponse
+                );
 
-  if(tokenReceived){
+                const tokenReceived =
+                workflowResponse?.data?.linkTokenReceived;
 
-    clearInterval(interval);
+                const workflowMessage =
+                workflowResponse?.data?.message;
 
-    const linkToken =
-    workflowResponse?.data?.linkToken;
+                if(workflowMessage){
 
-    localStorage.setItem(
-        "transactionId",
-        txnId
-    );
+                    setWorkflowStatus(
+                        workflowMessage
+                    );
+                }
 
-    localStorage.setItem(
-        "linkToken",
-        linkToken
-    );
+            if(tokenReceived){
 
-    setWorkflowStatus(
-        "SUCCESS"
-    );
+                clearInterval(interval);
 
-    setOpenModal(false);
+                const linkToken =
+                workflowResponse?.data?.linkToken;
 
-    navigate("/processing");
-}
+                const linkPayload = {
+                    abhaNumber: patientData?.abhaNumber,
+                    abhaAddress: patientData?.abhaAddress,
+                    linkToken,
+                    patient: patientPayload,
+                    transactionId: txnId,
+                    };
 
-    if(retryCount >= 10){
+                    console.log("LINK PAYLOAD", linkPayload);
 
-        clearInterval(interval);
+                   localStorage.setItem(
+                        "transactionId",
+                        txnId
+                    );
 
-        setWorkflowStatus(
-            "Callback Timeout"
-        );
-    }
+                    localStorage.setItem(
+                        "linkToken",
+                        linkToken
+                    );
 
-}, 5000);
+                    localStorage.setItem(
+                        "linkPayload",
+                        JSON.stringify(linkPayload)
+                    );
+                    localStorage.setItem(
+                        "patientData",
+                        JSON.stringify(patientData)
+                    );
 
-    
-     } catch (error) {
+                    setWorkflowStatus(
+                        "SUCCESS"
+                    );
 
-        console.log(error);
-    }
-};
+                    setOpenModal(false);
+
+                    navigate("/processing");
+                                }
+
+                if(retryCount >= 10){
+
+                    clearInterval(interval);
+
+                    setWorkflowStatus(
+                        "Callback Timeout"
+                    );
+                }
+
+            }, 5000);
+
+                
+                } catch (error) {
+
+                    console.log(error);
+                }
+            };
 
 
 
@@ -294,15 +293,13 @@ async () => {
 
                     {/* PATIENT INFO */}
                     <div className="text-left lg:text-center">
+                    <h2>
+                    {patientData?.patName} ({patientData?.mrno})
+                    </h2>
 
-                        <h2 className="text-xl font-semibold text-gray-800">
-                        Ravi Kumar (UH12345)
-                        </h2>
-
-                        <p className="text-sm text-gray-500 mt-1">
-                        ABHA: 91-9999-8888-7777 |
-                        ravi@abdm
-                        </p>
+                                        <p>
+                    ABHA: {patientData?.abhaNumber} | {patientData?.abhaAddress}
+                    </p>
 
                     </div>
 
@@ -321,48 +318,71 @@ async () => {
                         Select the records you want to link to ABHA
                     </p>
 
-                    {/* RECORD LIST */}
-                    <div className="space-y-3">
+               <div className="space-y-4">
 
-                        {selectedRecords.map((record) => (
+                    {hiTypes.map((section) => (
 
                         <div
-                            key={record.id}
-                        className="border border-gray-200 rounded-xl px-4 py-3 flex items-center justify-between hover:border-[#008080] transition"
+                    key={section.hiType}
+                        className="border border-gray-200 rounded-xl"
                         >
 
-                            {/* LEFT */}
-                            <div className="flex items-center gap-4">
+                        <button
+                    className="w-full flex justify-between items-center px-4 py-3 bg-gray-50 font-semibold text-[#008080]"
+                    onClick={() =>
+                        setExpandedSection(
+                        expandedSection === section.hiType
+                            ? null
+                            : section.hiType
+                        )
+                    }
+                    >
+                    <span>{section.hiType}</span>
 
-                            <input
+                    <span>
+                        {expandedSection === section.hiType ? "−" : "+"}
+                    </span>
+                    </button>
+
+                    {expandedSection === section.hiType && (
+
+                    <div className="p-4 space-y-2">
+
+                            {section.records.map((record: any) => (
+
+                            <label
+                            key={record.referenceNumber}
+                                className="flex items-center gap-3"
+                            >
+
+                                <input
                                 type="checkbox"
-                                checked={record.selected}
-                                onChange={() =>
-                                toggleSelection(record.id)
-                                }
-                                className="w-5 h-5 accent-[#008080]"
-                            />
+                                checked={selectedCareContexts.includes(record.referenceNumber)}
+                                onChange={() => toggleSelection(record.referenceNumber)}
+                                className="w-4 h-4 accent-[#008080]"
+                                />
 
                             <div>
+                    <p className="font-medium">
+                        {record.display}
+                    </p>
 
-                                <h4
-                                className={`font-semibold ${record.color}`}
-                                >
-                                {record.title}
-                                </h4>
+                    <p className="text-xs text-gray-500">
+                        {record.description}
+                    </p>
+                    </div>
 
-                                <p className="text-sm text-gray-500">
-                                {record.count} record(s)
-                                available
-                                </p>
+                            </label>
 
-                            </div>
-
-                            </div>
+                            ))}
 
                         </div>
 
-                        ))}
+
+                    )}
+                        </div>
+
+                    ))}
 
                     </div>
 
@@ -379,7 +399,13 @@ async () => {
 
                     <button
                     onClick={() => setOpenModal(true)}
-                    className="w-full lg:w-auto px-6 py-2.5 rounded-lg bg-[#008080] hover:bg-[#006d6d] text-white transition">
+                  className={`px-6 py-2 rounded-lg text-white transition
+                    ${
+                    selectedCareContexts.length === 0
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-teal-600 hover:bg-teal-700"
+                    }`}
+                    >
                         Link Records
                     </button>
 
@@ -390,12 +416,14 @@ async () => {
                 </div>
 
             </div>
-    <ConfirmLinkModal
-    open={openModal}
-    onClose={() => setOpenModal(false)}
-    onConfirm={handleConfirmLinking}
-     patient={patientData}
-    />
+            <ConfirmLinkModal
+                open={openModal}
+                onClose={() => setOpenModal(false)}
+                onConfirm={handleConfirmLinking}
+                patient={patientData}
+                hiTypes={hiTypes}
+                selectedCareContexts={selectedCareContexts}
+                />
             </div>
         );
         };

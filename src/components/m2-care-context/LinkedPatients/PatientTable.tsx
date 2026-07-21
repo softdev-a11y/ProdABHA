@@ -7,15 +7,17 @@
   } from "@tanstack/react-table";
 
   import type { ColumnDef } from "@tanstack/react-table";
-
-  interface Patient {
-    id: number;
-    name: string;
-    uhid: string;
-    abhaNumber: string;
-    abhaAddress: string;
-    status: string;
-  }
+interface Patient {
+  patientId: string;
+  uhid: string;
+  mrno: string;
+  patName: string;
+  patFName: string;
+  patLName: string;
+  unitCode: string;
+  abhaNumber: string;
+  abhaAddress: string;
+}
 
   interface Props {
     patients: Patient[];
@@ -26,12 +28,16 @@
 
     const columns: ColumnDef<Patient>[] = [
       {
-        accessorKey: "name",
+        accessorKey: "patName",
         header: "Patient Name",
       },
       {
         accessorKey: "uhid",
         header: "UHID",
+      },
+      {
+        accessorKey: "mrno",
+        header: "MR No",
       },
       {
         accessorKey: "abhaNumber",
@@ -41,27 +47,21 @@
         accessorKey: "abhaAddress",
         header: "ABHA Address",
       },
-      {
-        accessorKey: "status",
-        header: "Link Status",
-        cell: ({ row }) => (
-          <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
-            {row.original.status}
-          </span>
-        ),
-      },
+   
       {
             id: "action",
         header: "Action",
-        cell: () => (
-  <button
-    onClick={() =>
-      navigate("/patientrecords")
-    }
-    className="bg-[#008080] hover:bg-[#006d6d] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
-  >
-    Manage Records
-  </button>
+        cell: ({row}) => (
+        <button
+      onClick={() =>
+        navigate("/patientrecords", {
+          state: row.original,
+        })
+      }
+          className="bg-[#008080] hover:bg-[#006d6d] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+        >
+          Manage Records
+        </button>
         ),
       },
     ];
