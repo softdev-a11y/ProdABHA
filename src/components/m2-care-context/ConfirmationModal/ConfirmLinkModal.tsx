@@ -8,6 +8,10 @@ interface Props {
   onConfirm: () => void;
 
   patient: any;
+
+  hiTypes: any[];
+
+  selectedCareContexts: string[];
 }
 
 const ConfirmLinkModal = ({
@@ -15,6 +19,8 @@ const ConfirmLinkModal = ({
   onClose,
   onConfirm,
   patient,
+  hiTypes,
+  selectedCareContexts,
 }: Props) => {
       useEffect(() => {
 
@@ -29,6 +35,20 @@ const ConfirmLinkModal = ({
     };
 
   }, [open]);
+
+  const summary = hiTypes
+  .map((section) => ({
+    hiType: section.hiType,
+    count: section.records.filter((record: any) =>
+      selectedCareContexts.includes(record.referenceNumber)
+    ).length,
+  }))
+  .filter((item) => item.count > 0);
+
+const totalSelected = summary.reduce(
+  (total, item) => total + item.count,
+  0
+);
 
   if (!open) return null;
 
@@ -71,17 +91,17 @@ const ConfirmLinkModal = ({
                 </span>
 
                 <span className="font-medium text-right">
-                  {patient.name}
+                  {patient.patName}
                 </span>
               </div>
 
               <div className="flex justify-between gap-4">
                 <span className="text-gray-500">
-                  UHID
+                  MR No
                 </span>
 
                 <span className="font-medium text-right">
-                  {patient.uhid}
+                  {patient.mrno}
                 </span>
               </div>
 
@@ -116,61 +136,53 @@ const ConfirmLinkModal = ({
               Selected Records Summary
             </h3>
 
-            <div className="space-y-4 text-sm">
+          <div className="space-y-4 text-sm">
 
-              <div className="flex justify-between">
-                <span>
-                  Prescription
-                </span>
+            {summary.length === 0 ? (
 
-                <span className="font-semibold">
-                  2
-                </span>
-              </div>
+              <p className="text-gray-500">
+                No records selected.
+              </p>
 
-              <div className="flex justify-between">
-                <span>
-                  Lab Reports
-                </span>
+            ) : (
 
-                <span className="font-semibold">
-                  3
-                </span>
-              </div>
+              <>
+                {summary.map((item) => (
 
-              <div className="flex justify-between">
-                <span>
-                  OP Consultation
-                </span>
+                  <div
+                    key={item.hiType}
+                    className="flex justify-between"
+                  >
 
-                <span className="font-semibold">
-                  5
-                </span>
-              </div>
+                    <span>
+                      {item.hiType}
+                    </span>
 
-              <div className="flex justify-between">
-                <span>
-                  Radiology
-                </span>
+                    <span className="font-semibold">
+                      {item.count}
+                    </span>
 
-                <span className="font-semibold">
-                  2
-                </span>
-              </div>
+                  </div>
 
-              <div className="border-t border-gray-200 pt-4 flex justify-between text-base font-semibold">
+                ))}
 
-                <span>
-                  Total Records
-                </span>
+                <div className="border-t border-gray-200 pt-4 flex justify-between text-base font-semibold">
 
-                <span>
-                  12
-                </span>
+                  <span>
+                    Total Records
+                  </span>
 
-              </div>
+                  <span>
+                    {totalSelected}
+                  </span>
 
-            </div>
+                </div>
+
+              </>
+
+            )}
+
+          </div>
 
           </div>
 
