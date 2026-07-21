@@ -4,6 +4,11 @@ LinkCareContextService,
 SendSMSService,
 GetWorkflowStatusService,
 NotifyCareContextService,
+GetCareContextsService,
+  SearchPatientService,
+   SearchPatientByDateRangeService,
+  GetLinkedHistoryService,
+  GetLinkedHistoryByDateRangeService,
 } from "../services/m2.service";
 
 export const useM2 = () => {
@@ -99,11 +104,115 @@ async (transactionId:string) => {
     }
 };
 
+const getCareContexts = async (
+  unitCode: string,
+  mrNo: string
+) => {
+  try {
+    const response = await GetCareContextsService(
+      unitCode,
+      mrNo
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const searchPatients = async (
+  searchText: string
+) => {
+  try {
+    const response = await SearchPatientService(
+      searchText
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const searchPatientsByDateRange = async (
+  unitCode: string,
+  startDate: string,
+  endDate: string
+) => {
+
+  try {
+
+    const response =
+      await SearchPatientByDateRangeService(
+        unitCode,
+        startDate,
+        endDate
+      );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+const getLinkedHistory = async (
+  abhaAddress: string
+) => {
+
+  try {
+
+    const response =
+      await GetLinkedHistoryService(
+        abhaAddress
+      );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
+
+
+const getLinkedHistoryByDateRange = async (
+  startDate: string,
+  endDate: string
+) => {
+
+  try {
+
+    const response =
+      await GetLinkedHistoryByDateRangeService(
+        startDate,
+        endDate
+      );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+
+};
     return {
     generateLinkToken,
     linkCareContext,
     notifyCareContext,
+    getCareContexts,
+    searchPatients,
     sendSMS,
     getWorkflowStatus,
+    searchPatientsByDateRange,
+    getLinkedHistory,
+    getLinkedHistoryByDateRange,
     };
 };

@@ -60,58 +60,40 @@ const startLinking = async () => {
     }
 
     setCurrentStep(1);
+const payload = JSON.parse(
+  localStorage.getItem("linkPayload") || "{}"
+);
 
-    const payload = {
+payload.linkToken = linkToken;
 
-      abhaAddress:
-      "dhananjay07@sbx",
+// const patientData = JSON.parse(
+//     localStorage.getItem("patientData") || "{}"
+// );
 
-      abhaNumber:
-      "91178730682840",
+console.log("PROCESSING PAYLOAD", payload);
 
-      linkToken,
+const response =
+await linkCareContext(
+  payload
+);
 
-      patient:[
-        {
-          referenceNumber:
-          "PATIENT-1001",
+console.log(
+  "LINK CARE CONTEXT",
+  response
+);
 
-          display:
-          "Dhananjay Rajaram Dangadi",
+if (!response?.success) {
 
-          careContexts:[
-            {
-              referenceNumber:
-              "VISIT-001",
+  alert(response?.message);
 
-              display:
-              "OP Consultation"
-            }
-          ],
+  return;
+}
 
-          hiType:
-          "Prescription",
+setCurrentStep(2);
 
-          count:1
-        }
-      ]
-    };
-
-    const response =
-    await linkCareContext(
-      payload
-    );
-
-    console.log(
-      "LINK CARE CONTEXT",
-      response
-    );
-
-    setCurrentStep(2);
-
-    pollWorkflow(
-      transactionId
-    );
+pollWorkflow(
+  transactionId
+);
 
   }catch(error){
 
@@ -153,21 +135,44 @@ const pollWorkflow = (
 
    try{
 
-      const smsPayload = {
+  const linkPayload = JSON.parse(
+    localStorage.getItem("linkPayload") || "{}"
+);
 
-         abhaAddress:
-         "dhananjay07@sbx",
+const patientData = JSON.parse(
+    localStorage.getItem("patientData") || "{}"
+);
 
-         notification:{
-            phoneNo:
-            "9876543210",
+const smsPayload = {
 
-            hip:{
-               id:"IN2010000642_2",
-               name:"SBX HIP"
-            }
-         }
-      };
+    requestId: crypto.randomUUID(),
+
+    timestamp: new Date().toISOString(),
+
+    abhaAddress: linkPayload.abhaAddress,
+
+    notification: {
+
+        phoneNo: patientData?.patMobile?.trim(),
+
+        hip: {
+
+            id: "IN2010000642_2",
+
+            name: "Adhvit Innovations Private Limited"
+
+        }
+
+    },
+
+    transactionId: linkPayload.transactionId
+
+};
+
+console.log(
+    "SMS PAYLOAD",
+    smsPayload
+);
 
       const smsResponse =
       await sendSMS(
@@ -179,38 +184,50 @@ const pollWorkflow = (
          smsResponse
       );
 
-      const notifyPayload = {
 
-         notification:{
+const notifyPayload = {
 
-            patient:{
-               id:
-               "91324111341735@sbx"
-            },
+    notification: {
 
-            careContext:{
+        patient: {
 
-               patientReference:
-               "PATIENT-1001",
+            id: linkPayload.abhaAddress
 
-               careContextReference:
-               "VISIT-OPD-2025-001"
-            },
+        },
 
-            hiTypes:[
-               "Prescription",
-               "DiagnosticReport"
-            ],
+        careContext: {
 
-            date:
-            new Date().toISOString(),
+            patientReference:
+                linkPayload.patient?.[0]?.referenceNumber,
 
-            hip:{
-               id:
-               "IN2010000642_2"
-            }
-         }
-      };
+         careContextReference:
+          linkPayload.patient?.[0]?.careContexts
+              ?.map((item: any) => item.referenceNumber)
+              .join(",")
+              },
+
+        hiTypes: [
+
+            linkPayload.patient?.[0]?.hiType
+
+        ],
+
+        date: new Date().toISOString(),
+
+        hip: {
+
+            id: "IN2010000642_2"
+
+        }
+
+    }
+
+};
+
+console.log(
+    "NOTIFY PAYLOAD",
+    notifyPayload
+);
 
       const notifyResponse =
       await notifyCareContext(

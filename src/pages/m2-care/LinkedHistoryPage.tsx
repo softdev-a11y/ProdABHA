@@ -1,55 +1,128 @@
-      import { useState } from "react";
+   import { useEffect, useState } from "react";
       import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
       import { Menu, Search } from "lucide-react";
+      import { useM2 } from "../../hooks/useM2";
 
-      const historyData = [
-        {
-          id: 1,
-          patient: "Ravi Kumar",
-          uhid: "UH12345",
-          linkedRecords: 12,
-          linkedOn: "30 May 2024",
-          status: "Success",
-        },
-        {
-          id: 2,
-          patient: "Sita Devi",
-          uhid: "UH12346",
-          linkedRecords: 8,
-          linkedOn: "29 May 2024",
-          status: "Success",
-        },
-        {
-          id: 3,
-          patient: "Mohammed Ali",
-          uhid: "UH12347",
-          linkedRecords: 5,
-          linkedOn: "28 May 2024",
-          status: "Pending",
-        },
-        {
-          id: 4,
-          patient: "Anita Sharma",
-          uhid: "UH12348",
-          linkedRecords: 10,
-          linkedOn: "27 May 2024",
-          status: "Success",
-        },
-      ];
+   
 
       const LinkedHistoryPage = () => {
+        const { getLinkedHistory,  getLinkedHistoryByDateRange,} = useM2();
+
+        const [historyData, setHistoryData] =
+        useState<any[]>([]);
 
         const [sidebarOpen, setSidebarOpen] =
           useState(false);
           const [collapsed, setCollapsed] = useState(false);
 
-        const [search, setSearch] = useState("");
+      const [search, setSearch] = useState("");
+      const [filteredHistory, setFilteredHistory] = useState<any[]>([]);
 
-        const filteredHistory = historyData.filter((item) =>
-          `${item.patient} ${item.uhid}`
-            .toLowerCase()
-            .includes(search.toLowerCase())
-        );
+      const [fromDate, setFromDate] = useState("");
+
+      const [toDate, setToDate] = useState("");
+
+      useEffect(() => {
+
+          loadHistory();
+
+      }, []);
+
+              const loadHistory = async () => {
+
+            const patientData = JSON.parse(
+                localStorage.getItem("patientData") || "{}"
+            );
+
+
+            const response =
+            await getLinkedHistory(
+                patientData.abhaAddress
+            );
+
+            console.log(
+                "LINKED HISTORY",
+                response
+            );
+
+            if(response?.success){
+
+                setHistoryData(
+                    response.data
+                );
+                 setFilteredHistory(
+                    response.data
+                );
+
+            }
+
+        };
+
+                const handleSearch = async () => {
+                  if (!search && (!fromDate || !toDate)) {
+              alert("Please enter an ABHA Number or select a date range.");
+              return;
+            }
+
+            if ((fromDate && !toDate) || (!fromDate && toDate)) {
+              alert("Please select both From Date and To Date.");
+              return;
+            }
+
+          // Date Range Search
+          if (fromDate && toDate) {
+            const formattedFromDate = fromDate.replaceAll("-", "");
+
+            const formattedToDate = toDate.replaceAll("-", "");
+
+            const response =
+              await getLinkedHistoryByDateRange(
+                formattedFromDate,
+                formattedToDate
+              );
+
+            if (response?.success) {
+              setHistoryData(response.data);
+              setFilteredHistory(response.data);
+            }
+
+            return;
+          }
+
+       // ABHA Search
+          if (search.trim()) {
+
+            const response = await getLinkedHistory(
+              `${search}@sbx`
+            );
+
+            if (response?.success) {
+
+              setHistoryData(response.data);
+
+              setFilteredHistory(response.data);
+
+            }
+
+            return;
+          }
+
+          loadHistory();
+
+        };
+
+        const handleReset = () => {
+
+            setSearch("");
+
+            setFromDate("");
+
+            setToDate("");
+
+            loadHistory();
+
+          };
+
 
         return (
         <div className="bg-[#f5f7fb] min-h-screen flex">
@@ -99,39 +172,101 @@
 
                 {/* MAIN CARD */}
                 <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-4 lg:p-6">
-
-                  {/* HEADER */}
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
-
                     <div>
                       <h2 className="text-xl font-semibold text-gray-800">
                         History
                       </h2>
 
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-gray-500 mt-1 mb-4">
                         Previously linked patient records
                       </p>
                     </div>
 
-                    {/* SEARCH */}
-                    <div className="relative w-full lg:w-[320px]">
+                  {/* HEADER */}
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
-                      <input
-                        type="text"
-                        placeholder="Search patient or UHID"
-                        value={search}
-                        onChange={(e) =>
-                          setSearch(e.target.value)
-                        }
-                        className="w-full border border-gray-300 rounded-lg py-2.5 pl-4 pr-12 outline-none focus:ring-2 focus:ring-[#008080]"
-                      />
+                  
 
-                      <Search
-                        size={18}
-                        className="absolute right-4 top-3 text-gray-400"
-                      />
+                 <div className="w-full">
+
+                <div className="flex items-end gap-8 flex-wrap">
+
+                      {/* ABHA Search */}
+                     <div className="w-[220px]">
+                        <label className="block text-sm font-medium mb-2">
+                          ABHA Number
+                        </label>
+
+                        <div className="relative">
+
+                          <input
+                            type="text"
+                            placeholder="Search ABHA Number"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg py-2.5 pl-10 pr-4 outline-none focus:ring-2 focus:ring-[#008080]"
+                          />
+
+                          <Search
+                            size={18}
+                            className="absolute left-3 top-3 text-gray-400"
+                          />
+
+                        </div>
+                      </div>
+
+                      {/* OR */}
+                      <div className="pb-2 font-semibold text-gray-500">
+                        OR
+                      </div>
+
+                      {/* From Date */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          From Date
+                        </label>
+
+                        <input
+                          type="date"
+                          value={fromDate}
+                          onChange={(e) => setFromDate(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#008080]"
+                        />
+                      </div>
+
+                      {/* To Date */}
+                      <div>
+                        <label className="block text-sm font-medium mb-2">
+                          To Date
+                        </label>
+
+                        <input
+                          type="date"
+                          value={toDate}
+                          onChange={(e) => setToDate(e.target.value)}
+                          className="border border-gray-300 rounded-lg px-4 py-2.5 outline-none focus:ring-2 focus:ring-[#008080]"
+                        />
+                      </div>
+
+                      {/* Search Button */}
+                   <button
+                      onClick={handleSearch}
+                      className="w-[95px] bg-[#008080] text-white py-2.5 rounded-lg hover:bg-[#006d6d] transition"
+                    >
+                      Search
+                    </button>
+
+                      {/* Reset Button */}
+                  <button
+                    onClick={handleReset}
+                    className="w-[95px] border border-gray-300 py-2.5 rounded-lg hover:bg-gray-100 transition"
+                  >
+                    Reset
+                  </button>
 
                     </div>
+
+                  </div>
 
                   </div>
 
@@ -149,7 +284,7 @@
                           </th>
 
                           <th className="px-6 py-4 font-semibold">
-                            UHID
+                            ABHA Number
                           </th>
 
                           <th className="px-6 py-4 font-semibold">
@@ -168,29 +303,35 @@
 
                       </thead>
 
-                      <tbody>
+                    <tbody>
 
-                        {filteredHistory.map((item) => (
+                        {filteredHistory.map((item) => {
 
-                          <tr
+                          const patient = JSON.parse(
+                            item.patientsJson
+                          );
+
+                          return (
+
+                            <tr
                             key={item.id}
                             className="border-t border-gray-100 hover:bg-gray-50 transition"
                           >
 
                             <td className="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
-                              {item.patient}
+                              {patient[0].Display}
                             </td>
 
                             <td className="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
-                              {item.uhid}
+                            {item.abhaNumber}
                             </td>
 
                             <td className="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
-                              {item.linkedRecords}
+                             {item.careContextCount}
                             </td>
 
                             <td className="px-6 py-5 text-sm text-gray-700 whitespace-nowrap">
-                              {item.linkedOn}
+                            {new Date(item.linkedAtUtc).toLocaleDateString()}
                             </td>
 
                             <td className="px-6 py-5">
@@ -198,19 +339,21 @@
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-medium
                                 ${
-                                  item.status === "Success"
+                                item.isLinked
                                     ? "bg-green-100 text-green-700"
                                     : "bg-yellow-100 text-yellow-700"
                                 }`}
                               >
-                                {item.status}
+                            {item.isLinked ? "Success" : "Pending"}
                               </span>
 
                             </td>
 
                           </tr>
+                          
+                              );
 
-                        ))}
+      })}
 
                       </tbody>
 
@@ -221,29 +364,11 @@
                   {/* FOOTER */}
                   <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mt-6">
 
-                    <p className="text-sm text-gray-500">
-                      Showing 1 to 4 of 24 records
-                    </p>
+                   <p className="text-sm text-gray-500">
+                    Showing 1 to {filteredHistory.length} of {historyData.length} records
+                  </p>
 
-                    <div className="flex items-center gap-2">
-
-                      <button className="w-8 h-8 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                        {"<"}
-                      </button>
-
-                      <button className="w-8 h-8 bg-[#008080] text-white rounded text-sm">
-                        1
-                      </button>
-
-                      <button className="w-8 h-8 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                        2
-                      </button>
-
-                      <button className="w-8 h-8 border border-gray-300 rounded text-sm hover:bg-gray-100">
-                        {">"}
-                      </button>
-
-                    </div>
+                  
 
                   </div>
 
