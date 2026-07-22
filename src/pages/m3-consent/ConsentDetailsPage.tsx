@@ -207,7 +207,7 @@ console.log(consent);
 
         </div>
 
-        {/* Buttons */}
+        {/* Buttons  */}
         <div className="mt-7 flex flex-col-reverse sm:flex-row justify-center sm:justify-end gap-2">
 
           <button
