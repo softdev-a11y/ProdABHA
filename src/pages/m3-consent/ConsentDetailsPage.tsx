@@ -159,7 +159,7 @@ console.log(consent);
               </p>
 
               <p className="mt-1 font-semibold">
-             {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")}
+             {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")}
               </p>
             </div>
 
@@ -169,7 +169,7 @@ console.log(consent);
               </p>
 
               <p className="mt-1 font-semibold">
-              {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")}
+              {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")}
               </p>
             </div>
 
@@ -199,7 +199,7 @@ console.log(consent);
               </p>
 
               <p className="mt-1 text-xs font-medium">
-                01 May 2026
+                {new Date(consent.dataEraseAtUtc).toLocaleDateString("en-GB")}
               </p>
             </div>
 

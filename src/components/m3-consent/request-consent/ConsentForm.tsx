@@ -16,15 +16,28 @@
     const [hiTypes, setHiTypes] = useState<string[]>([
     
     ]);
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const today = new Date();
+const todayString = formatDate(today);
+
+const eraseDate = new Date(today);
+eraseDate.setDate(eraseDate.getDate() + 30);
+const eraseDateString = formatDate(eraseDate);
     const PURPOSES =
     import.meta.env.VITE_PURPOSES.split(",");
 
   const HI_TYPES =
     import.meta.env.VITE_HI_TYPES.split(",");
 
-    const [fromDate, setFromDate] = useState("2025-01-01");
-    const [toDate, setToDate] = useState("2026-01-01");
-  const [dataEraseAt, setDataEraseAt] = useState("2027-12-31");
+ const [fromDate, setFromDate] = useState(todayString);
+const [toDate, setToDate] = useState(todayString);
+const [dataEraseAt, setDataEraseAt] = useState(eraseDateString);
 
     const handleHiTypeChange = (type: string) => {
       if (hiTypes.includes(type)) {
@@ -38,23 +51,22 @@
     const payload = {
       consent: {
         purpose: {
-          text: purpose,
-          code: "CAREMGT",
-          refUri: "https://www.ndhm.gov.in/purpose/care-management",
-        },
+      text: purpose,
+      code: "CAREMGT",
+      refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
+    },
 
   patient: {
     id: "dhananjay07@sbx",
     mrno: patient?.mrno?.trim(),
     patName: patient?.patName?.trim(),
   },
-
         hip: {
-          id: "IN2010000642_2",
+          id: "",
         },
 
         hiu: {
-          id: "HIU-001",
+          id: "IN2010000642_2",
         },
 
         requester: {
@@ -84,7 +96,7 @@
 
           dateRange: {
             from: `${fromDate}T00:00:00.000Z`,
-            to: `${toDate}T23:59:59.000Z`,
+            to: `${toDate}T00:00:00.000Z`,
           },
 
           dataEraseAt: `${dataEraseAt}T23:59:59.000Z`,
