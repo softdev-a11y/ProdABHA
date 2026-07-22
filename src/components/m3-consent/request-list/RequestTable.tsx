@@ -8,6 +8,8 @@ interface RequestItem {
   requestId: string;
   consentId: string;
   patientAbhaAddress: string;
+  patName: string;
+  mrno: string;
   status: string;
   createdAtUtc: string;
   approvedAtUtc: string;
@@ -58,10 +60,16 @@ const RequestTable = ({
 
   const columns = useMemo<ColumnDef<RequestItem>[]>(
     () => [
-      {
-        accessorKey: "patientAbhaAddress",
+        {
+        accessorKey: "patName",
         header: "Name",
       },
+
+      {
+        accessorKey: "mrno",
+        header: "MR No",
+      },
+
       {
         accessorKey: "patientAbhaAddress",
         header: "ABHA ID",
