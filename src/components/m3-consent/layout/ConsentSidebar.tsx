@@ -10,7 +10,7 @@
   const menus = [
     {
       title: "Request Consent",
-      path: "/m3/request-consent",
+     path: "/m3/search-patient",
       icon: FileText,
     },
     {
