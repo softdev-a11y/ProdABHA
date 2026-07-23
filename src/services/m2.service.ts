@@ -79,10 +79,11 @@ export const GetCareContextsService = (
 // SEARCH PATIENT
 
 export const SearchPatientService = (
-  searchText: string
+  searchText: string,
+  unitCode: string
 ) => {
   return m2ApiClient.get(
-    `/api/HipInternal/search-patients?searchText=${searchText}`
+    `/api/HipInternal/search-patients?searchText=${searchText}&unitCode=${unitCode}`
   );
 };
 
@@ -101,27 +102,27 @@ export const SearchPatientByDateRangeService = (
 };
  
  // LINKED HISTORY
-
 export const GetLinkedHistoryService = (
-  abhaAddress: string
+  abhaAddress: string,
+  unitCode: string
 ) => {
 
   return m2ApiClient.get(
-    `/api/HipInternal/linked-care-context-history?abhaAddress=${abhaAddress}`
+    `/api/HipInternal/linked-care-context-history?abhaAddress=${abhaAddress}&unitCode=${unitCode}`
   );
 
 };
 
 
 // LINKED HISTORY DATE RANGE
-
 export const GetLinkedHistoryByDateRangeService = (
+  unitCode: string,
   startDate: string,
   endDate: string
 ) => {
 
   return m2ApiClient.get(
-    `/api/HipInternal/linked-care-context-history/by-date-range?startDate=${startDate}&endDate=${endDate}`
+    `/api/HipInternal/linked-care-context-history/by-date-range?unitCode=${unitCode}&startDate=${startDate}&endDate=${endDate}`
   );
 
 };

@@ -6,9 +6,11 @@ export const SearchPatientsService = (searchText: string) => {
   );
 };
 
-export const GetConsentRequestListService = () => {
+export const GetConsentRequestListService = (
+  unitCode: string
+) => {
   return m3ApiClient.get(
-    "/api/HiuInternal/consent-requests-list"
+    `/api/HiuInternal/consent-requests-list?unitCode=${unitCode}`
   );
 };
 
