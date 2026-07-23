@@ -37,7 +37,8 @@
 
             const response =
             await getLinkedHistory(
-                patientData.abhaAddress
+                patientData.abhaAddress,
+                patientData.unitCode,
             );
 
             console.log(
@@ -75,11 +76,16 @@
 
             const formattedToDate = toDate.replaceAll("-", "");
 
-            const response =
-              await getLinkedHistoryByDateRange(
-                formattedFromDate,
-                formattedToDate
-              );
+           const patientData = JSON.parse(
+            localStorage.getItem("patientData") || "{}"
+          );
+
+          const response =
+            await getLinkedHistoryByDateRange(
+              patientData.unitCode,
+              formattedFromDate,
+              formattedToDate
+            );
 
             if (response?.success) {
               setHistoryData(response.data);
@@ -92,8 +98,13 @@
        // ABHA Search
           if (search.trim()) {
 
+                      const patientData = JSON.parse(
+              localStorage.getItem("patientData") || "{}"
+            );
+
             const response = await getLinkedHistory(
-              `${search}@sbx`
+              `${search}@sbx`,
+              patientData.unitCode
             );
 
             if (response?.success) {

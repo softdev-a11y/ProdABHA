@@ -18,14 +18,18 @@ const useM3 = () => {
     }
   };
 
-  const getConsentRequestList = async () => {
-    try {
-      const response = await GetConsentRequestListService();
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const getConsentRequestList = async (
+  unitCode: string
+) => {
+  try {
+    const response = await GetConsentRequestListService(
+      unitCode
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 const getConsentDetails = async (requestId: string) => {
     try {
       const response = await GetConsentDetailsService(requestId);

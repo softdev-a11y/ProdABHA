@@ -121,11 +121,13 @@ const getCareContexts = async (
 };
 
 const searchPatients = async (
-  searchText: string
+  searchText: string,
+  unitCode: string
 ) => {
   try {
     const response = await SearchPatientService(
-      searchText
+      searchText,
+      unitCode
     );
 
     return response.data;
@@ -160,14 +162,16 @@ const searchPatientsByDateRange = async (
 };
 
 const getLinkedHistory = async (
-  abhaAddress: string
+  abhaAddress: string,
+  unitCode: string
 ) => {
 
   try {
 
     const response =
       await GetLinkedHistoryService(
-        abhaAddress
+        abhaAddress,
+        unitCode
       );
 
     return response.data;
@@ -180,8 +184,8 @@ const getLinkedHistory = async (
 
 };
 
-
 const getLinkedHistoryByDateRange = async (
+  unitCode: string,
   startDate: string,
   endDate: string
 ) => {
@@ -190,6 +194,7 @@ const getLinkedHistoryByDateRange = async (
 
     const response =
       await GetLinkedHistoryByDateRangeService(
+        unitCode,
         startDate,
         endDate
       );

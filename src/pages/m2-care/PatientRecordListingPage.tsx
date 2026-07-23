@@ -60,6 +60,8 @@
 
             const tokenPayload = {
 
+            unitCode: patientData?.unitCode,
+
             abhaAddress: patientData?.abhaAddress,
 
             abhaNumber: patientData?.abhaNumber,
