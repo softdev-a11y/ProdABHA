@@ -4,9 +4,11 @@ import { Search, RefreshCw } from "lucide-react";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
 import RequestTable from "../../components/m3-consent/request-list/RequestTable";
 import useM3 from "../../hooks/useM3";
+import { useUnit } from "../../context/UnitContext";
 
 const RequestListPage = () => {
   const { getConsentRequestList } = useM3();
+ const { selectedUnit } = useUnit();
 
   const [status, setStatus] = useState("All");
   const [search, setSearch] = useState("");
@@ -17,7 +19,7 @@ const RequestListPage = () => {
     try {
       setLoading(true);
 
-      const response = await getConsentRequestList();
+    const response = await getConsentRequestList( selectedUnit);
 
       if (response?.success) {
         setRequests(response.data || []);

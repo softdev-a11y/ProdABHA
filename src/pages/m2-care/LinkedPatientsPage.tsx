@@ -70,7 +70,7 @@ import { useUnit } from "../../context/UnitContext";
         if (search.trim()) {
 
           const response =
-            await searchPatients(search);
+            await searchPatients(search,selectedUnit);
 
           console.log(response);
 
