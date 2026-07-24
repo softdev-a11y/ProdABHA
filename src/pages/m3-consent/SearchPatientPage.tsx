@@ -10,25 +10,43 @@ const SearchPatientPage = () => {
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const handleSearch = async (searchText: string) => {
-    if (!searchText.trim()) {
-      setPatients([]);
-      return;
-    }
+const handleSearch = async (searchText: string) => {
 
-    setLoading(true);
+  const unitCode = localStorage.getItem("selectedUnit");
 
-    try {
-      const response = await searchPatients(searchText);
+  if (!searchText.trim()) {
+    setPatients([]);
+    return;
+  }
 
-      setPatients(response ?? []);
-    } catch (error) {
-      console.log(error);
-      setPatients([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!unitCode) {
+    console.log("Unit code not found");
+    setPatients([]);
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+
+    const response = await searchPatients(
+      searchText,
+      unitCode
+    );
+
+    setPatients(response ?? []);
+
+  } catch (error) {
+
+    console.log(error);
+    setPatients([]);
+
+  } finally {
+
+    setLoading(false);
+
+  }
+};
 
   return (
     <ConsentLayout>
