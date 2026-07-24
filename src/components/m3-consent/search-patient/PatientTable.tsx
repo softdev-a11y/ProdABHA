@@ -9,6 +9,8 @@ interface Patient {
   patFName: string;
   patLName: string;
   abhaNumber: string;
+  patSex: string;
+  patMobile: string;
 }
 
 interface PatientTableProps {
@@ -43,6 +45,14 @@ const PatientTable = ({
       {
         accessorKey: "abhaNumber",
         header: "ABHA ID",
+      },
+      {
+        accessorKey: "patSex",
+        header: "Gender",
+      },
+      {
+        accessorKey: "patMobile",
+        header: "Mobile Number",
       },
       {
         id: "action",

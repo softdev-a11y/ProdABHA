@@ -1,8 +1,11 @@
 import m3ApiClient from "./m3ApiClient";
 
-export const SearchPatientsService = (searchText: string) => {
+export const SearchPatientsService = (
+  searchText: string,
+  unitCode: string
+) => {
   return m3ApiClient.get(
-    `/api/HiuInternal/search-patients?searchText=${searchText}`
+    `/api/HiuInternal/search-patients?searchText=${searchText}&unitCode=${unitCode}`
   );
 };
 

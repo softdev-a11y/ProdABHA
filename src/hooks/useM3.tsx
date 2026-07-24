@@ -9,14 +9,21 @@ import {
 
 const useM3 = () => {
 
-  const searchPatients = async (searchText: string) => {
-    try {
-      const response = await SearchPatientsService(searchText);
-      return response.data;
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const searchPatients = async (
+  searchText: string,
+  unitCode: string
+) => {
+  try {
+    const response = await SearchPatientsService(
+      searchText,
+      unitCode
+    );
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const getConsentRequestList = async (
   unitCode: string
