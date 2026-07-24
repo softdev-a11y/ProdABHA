@@ -4,6 +4,7 @@
     import { useM2 } from "../../hooks/useM2";
     import Sidebar from "./../../components/m2-care-context/LinkedPatients/Sidebar";
     import { Menu } from "lucide-react";
+    import toast from "react-hot-toast";
 import { useUnit } from "../../context/UnitContext";
 
     const LinkedPatientsPage = () => {
@@ -29,7 +30,7 @@ import { useUnit } from "../../context/UnitContext";
           (fromDate || toDate)
         ) {
 
-          alert(
+          toast.error(
             "Please use either Patient Name / MR No OR Date Range."
           );
 
@@ -44,7 +45,7 @@ import { useUnit } from "../../context/UnitContext";
           !toDate
         ) {
 
-          alert(
+          toast.error(
             "Please enter Patient Name / MR No or select Date Range."
           );
 
@@ -58,10 +59,24 @@ import { useUnit } from "../../context/UnitContext";
           (!fromDate && toDate)
         ) {
 
-          alert(
+          toast.error(
             "Please select both From Date and To Date."
           );
 
+          return;
+        }
+
+        // MINIMUM 3 CHARACTERS
+
+        if (search.trim() && search.trim().length < 3) {
+          toast.error("Please enter at least 3 characters.");
+          return;
+        }
+
+        // INVALID DATE RANGE
+
+        if (fromDate && toDate && new Date(fromDate) > new Date(toDate)) {
+          toast.error("From Date cannot be later than To Date.");
           return;
         }
 

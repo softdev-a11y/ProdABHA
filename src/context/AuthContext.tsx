@@ -29,6 +29,8 @@ export const AuthProvider = ({ children }:{ children: React.ReactNode }) => {
             setLoading(true);
             const response = await loginService(data);
             console.log("Login response", response);
+            console.log("response.token =", response.token);
+            console.log("response.data.data[3] =", response.data.data[3]);
             // var response = {
             //     "id": "2",
             //     "username": "dhananjay",

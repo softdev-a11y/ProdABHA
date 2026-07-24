@@ -17,6 +17,7 @@ interface Patient {
   unitCode: string;
   abhaNumber: string;
   abhaAddress: string;
+  patSex: string;
 }
 
   interface Props {
@@ -31,10 +32,7 @@ interface Patient {
         accessorKey: "patName",
         header: "Patient Name",
       },
-      {
-        accessorKey: "uhid",
-        header: "UHID",
-      },
+   
       {
         accessorKey: "mrno",
         header: "MR No",
@@ -47,6 +45,18 @@ interface Patient {
         accessorKey: "abhaAddress",
         header: "ABHA Address",
       },
+      // {
+      //   accessorKey: "ipno",
+      //   header: "IP No",
+      // },
+      {
+        accessorKey: "patSex",
+        header: "Gender",
+      },
+      // {
+      //   accessorKey: "patMobile",
+      //   header: "Mobile Number",
+      // },
    
       {
             id: "action",
@@ -58,7 +68,7 @@ interface Patient {
           state: row.original,
         })
       }
-          className="bg-[#008080] hover:bg-[#006d6d] text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+         className="bg-[#008080] hover:bg-[#006d6d] text-white px-2 py-1 rounded text-xs font-medium transition"
         >
           Manage Records
         </button>
@@ -75,7 +85,7 @@ interface Patient {
     return (
   <div className="w-full overflow-x-auto">
 
-    <table className="min-w-[1000px] w-full border-collapse">
+  <table className="w-full table-fixed border-collapse">
 
       <thead className="bg-[#f8fafc]">
 
@@ -83,12 +93,13 @@ interface Patient {
           <tr key={headerGroup.id}>
 
             {headerGroup.headers.map((header) => (
-              <th
-                key={header.id}
-              className={`px-6 py-4 text-left text-sm font-semibold text-gray-600 whitespace-nowrap ${
-    header.id === "action" ? "lg:pl-14" : ""
+  <th
+  key={header.id}
+  className={`px-2 py-2 text-left text-xs font-semibold text-gray-600 whitespace-nowrap ${
+    header.id === "action" ? "text-center" : ""
   }`}
-              >
+>
+              
                 {flexRender(
                   header.column.columnDef.header,
                   header.getContext()
@@ -112,10 +123,10 @@ interface Patient {
 
             {row.getVisibleCells().map((cell) => (
 
-              <td
-                key={cell.id}
-                className="px-6 py-5 text-sm text-gray-700 whitespace-nowrap"
-              >
+          <td
+  key={cell.id}
+  className="px-2 py-2 text-xs text-gray-700 whitespace-nowrap"
+>
                 {flexRender(
                   cell.column.columnDef.cell,
                   cell.getContext()
