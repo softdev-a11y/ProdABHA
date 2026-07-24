@@ -1,18 +1,24 @@
-export const formatDOB = (
-  dob: string
-) => {
+export const formatDOB = (dob: string) => {
   if (!dob) return "";
 
-  if (dob.includes("-")) {
-    return dob.replaceAll("-", "");
+  // Remove dashes if present
+  const formatted = dob.replaceAll("-", "");
+
+  // Convert DDMMYYYY -> YYYYMMDD
+  if (formatted.length === 8) {
+    const day = formatted.slice(0, 2);
+    const month = formatted.slice(2, 4);
+    const year = formatted.slice(4, 8);
+
+    return `${year}${month}${day}`;
   }
 
-  return dob;
+  return formatted;
 };
 
 export const calculateAge = (dob: string) => {
   if (!dob) return "";
-
+  
   const birthDate = new Date(dob);
   const today = new Date();
 

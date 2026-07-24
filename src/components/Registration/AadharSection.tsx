@@ -179,32 +179,32 @@ const AadharSection = ({ onComplete }: Props) => {
             const existingResponse = await checkAbhaExistHMIS(dataToExistingRes);
             
             // ABHA Alredy Exists && Alredy Link With HMIS - Show Abha Card 
-            if(normalizedMessage === "this account already exist" && existingResponse && existingResponse?.success){
+            // if(normalizedMessage === "this account already exist" && existingResponse && existingResponse?.success){
                 
-                setAbhaAddress(abhaAddress);
+            //     setAbhaAddress(abhaAddress);
 
-                setAbhaNumber(abhaNumber);
+            //     setAbhaNumber(abhaNumber);
                 
-                setShowModal((prev:any)=>({
-                  ...prev,
-                  abhacard:true
-                }));
+            //     setShowModal((prev:any)=>({
+            //       ...prev,
+            //       abhacard:true
+            //     }));
 
-                return;
-            }
+            //     return;
+            // }
 
-            // ABHA Alredy Exists && NOT Linked With HMIS - Countine for Linking 
-            if(normalizedMessage === "this account already exist" && existingResponse && !existingResponse?.success){
+            // // ABHA Alredy Exists && NOT Linked With HMIS - Countine for Linking 
+            // if(normalizedMessage === "this account already exist" && existingResponse && !existingResponse?.success){
 
-                setAbhaParsedData(parsed);
+            //     setAbhaParsedData(parsed);
 
-                setShowModal((prev:any)=>({
-                  ...prev,
-                  abhalink:true
-                }));
+            //     setShowModal((prev:any)=>({
+            //       ...prev,
+            //       abhalink:true
+            //     }));
 
-                return;
-            }
+            //     return;
+            // }
 
           }
           catch(err:any){

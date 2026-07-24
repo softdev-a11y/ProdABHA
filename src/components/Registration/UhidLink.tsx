@@ -118,6 +118,8 @@ console.log("ABHA ADDRESS", abhaAddress);
       // =========================
       patfname: profileData?.firstName || "",
 
+      patmname: profileData?.middleName || "",
+
       patlname: profileData?.lastName || "",
 
       patdob: formatDOB(profileData?.dateOfBirth),
@@ -418,34 +420,33 @@ console.log("ABHA ADDRESS", abhaAddress);
         </div>
       )}
 
- <PatientVerificationModal
-  isOpen={isModalOpen}
-  abhaProfile={{
-    ...profile,
-    abhaNumber,
+    <PatientVerificationModal
+      isOpen={isModalOpen}
+      abhaProfile={{
+        ...profile,
+        abhaNumber,
 
-    abhaAddress:
-      profile?.phrAddress?.join(", ") ||
-      abhaAddress,
-  }}
-  
-  patientData={selectedPatientData}
-  isNewPatient={mode === "NEW"}
-  onCancel={() => setIsModalOpen(false)}
-  onContinue={async () => {
+        abhaAddress:
+          profile?.phrAddress?.join(", ") ||
+          abhaAddress,
+      }}
+      
+      patientData={selectedPatientData}
+      isNewPatient={mode === "NEW"}
+      onCancel={() => setIsModalOpen(false)}
+      onContinue={async () => {
+        setIsModalOpen(false);
 
-    setIsModalOpen(false);
+        if (mode === "NEW") {
 
-    if (mode === "NEW") {
+          await handleCreateNewUHID();
 
-      await handleCreateNewUHID();
+        } else {
 
-    } else {
+          await handleLinkUHID();
 
-      await handleLinkUHID();
-
-    }
-  }}
+        }
+   }}
 />
     </div>
   );
