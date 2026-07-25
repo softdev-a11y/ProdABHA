@@ -25,21 +25,23 @@ const [collapsed, setCollapsed] = useState(false);
       />
 
       {/* PAGE */}
-   <div className="flex-1 flex flex-col">
+  <div className="flex-1 flex flex-col pt-16 lg:pt-0">
 
         {/* MOBILE TOPBAR */}
-        <div className="lg:hidden h-[60px] bg-white border-b border-gray-200 flex items-center px-4 sticky top-0 z-30">
+        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
 
           <button
             onClick={() => setSidebarOpen(true)}
-            className="bg-[#008080] text-white p-2 rounded-lg"
+            className="p-2 rounded hover:bg-slate-100"
           >
             <Menu size={22} />
           </button>
 
-          <h1 className="flex-1 text-center text-lg font-semibold text-[#1e293b] pr-10">
+          <h1 className="font-semibold text-slate-800">
             Success
           </h1>
+
+          <div className="w-9 h-9" />
 
         </div>
 

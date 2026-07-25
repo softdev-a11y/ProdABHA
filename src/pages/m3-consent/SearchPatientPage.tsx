@@ -49,8 +49,8 @@ const handleSearch = async (searchText: string) => {
 };
 
   return (
-    <ConsentLayout>
-      <div className="w-full max-w-7xl space-y-6">
+    <ConsentLayout hideOperatorPanel>
+      <div className="w-full max-w-7xl space-y-4 sm:space-y-5">
 
         <SearchPatientCard
           onSearch={handleSearch}

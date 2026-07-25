@@ -128,55 +128,39 @@ import { useUnit } from "../../context/UnitContext";
           />
 
           {/* MAIN CONTENT */}
-  <div className="flex-1 flex flex-col">
+  <div className="flex-1 min-w-0 flex flex-col pt-16 lg:pt-0">
 
             {/* MOBILE HEADER */}
-            <div className="lg:hidden sticky top-0 z-30 h-[60px] bg-white border-b border-gray-200 flex items-center px-4">
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
 
               <button
                 onClick={() => setSidebarOpen(true)}
-                className="bg-[#008080] text-white p-2 rounded-lg"
+                className="p-2 rounded hover:bg-slate-100"
               >
                 <Menu size={22} />
               </button>
 
-              <h1 className="flex-1 text-center text-lg font-semibold text-[#1e293b] pr-10">
+              <h1 className="font-semibold text-slate-800">
                 Linked Patients
               </h1>
+
+              <div className="w-9 h-9" />
 
             </div>
 
             {/* PAGE CONTENT */}
-            <div className="flex-1 p-4 lg:p-8 w-full">
+            <div className="flex-1 w-full px-4 pt-4 pb-4">
 
-              {/* DESKTOP TITLE */}
-              <div className="hidden lg:block mb-6">
-
-                <h1 className="text-3xl font-bold text-[#1e293b]">
-                  Linked Patients
-                </h1>
-
-                <p className="text-gray-500 text-sm mt-1">
-                  Patients already linked with ABHA
-                </p>
-
-              </div>
 
               {/* CARD */}
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm w-full ">
+              <div className="bg-white border border-gray-200 rounded-lg shadow-sm w-full">
 
                 {/* HEADER */}
-                <div className="p-4 lg:p-6 border-b border-gray-100">
+                <div className="p-5 border-b border-gray-100">
 
               <div>
 
-              <h2 className="text-lg lg:text-xl font-semibold text-gray-800">
-                Linked Patients
-              </h2>
-
-              <p className="text-sm text-gray-500 mt-1">
-                View and manage linked patient records
-              </p>
+             
               <SearchBar
                 search={search}
                 setSearch={setSearch}
@@ -203,11 +187,11 @@ import { useUnit } from "../../context/UnitContext";
 
                 <div className="py-16 text-center">
 
-                  <h3 className="text-lg font-semibold text-slate-700">
+                  <h3 className="text-base font-semibold text-gray-700">
                     No patients found
                   </h3>
 
-                  <p className="mt-2 text-sm text-slate-500">
+                  <p className="mt-3 text-sm text-gray-500">
                     Try searching with a different value.
                   </p>
 
@@ -216,7 +200,7 @@ import { useUnit } from "../../context/UnitContext";
               )}
 
                 {/* FOOTER */}
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 lg:p-6 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 border-t border-gray-100">
 
                 <p className="text-sm text-gray-500 text-center sm:text-left">
                 Showing {patients.length} of {patients.length} patients

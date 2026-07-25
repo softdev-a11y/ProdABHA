@@ -83,9 +83,9 @@ interface Patient {
     });
 
     return (
-  <div className="w-full overflow-x-auto">
+  <div className="w-full max-w-full overflow-x-auto">
 
-  <table className="w-full table-fixed border-collapse">
+  <table className="min-w-[900px] w-full border-collapse">
 
       <thead className="bg-[#f8fafc]">
 
@@ -95,7 +95,7 @@ interface Patient {
             {headerGroup.headers.map((header) => (
   <th
   key={header.id}
-  className={`px-2 py-2 text-left text-xs font-semibold text-gray-600 whitespace-nowrap ${
+    className={`px-4 py-3 text-left text-xs font-semibold text-gray-600 whitespace-nowrap ${
     header.id === "action" ? "text-center" : ""
   }`}
 >
@@ -125,7 +125,7 @@ interface Patient {
 
           <td
   key={cell.id}
-  className="px-2 py-2 text-xs text-gray-700 whitespace-nowrap"
+  className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap"
 >
                 {flexRender(
                   cell.column.columnDef.cell,

@@ -17,21 +17,21 @@ const SearchPatientCard = ({
   };
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+    <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
 
       {/* Heading */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-800">
+      <div className="mb-4">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-800">
           Search Patient
         </h2>
 
-        <p className="mt-2 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500">
           Search patient using Patient Name or MR No.
         </p>
       </div>
 
       {/* Search Form */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
 
         {/* Search Field */}
         <div className="md:col-span-10">

@@ -66,7 +66,7 @@ const PatientTable = ({
         },
       })
     }
-    className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700"
+    className="rounded-md bg-teal-600 px-3 py-2 text-sm font-medium text-white hover:bg-teal-700"
   >
     Request
   </button>
@@ -77,10 +77,10 @@ const PatientTable = ({
   );
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+    <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
 
-      <div className="mb-5">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-800">
+      <div className="mb-4">
+        <h2 className="text-lg sm:text-xl font-semibold text-slate-800">
           Search Results
         </h2>
 

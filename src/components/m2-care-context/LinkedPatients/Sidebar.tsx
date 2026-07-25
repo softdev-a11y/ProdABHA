@@ -1,4 +1,5 @@
   import {
+    ArrowLeft,
     Users,
     History,
     X,
@@ -27,7 +28,7 @@
         {/* OVERLAY */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/40 z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
           />
         )}
@@ -35,36 +36,35 @@
         {/* SIDEBAR */}
         <aside
           className={`
-            ${
-              collapsed
-                ? "w-[80px]"
-                : "w-[220px]"
-            }
-          min-h-screen
-            bg-[#006d6d]
+            ${collapsed ? "w-[80px]" : "w-[250px]"}
+            fixed top-0 left-0 z-50 h-screen
+            bg-[#0F172A]
             text-white
             flex flex-col
-            transition-all duration-300
-            overflow-y-auto
-
-          fixed lg:relative
-          top-[60px] lg:top-0
-           left-0
-          z-50 lg:z-40
-          shrink-0
+            overflow-hidden
+            transition-transform duration-300
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            lg:sticky
+            lg:top-0
             lg:translate-x-0
+            lg:shrink-0
           `}
         >
 
           {/* HEADER */}
-          <div className="px-4 py-5 border-b border-[#0f8b8b] flex items-center justify-between">
+          <div className="px-6 py-8 border-b border-slate-700 flex justify-between items-start">
 
             {/* TITLE */}
             {!collapsed && (
-              <h1 className="text-2xl font-bold">
-                CareLink
-              </h1>
+              <div>
+                <h1 className="text-2xl font-bold">
+                  CareLink
+                </h1>
+
+                <p className="text-sm text-slate-400 mt-2">
+                  Health Information Exchange
+                </p>
+              </div>
             )}
 
             {/* DESKTOP COLLAPSE BUTTON */}
@@ -73,6 +73,7 @@
               className={`
                 hidden lg:flex
                 items-center justify-center
+                p-2 rounded hover:bg-slate-800 transition
 
                 ${collapsed ? "mx-auto" : "ml-auto"}
               `}
@@ -94,8 +95,37 @@
 
           </div>
 
+          {/* BACK TO MODULE */}
+          <div className="px-4 pt-4">
+            <NavLink
+              to="/module"
+              onClick={() => setSidebarOpen(false)}
+              className={`
+                flex items-center
+                ${collapsed ? "justify-center" : "gap-2"}
+                w-full rounded-lg border border-slate-700 px-3 py-2 text-slate-200 transition hover:bg-slate-800
+              `}
+            >
+              <ArrowLeft size={16} />
+
+              {!collapsed && (
+                <span className="text-sm font-medium">
+                  Module
+                </span>
+              )}
+            </NavLink>
+          </div>
+
           {/* MENU */}
-          <div className="flex-1 px-3 py-6 space-y-2">
+          <nav className="flex-1 overflow-y-auto px-4 py-6">
+
+            {!collapsed && (
+              <p className="text-xs uppercase text-slate-500 mb-3">
+                Care
+              </p>
+            )}
+
+            <div className="space-y-2">
 
             {[
               {
@@ -121,27 +151,23 @@
                   className={({ isActive }) =>
                     `
                     flex items-center
-                    ${
-                      collapsed
-                        ? "justify-center"
-                        : "gap-3"
-                    }
+                    ${collapsed ? "justify-center" : "gap-3"}
 
-                    w-full px-4 py-3 rounded-xl transition-all duration-300
+                    w-full rounded-lg px-4 py-3 transition
 
                     ${
                       isActive
-                        ? "bg-[#0f8b8b]"
-                        : "hover:bg-[#0f8b8b]"
+                        ? "bg-teal-600 text-white"
+                        : "text-slate-300 hover:bg-slate-800"
                     }
                     `
                   }
                 >
 
-                  <Icon size={20} />
+                  <Icon size={18} />
 
                   {!collapsed && (
-                    <span className="text-sm font-medium whitespace-nowrap">
+                    <span className="text-sm font-medium">
                       {item.label}
                     </span>
                   )}
@@ -150,7 +176,9 @@
               );
             })}
 
-          </div>
+            </div>
+
+          </nav>
 
         </aside>
       </>

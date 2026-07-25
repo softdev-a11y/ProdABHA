@@ -1,5 +1,6 @@
   import { useState } from "react";
   import {
+    ArrowLeft,
     FileText,
     Table2,
     Menu,
@@ -87,6 +88,18 @@
               <X size={22} />
             </button>
 
+          </div>
+
+          {/* BACK TO MODULE */}
+          <div className="px-4 pt-4">
+            <NavLink
+              to="/module"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 w-full rounded-lg border border-slate-700 px-3 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
+            >
+              <ArrowLeft size={16} />
+              <span>Module</span>
+            </NavLink>
           </div>
 
           {/* Menu */}

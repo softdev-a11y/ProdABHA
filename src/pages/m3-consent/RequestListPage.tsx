@@ -55,25 +55,25 @@ const RequestListPage = () => {
   });
 
   return (
-    <ConsentLayout>
-      <div className="space-y-6">
+    <ConsentLayout hideOperatorPanel>
+      <div className="space-y-4 sm:space-y-5">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">
+            <h1 className="text-2xl font-semibold text-slate-800">
               Request List
             </h1>
 
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-1 text-sm text-slate-500">
               View and manage all consent requests.
             </p>
           </div>
 
           <button
             onClick={loadRequests}
-            className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 hover:bg-slate-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
           >
             <RefreshCw
               size={16}
@@ -85,7 +85,7 @@ const RequestListPage = () => {
         </div>
 
         {/* Filters */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
@@ -122,7 +122,7 @@ const RequestListPage = () => {
 
         {/* Table */}
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
 
           <RequestTable
             data={filteredData}
