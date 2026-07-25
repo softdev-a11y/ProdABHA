@@ -67,6 +67,11 @@ console.log("ABHA NUMBER", abhaNumber);
 
 console.log("ABHA ADDRESS", abhaAddress);
 
+  const normalizedAbhaNumber = useMemo(
+    () => String(abhaNumber || "").replace(/-/g, "").trim(),
+    [abhaNumber],
+  );
+
   useEffect(() => {
     if (abhaAddresses.length === 0) {
       setSelectedAbhaAddress("");
@@ -122,7 +127,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       return false;
     }
 
-    if (!abhaNumber) {
+    if (!normalizedAbhaNumber) {
       toast.error("ABHA Number missing");
       return false;
     }
@@ -174,7 +179,7 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       zip: address?.pincode || "",
 
-      abhaNumber,
+      abhaNumber: normalizedAbhaNumber,
       abhaAddress: selectedAbhaAddress,
 
       identityNumber: aadhar || profileData?.aadhar || "",
@@ -222,9 +227,29 @@ console.log("ABHA ADDRESS", abhaAddress);
     try {
       const response = await savePatient(payload);
       debugger;
-      if (!response || !response.success) {
-        toast.error(response.message || "Failed to save patient");
+      if (!response) {
+        toast.error("No response received while saving patient");
         return;
+      }
+
+      if (!response.success) {
+        toast.error(response.message || error || "Failed to save patient");
+        return;
+      }
+
+      if (typeof response.data === "string") {
+        try {
+          const parsed = JSON.parse(response.data);
+
+          if (parsed && parsed.success === false) {
+            toast.error(parsed.message || response.message || "Failed to save patient");
+            return;
+          }
+        } catch (parseErr) {
+          console.error("Save response parse error", parseErr);
+          toast.error("Invalid response received while saving patient");
+          return;
+        }
       }
 
       toast.success(response.message || "UHID linked successfully");
@@ -232,7 +257,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       onComplete?.(response.data);
     } catch (err) {
       console.error(err);
-      toast.error("Something went wrong");
+      toast.error(error || "Something went wrong while saving patient");
     }
   };
 
@@ -299,7 +324,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       //await handleSaveAction(payload);
 
       const payload = {
-        abhaNumber:abhaNumber,
+        abhaNumber:normalizedAbhaNumber,
         abhaaddress:selectedAbhaAddress,
         mrno:selected
       };
@@ -308,24 +333,47 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       const updateResponse = await UpdateAbhaDetails(payload);
 
-      if(!updateResponse || !updateResponse.success){
-        toast.error(error || "Failed to link with uhid");
+      if(!updateResponse){
+        toast.error("No response received while linking UHID");
+        return;
+      }
+
+      if(!updateResponse.success){
+        toast.error(updateResponse.message || error || "Failed to link with uhid");
+        return;
+      }
+
+      if(!updateResponse.data){
+        toast.error(updateResponse.message || "Invalid response received while linking UHID");
         return;
       }
 
       if(updateResponse.success){
 
-        const parsed = JSON.parse(updateResponse.data);
+        let parsed: any;
+
+        try {
+          parsed = JSON.parse(updateResponse.data);
+        } catch (parseErr) {
+          console.error("Link response parse error", parseErr);
+          toast.error("Unable to process link response");
+          return;
+        }
+
+        if(!parsed){
+          toast.error("Invalid response received while linking UHID");
+          return;
+        }
 
         if(parsed.success){
           
-          toast.success(parsed.message || "linked successfully");
+          toast.success(parsed.message || updateResponse.message || "linked successfully");
 
           onComplete?.(parsed);
 
         }
         else{
-          toast.error(parsed.message || "Failed to link");
+          toast.error(parsed.message || updateResponse.message || "Failed to link");
         }
 
       }
@@ -334,6 +382,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       }
 
     } catch (err) {
+      console.error(err);
       toast.error("Failed to link patient");
     }
   };
@@ -393,7 +442,7 @@ console.log("ABHA ADDRESS", abhaAddress);
             <p>
               <span className="font-medium">Patient Name:</span> {patientName}
             </p>
-            <p className="text-xs text-gray-500">ABHA Number: {abhaNumber || "-"}</p>
+            <p className="text-xs text-gray-500">ABHA Number: {normalizedAbhaNumber || "-"}</p>
             <p className="text-xs text-gray-500">ABHA: {selectedAbhaAddress || "-"}</p>
           </div>
 
@@ -417,7 +466,7 @@ console.log("ABHA ADDRESS", abhaAddress);
             <p>
               <span className="font-medium">Patient Name:</span> {patientName}
             </p>
-            <p className="text-xs text-gray-500">ABHA Number: {abhaNumber || "-"}</p>
+            <p className="text-xs text-gray-500">ABHA Number: {normalizedAbhaNumber || "-"}</p>
             <p className="text-xs text-gray-500">ABHA: {selectedAbhaAddress || "-"}</p>
           </div>
 
@@ -489,7 +538,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       isOpen={isModalOpen}
       abhaProfile={{
         ...profile,
-        abhaNumber,
+        abhaNumber: normalizedAbhaNumber,
 
         abhaAddress:
           selectedAbhaAddress,

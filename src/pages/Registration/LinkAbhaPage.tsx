@@ -9,7 +9,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 
-import PatinetSection from "../../components/Registration/PatientSection";
+import AbhaVerificationPatientDetails from "../../components/Verification/AbhaVerificationPatientDetails";
 import UhIdLink from "../../components/Registration/UhidLink";
 
 const LinkAbhaPage = () => {
@@ -81,30 +81,23 @@ const LinkAbhaPage = () => {
 
     setPatientData((prev: any) => ({
       ...prev,
+      abhaNumber:
+        data?.abhaNumber || prev?.abhaNumber || "",
+      abhaAddress:
+        data?.abhaAddress || prev?.abhaAddress || "",
 
       profile: {
         ...prev.profile,
-
-        email: data.email,
-        aadhar: data.aadhar,
-
-        salutationId: data.salutationId,
-
-        stateId: data.stateId,
-
-        districtId: data.districtId,
-
-        cityId: data.cityId,
-
-        countryId: data.countryId,
-
-        maritalStatus: data.maritalStatus,
-
-        occupation: data.occupation,
-
-        religion: data.religion,
-
-        bloodGroup: data.bloodGroup,
+        ...data,
+        address: {
+          ...prev?.profile?.address,
+          ...data?.address,
+        },
+        phrAddress:
+          Array.isArray(data?.phrAddress) &&
+          data.phrAddress.length > 0
+            ? data.phrAddress
+            : prev?.profile?.phrAddress,
       },
     }));
 
@@ -154,11 +147,12 @@ const LinkAbhaPage = () => {
 
           {activeSection === "PATIENT" && isAccessible("patient") && (
             <div className="mt-4">
-              <PatinetSection
+              <AbhaVerificationPatientDetails
                 profile={patientData}
-                aadhar={aadhar}
+                typeData={typeData}
+                type={type}
                 isCompleted={status.patient === "completed"}
-                onComplete={(data) => {
+                onComplete={(data: any) => {
                   handlePatinetOnComplete(data);
                 }}
               />
