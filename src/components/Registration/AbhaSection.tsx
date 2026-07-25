@@ -42,6 +42,7 @@ const AbhaSection = ({ transactionId, onComplete }: Props) => {
       }
     } catch (err) {
       console.error("Parse error", err);
+      toast.error("Unable to read ABHA address suggestions");
     }
   };
 
@@ -90,6 +91,7 @@ const AbhaSection = ({ transactionId, onComplete }: Props) => {
       }
     } catch (err) {
       console.error("Error", err);
+      toast.error("Invalid ABHA response. Please try again.");
     }
   };
 

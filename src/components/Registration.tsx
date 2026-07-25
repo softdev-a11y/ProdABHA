@@ -126,7 +126,52 @@ const Registration = () => {
   };
 
   // ✅ ABHA Done
-  const onCompleteAbha = () => {
+  const onCompleteAbha = (data?: any) => {
+    const payloadData = data?.data || {};
+
+    const createdAbhaAddress =
+      (typeof payloadData?.preferredAbhaAddress === "string" &&
+        payloadData.preferredAbhaAddress.trim()) ||
+      (typeof data?.abhaAddress === "string" && data.abhaAddress.trim()) ||
+      (typeof data?.phrAddress === "string" && data.phrAddress.trim()) ||
+      "";
+
+    const apiAddressList = Array.isArray(data?.abhaAddressList)
+      ? data.abhaAddressList.filter(
+          (item: string) => typeof item === "string" && item.trim().length > 0,
+        )
+      : [];
+
+    setPatientData((prev: any) => {
+      const existingAddresses = Array.isArray(prev?.profile?.phrAddress)
+        ? prev.profile.phrAddress.filter(Boolean)
+        : [];
+
+      const mergedAddresses = Array.from(
+        new Set([
+          ...existingAddresses,
+          ...apiAddressList,
+          ...(createdAbhaAddress ? [createdAbhaAddress] : []),
+        ]),
+      );
+
+      return {
+        ...prev,
+        abhaAddress:
+          createdAbhaAddress ||
+          prev?.abhaAddress ||
+          prev?.profile?.abhaAddress ||
+          "",
+        profile: {
+          ...prev.profile,
+          phrAddress:
+            mergedAddresses.length > 0
+              ? mergedAddresses
+              : prev?.profile?.phrAddress,
+        },
+      };
+    });
+
     setStatus((prev) => ({
       ...prev,
       abha: "completed",

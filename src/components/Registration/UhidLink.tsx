@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, UserPlus, Link2 } from "lucide-react";
 import PatientVerificationModal from "../Modal/PatientVerificationModal";
 import useABDM from "../../hooks/useABDM";
@@ -33,6 +33,28 @@ const UhIdLink = ({
 
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedAbhaAddress, setSelectedAbhaAddress] = useState("");
+
+  const abhaAddresses = useMemo(() => {
+    const profileAddresses = Array.isArray(profile?.phrAddress)
+      ? profile.phrAddress
+          .filter(
+            (item: string) =>
+              typeof item === "string" && item.trim().length > 0,
+          )
+          .map((item: string) => item.trim())
+      : [];
+
+    const fallbackAddress =
+      typeof abhaAddress === "string" ? abhaAddress.trim() : "";
+
+    return Array.from(
+      new Set([
+        ...profileAddresses,
+        ...(fallbackAddress ? [fallbackAddress] : []),
+      ]),
+    );
+  }, [profile?.phrAddress, abhaAddress]);
 
 const [selectedPatientData, setSelectedPatientData] = useState<any>(null);
 
@@ -44,6 +66,26 @@ console.log("PROFILE", profile);
 console.log("ABHA NUMBER", abhaNumber);
 
 console.log("ABHA ADDRESS", abhaAddress);
+
+  useEffect(() => {
+    if (abhaAddresses.length === 0) {
+      setSelectedAbhaAddress("");
+      return;
+    }
+
+    setSelectedAbhaAddress((prev) => {
+      if (prev && abhaAddresses.includes(prev)) {
+        return prev;
+      }
+
+      if (abhaAddress && abhaAddresses.includes(abhaAddress)) {
+        return abhaAddress;
+      }
+
+      return abhaAddresses[0];
+    });
+  }, [abhaAddresses, abhaAddress]);
+
   // ================= SEARCH PATIENT =================
   useEffect(() => {
     if (search.length < 3) {
@@ -85,7 +127,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       return false;
     }
 
-    if (!abhaAddress) {
+    if (!selectedAbhaAddress) {
       toast.error("ABHA Address missing");
       return false;
     }
@@ -133,7 +175,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       zip: address?.pincode || "",
 
       abhaNumber,
-      abhaAddress,
+      abhaAddress: selectedAbhaAddress,
 
       identityNumber: aadhar || profileData?.aadhar || "",
 
@@ -258,7 +300,7 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       const payload = {
         abhaNumber:abhaNumber,
-        abhaaddress:abhaAddress,
+        abhaaddress:selectedAbhaAddress,
         mrno:selected
       };
 
@@ -321,6 +363,29 @@ console.log("ABHA ADDRESS", abhaAddress);
         </label>
       </div>
 
+      <div className="space-y-1">
+        <label className="block text-sm font-medium text-gray-700">
+          Select ABHA Address
+        </label>
+
+        <select
+          value={selectedAbhaAddress}
+          onChange={(e) => setSelectedAbhaAddress(e.target.value)}
+          disabled={abhaAddresses.length === 0}
+          className="w-full md:w-1/2 border rounded-md px-3 py-2 text-sm bg-white disabled:bg-gray-100 disabled:text-gray-400"
+        >
+          {abhaAddresses.length === 0 ? (
+            <option value="">No ABHA Address available</option>
+          ) : (
+            abhaAddresses.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))
+          )}
+        </select>
+      </div>
+
       {/* ================= NEW ================= */}
       {mode === "NEW" && (
         <div className="space-y-3">
@@ -328,8 +393,8 @@ console.log("ABHA ADDRESS", abhaAddress);
             <p>
               <span className="font-medium">Patient Name:</span> {patientName}
             </p>
-
-            <p className="text-xs text-gray-500">ABHA: {profile?.phrAddress?.join(", ") || abhaAddress}</p>
+            <p className="text-xs text-gray-500">ABHA Number: {abhaNumber || "-"}</p>
+            <p className="text-xs text-gray-500">ABHA: {selectedAbhaAddress || "-"}</p>
           </div>
 
           <div className="text-sm text-gray-600 flex items-center gap-2">
@@ -352,8 +417,8 @@ console.log("ABHA ADDRESS", abhaAddress);
             <p>
               <span className="font-medium">Patient Name:</span> {patientName}
             </p>
-
-            <p className="text-xs text-gray-500">ABHA: {profile?.phrAddress?.join(", ") || abhaAddress}</p>
+            <p className="text-xs text-gray-500">ABHA Number: {abhaNumber || "-"}</p>
+            <p className="text-xs text-gray-500">ABHA: {selectedAbhaAddress || "-"}</p>
           </div>
 
           {/* Search */}
@@ -427,8 +492,7 @@ console.log("ABHA ADDRESS", abhaAddress);
         abhaNumber,
 
         abhaAddress:
-          profile?.phrAddress?.join(", ") ||
-          abhaAddress,
+          selectedAbhaAddress,
       }}
       
       patientData={selectedPatientData}
