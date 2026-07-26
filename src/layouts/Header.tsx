@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { useUnit } from "../context/UnitContext";
 import { LogOut, User } from "lucide-react";
+import ConfirmationModal from "../components/ConfirmationModal/ConfirmationModal";
 
 const Header = () => {
 
   const { units,selectedUnit } = useUnit();
   const navigate = useNavigate();
   const {logout,user} = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const selectedUnitObject = units.find(u => u.id === selectedUnit);
 
   const handleLogout = () => {
@@ -15,11 +18,25 @@ const Header = () => {
     navigate('/');
   }
 
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleLogoutCancel = () => {
+    setShowLogoutModal(false);
+  };
+
+  const handleLogoutConfirm = () => {
+    setShowLogoutModal(false);
+    handleLogout();
+  };
+
   const handleUnitChange = () => {
     navigate("/unitsubscription");
   };
 
   return (
+    <>
     <header className="w-full min-h-[64px] bg-white flex items-center justify-between px-3 sm:px-4 md:px-8 py-2 shadow-md">
 
       {/* Left Section */}
@@ -70,7 +87,7 @@ const Header = () => {
 
         {/* Logout Button */}
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           className="flex items-center justify-center p-2 rounded-md hover:bg-red-100 text-red-600 transition cursor-pointer"
           title="Logout"
         >
@@ -83,6 +100,17 @@ const Header = () => {
       
 
     </header>
+
+    <ConfirmationModal
+      isOpen={showLogoutModal}
+      title="Logout"
+      message="Are you sure you want to logout?"
+      onConfirm={handleLogoutConfirm}
+      onCancel={handleLogoutCancel}
+      confirmText="Yes"
+      cancelText="No"
+    />
+    </>
   );
 };
 

@@ -193,18 +193,18 @@ const AadharSection = ({ onComplete }: Props) => {
             //     return;
             // }
 
-            // // ABHA Alredy Exists && NOT Linked With HMIS - Countine for Linking 
-            // if(normalizedMessage === "this account already exist" && existingResponse && !existingResponse?.success){
+            // // ABHA Alredy Exists && NOT Linked With HMIS - Countine for Linking // && existingResponse && !existingResponse?.success
+            if(normalizedMessage === "this account already exist"){
 
-            //     setAbhaParsedData(parsed);
+                setAbhaParsedData(parsed);
 
-            //     setShowModal((prev:any)=>({
-            //       ...prev,
-            //       abhalink:true
-            //     }));
+                setShowModal((prev:any)=>({
+                  ...prev,
+                  abhalink:true
+                }));
 
-            //     return;
-            // }
+                return;
+            }
 
           }
           catch(err:any){
@@ -368,6 +368,155 @@ const AadharSection = ({ onComplete }: Props) => {
 
     return () => clearInterval(interval);
   }, [timer, step]);
+
+  const normalizeDob = (value: string) => {
+    const raw = String(value || "").trim();
+
+    if (!raw) return "";
+
+    // dd-mm-yyyy -> yyyy-mm-dd
+    const ddmmyyyy = raw.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+    if (ddmmyyyy) {
+      const [, dd, mm, yyyy] = ddmmyyyy;
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // dd/mm/yyyy -> yyyy-mm-dd
+    const ddmmyyyySlash = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (ddmmyyyySlash) {
+      const [, dd, mm, yyyy] = ddmmyyyySlash;
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // already in yyyy-mm-dd
+    if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+      return raw;
+    }
+
+    return "";
+  };
+
+  const buildLinkAbhaPayload = () => {
+    const root = abhaParsedData || {};
+    
+    const parseJsonSafe = (value: any) => {
+      if (typeof value !== "string") return value;
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    };
+
+    const unwrapData = (value: any) => {
+      let current = parseJsonSafe(value) || {};
+
+      // Handles payloads like: { data: "{...}" } and nested variants.
+      for (let i = 0; i < 3; i++) {
+        if (!current || typeof current !== "object") break;
+        if (!("data" in current)) break;
+
+        const next = parseJsonSafe((current as any).data);
+        if (!next || typeof next !== "object") break;
+
+        current = {
+          ...current,
+          ...next,
+        };
+      }
+
+      return current;
+    };
+
+    const unwrapped = unwrapData(root);
+
+    const profileFromRoot = parseJsonSafe(root?.profile);
+    const profileFromUnwrapped = parseJsonSafe(unwrapped?.profile);
+
+    const innerProfile =
+      (profileFromUnwrapped && typeof profileFromUnwrapped === "object" ? profileFromUnwrapped : null) ||
+      (profileFromRoot && typeof profileFromRoot === "object" ? profileFromRoot : null) ||
+      {};
+
+    const details = {
+      ...root,
+      ...unwrapped,
+    } as any;
+
+    const abhaNumberValue =
+      details?.abhaNumber ||
+      details?.ABHANumber ||
+      root?.abhaNumber ||
+      "";
+
+    const abhaAddressValue =
+      details?.abhaAddress ||
+      (Array.isArray(details?.phrAddress) ? details.phrAddress[0] : "") ||
+      root?.abhaAddress ||
+      "";
+    debugger;
+    const phrSource = Array.isArray(innerProfile?.phrAddress)
+      ? innerProfile.phrAddress
+      : Array.isArray(details?.phrAddress)
+      ? details.phrAddress
+      : [];
+
+    const phrFromPayload = phrSource.filter(
+      (item: any) => typeof item === "string" && item.trim(),
+    );
+
+    // Keep all available PHR addresses and ensure primary ABHA address is included.
+    const phrAddressList = Array.from(
+      new Set([
+        ...phrFromPayload,
+        ...(abhaAddressValue ? [abhaAddressValue] : []),
+      ]),
+    );
+
+    const cleanAadhar = aadhar.replace(/\s/g, "");
+    const dobValue = normalizeDob(innerProfile?.dateOfBirth || innerProfile?.dob || "");
+    const resolvedAddressLine =
+      innerProfile?.addressLine ||
+      details?.addressLine ||
+      innerProfile?.address ||
+      details?.address ||
+      "";
+
+    const resolvedAbhaStatus =
+      innerProfile?.abhaStatus || ""
+
+    return {
+      success: true,
+      abhaNumber: abhaNumberValue,
+      abhaAddress: abhaAddressValue,
+      abhaStatus: resolvedAbhaStatus,
+
+      profile: {
+        firstName: innerProfile?.firstName || "",
+        middleName: innerProfile?.middleName || "",
+        lastName: innerProfile?.lastName || "",
+        dateOfBirth: dobValue,
+        dob: dobValue,
+        gender: innerProfile?.gender || details?.gender || "",
+        mobile: mobile || innerProfile?.mobile || "",
+        email: innerProfile?.email || "",
+        aadhar: cleanAadhar,
+        addressLine: resolvedAddressLine,
+        pinCode: innerProfile?.pinCode || details?.pinCode || "",
+        stateName: innerProfile?.stateName || details?.stateName || "",
+        districtName: innerProfile?.districtName || details?.districtName || "",
+        cityName:
+          innerProfile?.cityName ||
+          details?.cityName ||
+          innerProfile?.districtName ||
+          details?.districtName ||
+          "",
+        abhaStatus: resolvedAbhaStatus,
+        abhaNumber: abhaNumberValue,
+        phrAddress: phrAddressList,
+      },
+    };
+  };
  
 
   // ABHA already exists. Continue linking with HMIS.
@@ -378,11 +527,13 @@ const AadharSection = ({ onComplete }: Props) => {
         abhalink: false
     }));
 
-    console.log('abha link redirecting',abhaParsedData);
+    const linkPayload = buildLinkAbhaPayload();
+
+    console.log('abha link redirecting', linkPayload);
      
     navigate("/linkabhaverification",{
       state:{
-        parsedData:abhaParsedData,
+        parsedData: linkPayload,
         typeData:mobile,
         txnId,
         type:"mobile"

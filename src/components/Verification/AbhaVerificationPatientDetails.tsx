@@ -57,8 +57,8 @@ const AbhaVerificationPatientDetails = ({
 
   const initialAbhaAddress = useMemo(() => {
     const profileAddress =
-      (Array.isArray(sourceProfile?.phrAddress) && sourceProfile.phrAddress[0]) ||
-      sourceProfile?.abhaAddress ||
+      (Array.isArray(sourceProfile?.phrAddress) && sourceProfile.phrAddress.join(',')) ||
+      sourceProfile?.abhaAddress 
       profile?.abhaAddress ||
       "";
 
@@ -323,6 +323,7 @@ const AbhaVerificationPatientDetails = ({
 
     onComplete?.({
       ...formData,
+      abhaAddress: "",
       dob: formData.dateOfBirth,
       profile: {
         ...sourceProfile,

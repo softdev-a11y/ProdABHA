@@ -173,6 +173,8 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
 
         toast.success(parsed.message || "Verified successfully");
 
+        setTxnId(parsed.transactionID);  // Need to update txnId with the new one after verification
+
         setStep("DONE");
 
         debugger;
