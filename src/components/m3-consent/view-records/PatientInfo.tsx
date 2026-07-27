@@ -1,4 +1,4 @@
-const PatientInfo = () => {
+const PatientInfo = ({ consent }: { consent: any }) => {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
 
@@ -15,7 +15,7 @@ const PatientInfo = () => {
           </p>
 
           <p className="mt-1 text-sm font-semibold text-slate-800">
-            dhananjay07@sbx
+            {consent.patName}
           </p>
         </div>
 
@@ -26,7 +26,7 @@ const PatientInfo = () => {
           </p>
 
           <p className="mt-1 text-sm font-semibold text-slate-800 break-all">
-            dhananjay07@sbx
+            {consent.patientAbhaAddress}
           </p>
         </div>
 
@@ -37,7 +37,7 @@ const PatientInfo = () => {
           </p>
 
           <p className="mt-1 text-sm font-semibold text-slate-800">
-            RH126002123
+            {consent.mrno}
           </p>
         </div>
 
@@ -48,7 +48,7 @@ const PatientInfo = () => {
           </p>
 
           <span className="mt-2 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">
-            GRANTED
+            {consent.status}
           </span>
         </div>
 
