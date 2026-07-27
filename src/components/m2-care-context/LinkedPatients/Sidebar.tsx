@@ -15,6 +15,8 @@
 
     collapsed: boolean;
     setCollapsed: (value: boolean) => void;
+
+    onNavigate?: (path: string) => void;
   }
 
   const Sidebar = ({
@@ -22,6 +24,7 @@
     setSidebarOpen,
     collapsed,
     setCollapsed,
+    onNavigate,
   }: Props) => {
     return (
       <>
@@ -99,7 +102,14 @@
           <div className="px-4 pt-4">
             <NavLink
               to="/module"
-              onClick={() => setSidebarOpen(false)}
+              onClick={(event) => {
+                setSidebarOpen(false);
+
+                if (onNavigate) {
+                  event.preventDefault();
+                  onNavigate("/module");
+                }
+              }}
               className={`
                 flex items-center
                 ${collapsed ? "justify-center" : "gap-2"}
@@ -147,7 +157,14 @@
                 <NavLink
                   key={index}
                   to={item.path}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={(event) => {
+                    setSidebarOpen(false);
+
+                    if (onNavigate) {
+                      event.preventDefault();
+                      onNavigate(item.path);
+                    }
+                  }}
                   className={({ isActive }) =>
                     `
                     flex items-center

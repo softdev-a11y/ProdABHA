@@ -18,6 +18,7 @@ interface Patient {
   abhaNumber: string;
   abhaAddress: string;
   patSex: string;
+  patMobile?: string;
 }
 
   interface Props {
@@ -53,10 +54,11 @@ interface Patient {
         accessorKey: "patSex",
         header: "Gender",
       },
-      // {
-      //   accessorKey: "patMobile",
-      //   header: "Mobile Number",
-      // },
+      {
+        accessorKey: "patMobile",
+        header: "Mobile Number",
+        cell: ({ row }) => row.original.patMobile || "-",
+      },
    
       {
             id: "action",
@@ -85,7 +87,7 @@ interface Patient {
     return (
   <div className="w-full max-w-full overflow-x-auto">
 
-  <table className="min-w-[900px] w-full border-collapse">
+  <table className="min-w-[1050px] w-full border-collapse">
 
       <thead className="bg-[#f8fafc]">
 

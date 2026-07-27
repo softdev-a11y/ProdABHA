@@ -3,6 +3,7 @@ import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
 import { Menu, Search } from "lucide-react";
 import { useM2 } from "../../hooks/useM2";
 import { useUnit } from "../../context/UnitContext";
+import toast from "react-hot-toast";
 
 const LinkedHistoryPage = () => {
   const { getLinkedHistory, getLinkedHistoryByDateRange } = useM2();
@@ -23,33 +24,18 @@ const LinkedHistoryPage = () => {
   useEffect(() => {
     if (!selectedUnit) return;
 
-    loadHistory();
+    setHistoryData([]);
+    setFilteredHistory([]);
   }, [selectedUnit]);
-
-  const loadHistory = async () => {
-    const patientData = JSON.parse(localStorage.getItem("patientData") || "{}");
-
-    const response = await getLinkedHistory(
-      patientData.abhaAddress,
-      selectedUnit,
-    );
-
-    console.log("LINKED HISTORY", response);
-
-    if (response?.success) {
-      setHistoryData(response.data);
-      setFilteredHistory(response.data);
-    }
-  };
 
   const handleSearch = async () => {
     if (!search && (!fromDate || !toDate)) {
-      alert("Please enter an ABHA Number or select a date range.");
+      toast.error("Please enter an ABHA Number or select a date range.");
       return;
     }
 
     if ((fromDate && !toDate) || (!fromDate && toDate)) {
-      alert("Please select both From Date and To Date.");
+      toast.error("Please select both From Date and To Date.");
       return;
     }
 
@@ -58,10 +44,6 @@ const LinkedHistoryPage = () => {
       const formattedFromDate = fromDate.replaceAll("-", "");
 
       const formattedToDate = toDate.replaceAll("-", "");
-
-      const patientData = JSON.parse(
-        localStorage.getItem("patientData") || "{}",
-      );
 
       const response = await getLinkedHistoryByDateRange(
         selectedUnit,
@@ -79,10 +61,6 @@ const LinkedHistoryPage = () => {
 
     // ABHA Search
     if (search.trim()) {
-      const patientData = JSON.parse(
-        localStorage.getItem("patientData") || "{}",
-      );
-
       const response = await getLinkedHistory(`${search}@sbx`, selectedUnit);
 
       if (response?.success) {
@@ -94,7 +72,8 @@ const LinkedHistoryPage = () => {
       return;
     }
 
-    loadHistory();
+    setHistoryData([]);
+    setFilteredHistory([]);
   };
 
   const handleReset = () => {
@@ -104,7 +83,8 @@ const LinkedHistoryPage = () => {
 
     setToDate("");
 
-    loadHistory();
+    setHistoryData([]);
+    setFilteredHistory([]);
   };
 
   return (

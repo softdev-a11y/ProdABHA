@@ -4,15 +4,29 @@ import {
   Menu,
   CheckCircle2,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const SuccessPage = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [sidebarOpen, setSidebarOpen] =
     useState(false);
 const [collapsed, setCollapsed] = useState(false);
+
+  const successData = (location.state as any) || null;
+
+const linkedDateTime = successData?.linkedAt
+  ? new Date(successData.linkedAt).toLocaleString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  : "--";
+
   return (
   <div className="bg-[#f5f7fb] min-h-screen flex">
 
@@ -73,11 +87,11 @@ const [collapsed, setCollapsed] = useState(false);
               />
 
               <h2 className="text-3xl font-bold text-gray-800">
-                Records Linked Successfully!
+                Care Context Linked Successfully
               </h2>
 
               <p className="text-gray-500 mt-2">
-                Care contexts have been linked to ABHA.
+                Care contexts have been linked and notification has been sent.
               </p>
 
             </div>
@@ -95,17 +109,7 @@ const [collapsed, setCollapsed] = useState(false);
                     </span>
 
                     <span className="font-medium text-right">
-                      Ravi Kumar
-                    </span>
-                  </div>
-
-                  <div className="flex justify-between gap-4">
-                    <span className="text-gray-500">
-                      UHID
-                    </span>
-
-                    <span className="font-medium text-right">
-                      UH12345
+                      {successData?.patientName || "--"}
                     </span>
                   </div>
 
@@ -115,7 +119,7 @@ const [collapsed, setCollapsed] = useState(false);
                     </span>
 
                     <span className="font-medium text-right">
-                      91-9999-8888-7777
+                      {successData?.abhaNumber || "--"}
                     </span>
                   </div>
 
@@ -129,17 +133,17 @@ const [collapsed, setCollapsed] = useState(false);
                     </span>
 
                     <span className="font-semibold text-[#008080]">
-                      12
+                      {successData?.linkedCareContextCount ?? 0}
                     </span>
                   </div>
 
                   <div className="flex justify-between gap-4">
                     <span className="text-gray-500">
-                      Linked On
+                      Date & Time
                     </span>
 
                     <span className="font-medium text-right">
-                      30 May 2024, 05:21 PM
+                      {linkedDateTime}
                     </span>
                   </div>
 
@@ -164,11 +168,11 @@ const [collapsed, setCollapsed] = useState(false);
 
               <button
                 onClick={() =>
-                  navigate("/linkedhistory")
+                  navigate("/dashboard")
                 }
                 className="w-full lg:w-auto px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition"
               >
-                View Linked History
+                Done
               </button>
 
               <button
@@ -177,7 +181,7 @@ const [collapsed, setCollapsed] = useState(false);
                 }
                 className="w-full lg:w-auto px-6 py-3 rounded-xl bg-[#008080] hover:bg-[#006d6d] text-white transition"
               >
-                Back to Patients
+                Back to Search Patient
               </button>
 
             </div>

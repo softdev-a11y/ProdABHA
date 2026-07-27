@@ -36,7 +36,7 @@
           </button>
 
           <span className="font-semibold text-slate-800">
-            ABDM M3
+             
           </span>
 
           <div className="w-9 h-9 rounded-full bg-teal-600 flex items-center justify-center text-white font-semibold">
@@ -73,7 +73,7 @@
 
             <div>
               <h1 className="text-2xl font-bold">
-                ABDM M3
+                Request Consent
               </h1>
 
               <p className="text-sm text-slate-400 mt-2">

@@ -11,7 +11,12 @@ interface Props {
 
   hiTypes: any[];
 
-  selectedCareContexts: string[];
+  selectedCareContexts: Array<{
+    hiType: string;
+    referenceNumber: string;
+  }>;
+
+  confirmDisabled?: boolean;
 }
 
 const ConfirmLinkModal = ({
@@ -21,6 +26,7 @@ const ConfirmLinkModal = ({
   patient,
   hiTypes,
   selectedCareContexts,
+  confirmDisabled = false,
 }: Props) => {
       useEffect(() => {
 
@@ -40,7 +46,11 @@ const ConfirmLinkModal = ({
   .map((section) => ({
     hiType: section.hiType,
     count: section.records.filter((record: any) =>
-      selectedCareContexts.includes(record.referenceNumber)
+        selectedCareContexts.some(
+          (item) =>
+            item.hiType === section.hiType &&
+            item.referenceNumber === record.referenceNumber
+        )
     ).length,
   }))
   .filter((item) => item.count > 0);
@@ -200,7 +210,12 @@ const totalSelected = summary.reduce(
 
           <button
             onClick={onConfirm}
-            className="w-full lg:w-auto px-6 py-2.5 rounded-lg bg-[#008080] hover:bg-[#006d6d] text-white transition"
+            disabled={confirmDisabled}
+            className={`w-full lg:w-auto px-6 py-2.5 rounded-lg text-white transition ${
+              confirmDisabled
+                ? "bg-slate-400 cursor-not-allowed"
+                : "bg-[#008080] hover:bg-[#006d6d]"
+            }`}
           >
             Confirm
           </button>
