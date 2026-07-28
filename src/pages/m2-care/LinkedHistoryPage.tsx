@@ -212,6 +212,8 @@ const LinkedHistoryPage = () => {
                   <tr className="text-left text-xs font-semibold text-gray-700">
                     <th className="px-6 py-3">Patient</th>
 
+                    <th className="px-6 py-3">ABHA Address</th>
+
                     <th className="px-6 py-3">ABHA Number</th>
 
                     <th className="px-6 py-3">Records</th>
@@ -233,6 +235,10 @@ const LinkedHistoryPage = () => {
                       >
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {patient[0].Display}
+                        </td>
+
+                        <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">
+                          {item.abhaAddress}
                         </td>
 
                         <td className="px-6 py-4 text-sm text-gray-600 whitespace-nowrap">

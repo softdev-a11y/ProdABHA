@@ -99,7 +99,7 @@ const [dataEraseAt, setDataEraseAt] = useState(eraseDateString);
 
           dateRange: {
             from: `${fromDate}T00:00:00.000Z`,
-            to: `${toDate}T00:00:00.000Z`,
+            to: `${toDate}T23:59:59.000Z`,
           },
 
           dataEraseAt: `${dataEraseAt}T23:59:59.000Z`,
