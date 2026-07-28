@@ -68,6 +68,13 @@ useEffect(() => {
 
 const isGranted = consent?.status === "GRANTED";
 
+const isConsentValid =
+  consent &&
+  new Date(consent.dataEraseAtUtc) > new Date();
+
+const canRequestData =
+  isGranted && isConsentValid;
+
 if (loading) {
     return (
       <ConsentLayout>
@@ -232,12 +239,19 @@ console.log(consent);
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Data Erase At
+              Consent Valid Upto
               </p>
 
-              <p className="mt-2 text-sm font-semibold text-slate-800">
-                {new Date(consent.dataEraseAtUtc).toLocaleDateString("en-GB")}
-              </p>
+             <p className="mt-2 text-sm font-semibold text-slate-800">
+             {new Date(consent.dataEraseAtUtc).toLocaleString("en-GB", {
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: true,
+            })}
+            </p>
             </div>
 
           </div>
@@ -254,9 +268,14 @@ console.log(consent);
             Back
           </button>
 
-          <button
-          className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-2.5 text-sm text-white hover:bg-blue-700"
+        <button
+            disabled={!canRequestData}
             onClick={handleRequestData}
+            className={`w-full sm:w-auto rounded-lg px-5 py-2.5 text-sm text-white ${
+              canRequestData
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-slate-300 cursor-not-allowed"
+            }`}
           >
             Request Data
           </button>

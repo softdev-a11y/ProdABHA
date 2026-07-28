@@ -111,7 +111,7 @@ const RequestListPage = () => {
               className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-teal-600"
             >
               <option>All</option>
-              <option>ARTEFACT_FETCHED</option>
+              <option>REVOKED</option>
               <option>REQUESTED</option>
               <option>GRANTED</option>
             </select>
