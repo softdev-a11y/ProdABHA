@@ -36,6 +36,13 @@ export const SubmitConsentRequestService = (payload: any) => {
   );
 };
 
+export const RequestHealthInformationService = (payload: any) => {
+  return m3ApiClient.post(
+    "/api/hiecm/data-flow/v3/health-information/request",
+    payload
+  );
+};
+
 export const ViewHealthRecordService = (
   healthInfoTransactionId: string
 ) => {

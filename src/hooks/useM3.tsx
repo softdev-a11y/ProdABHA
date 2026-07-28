@@ -4,6 +4,7 @@ import {
   GetConsentDetailsService,
   GetRequestDataService,
   SubmitConsentRequestService,
+  RequestHealthInformationService,
   ViewHealthRecordService,
 } from "../services/m3Service";
 
@@ -80,6 +81,17 @@ const getConsentDetails = async (requestId: string) => {
   }
 };
 
+const requestHealthInformation = async (payload: any) => {
+  try {
+    const response =
+      await RequestHealthInformationService(payload);
+
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 return {
   searchPatients,
   getConsentRequestList,
@@ -87,6 +99,7 @@ return {
   getRequestData,
   submitConsentRequest,
   viewHealthRecord,
+  requestHealthInformation,
 };
 };
 

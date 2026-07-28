@@ -2,19 +2,50 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import useM3 from "../../hooks/useM3";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
+import toast from "react-hot-toast";
 
 const ConsentDetailsPage = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
 
-const { getConsentDetails } = useM3();
+const { getConsentDetails, requestHealthInformation } = useM3();
 
 const requestId = location.state?.requestId;
 
 const [consent, setConsent] = useState<any>(null);
 
 const [loading, setLoading] = useState(true);
+
+
+const handleRequestData = async () => {
+  try {
+    const payload = {
+      consent: {
+        id: consent.consentId,
+      },
+   dateRange: {
+  from: consent.permissionFromUtc + "Z",
+  to: consent.permissionToUtc + "Z",
+},
+    };
+
+    console.log("CONSENT OBJECT", consent);
+    console.log("REQUEST PAYLOAD", payload);
+
+    const response =
+      await requestHealthInformation(payload);
+
+    if (response?.success) {
+      toast.success(response.message);
+    } else {
+      toast.error(response?.message || "Request failed");
+    }
+  } catch (error) {
+    console.log(error);
+    toast.error("Failed to request health information.");
+  }
+};
 
 useEffect(() => {
 
@@ -223,11 +254,12 @@ console.log(consent);
             Back
           </button>
 
-          {/* <button
+          <button
           className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-2.5 text-sm text-white hover:bg-blue-700"
+            onClick={handleRequestData}
           >
             Request Data
-          </button> */}
+          </button>
 
       <button
   disabled={!isGranted}
