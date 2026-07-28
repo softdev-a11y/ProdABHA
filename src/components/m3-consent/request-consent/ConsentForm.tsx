@@ -48,6 +48,7 @@ const [dataEraseAt, setDataEraseAt] = useState(eraseDateString);
     };
 
     const handleSubmit = () => {
+      debugger;
     const payload = {
       consent: {
         purpose: {
@@ -56,11 +57,13 @@ const [dataEraseAt, setDataEraseAt] = useState(eraseDateString);
       refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
     },
 
-  patient: {
-    id: "dhananjay07@sbx",
-    mrno: patient?.mrno?.trim(),
-    patName: patient?.patName?.trim(),
-  },
+      patient: {
+        id: patient?.abhaAddress || "", // "dhananjay07@sbx",
+        mrno: patient?.mrno?.trim(),
+        patName: patient?.patName?.trim(),
+        unitCode:patient?.unitCode?.trim(),
+        patientAbhaNumber: patient?.abhaNumber?.trim(),
+      },
         hip: {
           id: "",
         },

@@ -17,6 +17,8 @@ const ViewDataPage = () => {
 
 const consentId = location.state?.consentId;
 
+const consent = location.state?.consent;
+
   const { getRequestData } = useM3();
 
   const [records, setRecords] = useState<any[]>([]);
@@ -43,6 +45,8 @@ const consentId = location.state?.consentId;
     };
 
     loadRecords();
+
+    console.log("Records after load consent", consent);
 
   }, [consentId]);
 
@@ -98,11 +102,11 @@ if (!loading && records.length === 0) {
         </div>
 
         <div className="mt-6">
-          <PatientInfo />
+          <PatientInfo consent={consent} />
         </div>
 
         <div className="mt-6">
-          <SummaryCards />
+          <SummaryCards consent={consent} />
         </div>
 
         <div className="mt-6">

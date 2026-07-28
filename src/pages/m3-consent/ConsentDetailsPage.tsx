@@ -106,11 +106,11 @@ console.log(consent);
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Patient Name
+                Patient Name 
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800 break-words">
-               {consent.patientAbhaAddress}
+               {consent.patName}
               </p>
             </div>
 
@@ -120,7 +120,7 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-                 -
+                {consent.mrno}
               </p>
             </div>
 
@@ -130,7 +130,7 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800 break-all">
-                {consent.patientAbhaAddress}
+                {consent.patientAbhaNumber}
               </p>
             </div>
 
@@ -267,6 +267,7 @@ console.log(consent);
     navigate("/m3/view-data", {
       state: {
         consentId: consent.consentId,
+        consent: consent,
       },
     })
   }
