@@ -6,8 +6,8 @@ import TanStackTable from "../shared/TanStackTable";
 interface Patient {
   mrno: string;
   patName: string;
-  patFName: string;
-  patLName: string;
+  abhaAddress: string;
+  // patEmail: string;
   abhaNumber: string;
   patSex: string;
   patMobile: string;
@@ -35,13 +35,13 @@ const PatientTable = ({
         header: "MR No",
       },
       {
-        accessorKey: "patFName",
-        header: "First Name",
+        accessorKey: "abhaAddress",
+        header: "ABHA Address",
       },
-      {
-        accessorKey: "patLName",
-        header: "Last Name",
-      },
+      // {
+      //   accessorKey: "patEmail",
+      //   header: "Email",
+      // },
       {
         accessorKey: "abhaNumber",
         header: "ABHA ID",
