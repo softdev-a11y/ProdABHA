@@ -99,24 +99,34 @@ const RequestTable = ({
         cell: ({ row }) =>
           formatDate(row.original.approvedAtUtc),
       },
-      {
-        id: "action",
-        header: "Action",
-        cell: ({ row }) => (
-          <button
-            onClick={() =>
-              navigate("/m3/consent-details", {
-              state: {
-  requestId: row.original.requestId,
-}
-              })
-            }
-            className="rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          >
-            View Details
-          </button>
-        ),
-      },
+   {
+  id: "action",
+  header: "Action",
+  cell: ({ row }) => {
+    const isRevoked =
+      row.original.status === "REVOKED";
+
+    return (
+      <button
+        disabled={isRevoked}
+        onClick={() =>
+          navigate("/m3/consent-details", {
+            state: {
+              requestId: row.original.requestId,
+            },
+          })
+        }
+        className={`rounded-md px-3 py-2 text-sm font-medium text-white ${
+          isRevoked
+            ? "bg-slate-300 cursor-not-allowed"
+            : "bg-blue-600 hover:bg-blue-700"
+        }`}
+      >
+        View Details
+      </button>
+    );
+  },
+},
     ],
     [navigate]
   );
