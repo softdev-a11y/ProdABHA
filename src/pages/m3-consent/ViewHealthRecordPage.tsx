@@ -17,7 +17,7 @@ import ResourceRenderer from "../../components/m3-consent/resource-renderer/Reso
 
       const [loading, setLoading] = useState(true);
 
-     const [resources, setResources] =useState<Record<string, any[]>>({});
+      const [resources, setResources] =useState<Record<string, any[]>>({});
 
 
 
