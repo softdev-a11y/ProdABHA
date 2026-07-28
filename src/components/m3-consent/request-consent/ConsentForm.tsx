@@ -31,15 +31,30 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
       refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
     },
     {
-      text: "Treatment",
-      code: "TREAT",
+      text: "Bridge To Government",
+      code: "BTG",
       refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
     },
     {
-      text: "Insurance",
-      code: "HPAYMT",
+      text: "Public Health",
+      code: "PUBHLTH",
       refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
     },
+    {
+      text: "Healthcare Payment",
+      code: "HPAYMT",
+      refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
+    }, 
+    {
+      text: "Disease Research",
+      code: "DSRCH",
+      refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
+    },
+    {
+      text: "Self Requested",
+      code: "PATRQT",
+      refUri: "http://terminology.hl7.org/ValueSet/v3-PurposeOfUse",
+    }
   ];
   const HI_TYPES = [
     {

@@ -203,7 +203,16 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-             {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")}
+              {/* {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")} */}
+              {new Date(`${consent.permissionFromUtc}Z`).toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  //hour: "2-digit",
+                  //minute: "2-digit",
+                  //hour12: true,
+                })}
               </p>
             </div>
 
@@ -213,7 +222,16 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-              {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")}
+              {/* {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")} */}
+               {new Date(`${consent.permissionToUtc}Z`).toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  // hour: "2-digit",
+                  // minute: "2-digit",
+                  // hour12: true,
+                })}
               </p>
             </div>
 
@@ -239,19 +257,20 @@ console.log(consent);
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Consent Valid Upto
+              Consent Valid Upto 
               </p>
 
              <p className="mt-2 text-sm font-semibold text-slate-800">
-             {new Date(consent.dataEraseAtUtc).toLocaleString("en-GB", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-              hour12: true,
-            })}
-            </p>
+                {new Date(`${consent.dataEraseAtUtc}Z`).toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: true,
+                })}
+              </p>
             </div>
 
           </div>
