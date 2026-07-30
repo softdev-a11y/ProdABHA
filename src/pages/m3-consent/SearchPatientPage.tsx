@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
 import SearchPatientCard from "../../components/m3-consent/search-patient/SearchPatientCard";
 import PatientTable from "../../components/m3-consent/search-patient/PatientTable";
@@ -6,6 +7,7 @@ import useM3 from "../../hooks/useM3";
 
 const SearchPatientPage = () => {
   const { searchPatients } = useM3();
+  const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
   const [patients, setPatients] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,6 +28,7 @@ const handleSearch = async (searchText: string) => {
   }
 
   setLoading(true);
+  setGlobalLoading(true);
 
   try {
 
@@ -44,6 +47,7 @@ const handleSearch = async (searchText: string) => {
   } finally {
 
     setLoading(false);
+    setGlobalLoading(false);
 
   }
 };

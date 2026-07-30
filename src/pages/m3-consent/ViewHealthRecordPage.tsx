@@ -1,4 +1,5 @@
-    import { useEffect, useState } from "react";
+   import { useContext, useEffect, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
     import { useLocation } from "react-router-dom";
 
     import useM3 from "../../hooks/useM3";
@@ -13,6 +14,7 @@ import ResourceRenderer from "../../components/m3-consent/resource-renderer/Reso
         location.state?.healthInfoTransactionId;
 
       const { viewHealthRecord } = useM3();
+      const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
 
       const [loading, setLoading] = useState(true);
@@ -24,7 +26,9 @@ import ResourceRenderer from "../../components/m3-consent/resource-renderer/Reso
 
       useEffect(() => {
         const loadHealthRecord = async () => {
+            try {
           if (!healthInfoTransactionId) return;
+             setGlobalLoading(true);
 
           const response = await viewHealthRecord(
             healthInfoTransactionId
@@ -47,7 +51,17 @@ import ResourceRenderer from "../../components/m3-consent/resource-renderer/Reso
 
 
 
-            setLoading(false);
+              } catch (error) {
+
+    console.log(error);
+    setResources({});
+
+  } finally {
+
+    setLoading(false);
+    setGlobalLoading(false);
+
+  }
         };
 
         loadHealthRecord();

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
 import { useLocation, useNavigate } from "react-router-dom";
 import useM3 from "../../hooks/useM3";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
@@ -10,6 +11,7 @@ const ConsentDetailsPage = () => {
   const location = useLocation();
 
 const { getConsentDetails, requestHealthInformation } = useM3();
+const { setLoading: setGlobalLoading }: any =  useContext(LoaderContext);
 
 const requestId = location.state?.requestId;
 
@@ -20,6 +22,7 @@ const [loading, setLoading] = useState(true);
 
 const handleRequestData = async () => {
   try {
+      setGlobalLoading(true);
     const payload = {
       consent: {
         id: consent.consentId,
@@ -45,22 +48,31 @@ const handleRequestData = async () => {
     console.log(error);
     toast.error("Failed to request health information.");
   }
+  finally {
+  setGlobalLoading(false);
+}
 };
 
 useEffect(() => {
 
     const loadConsent = async () => {
-
+        try {
         if (!requestId) return;
+          setGlobalLoading(true);
 
         const response =
         await getConsentDetails(requestId);
 
        setConsent(response.data);
+         } catch (error) {
 
+    console.log(error);
+
+  } finally {
         setLoading(false);
-
-    };
+        setGlobalLoading(false);
+    }
+  };
 
     loadConsent();
 
