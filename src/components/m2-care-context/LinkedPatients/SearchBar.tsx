@@ -10,9 +10,10 @@ interface Props {
   setToDate: (value: string) => void;
 
   onSearch: () => void;
+  onReset?: () => void;
 }
 
-const SearchBar = ({ search, setSearch, fromDate, setFromDate, toDate, setToDate, onSearch }: Props) => {
+const SearchBar = ({ search, setSearch, fromDate, setFromDate, toDate, setToDate, onSearch, onReset }: Props) => {
   return (
     <div className="w-full rounded-xl border border-slate-200 bg-white p-5">
 
@@ -96,12 +97,21 @@ const SearchBar = ({ search, setSearch, fromDate, setFromDate, toDate, setToDate
 
     </div>
 
-    <button
-      onClick={onSearch}
-      className="bg-teal-600 text-white rounded-lg px-6 py-3 hover:bg-teal-700"
-    >
-      Search
-    </button>
+   <div className="flex gap-2">
+  <button
+    onClick={onSearch}
+    className="bg-teal-600 text-white rounded-lg px-6 py-3 hover:bg-teal-700"
+  >
+    Search
+  </button>
+
+  <button
+    onClick={onReset}
+    className="border border-slate-300 rounded-lg px-6 py-3 hover:bg-slate-100"
+  >
+    Reset
+  </button>
+</div>
 
   </div>
 

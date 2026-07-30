@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
 import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
 import { Menu, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ const PatientRecordListingPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
   const { getCareContexts } = useM2();
+    const { setLoading }: any = useContext(LoaderContext);
 
   const [selectedCareContexts, setSelectedCareContexts] = useState<
     SelectedCareContext[]
@@ -47,6 +49,8 @@ const PatientRecordListingPage = () => {
   }, []);
 
   const loadCareContexts = async () => {
+      try {
+    setLoading(true);
     const response = await getCareContexts(
       patientData.unitCode,
       patientData.mrno,
@@ -56,8 +60,13 @@ const PatientRecordListingPage = () => {
 
     if (response?.success) {
       setHiTypes(response.data.careContextGroups);
-    }
-  };
+      }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleConfirmLinking = async () => {
     try {
       if (isSubmitting) return;

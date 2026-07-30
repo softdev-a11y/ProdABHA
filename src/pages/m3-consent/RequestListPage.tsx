@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
 import { Search, RefreshCw } from "lucide-react";
 
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
@@ -8,7 +9,8 @@ import { useUnit } from "../../context/UnitContext";
 
 const RequestListPage = () => {
   const { getConsentRequestList } = useM3();
- const { selectedUnit } = useUnit();
+  const { selectedUnit } = useUnit();
+  const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
   const [status, setStatus] = useState("All");
   const [search, setSearch] = useState("");
@@ -18,6 +20,7 @@ const RequestListPage = () => {
   const loadRequests = async () => {
     try {
       setLoading(true);
+      setGlobalLoading(true);
 
     const response = await getConsentRequestList( selectedUnit);
 
@@ -31,6 +34,7 @@ const RequestListPage = () => {
       setRequests([]);
     } finally {
       setLoading(false);
+      setGlobalLoading(false);
     }
   };
 

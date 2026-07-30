@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { LoaderContext } from "../../context/LoaderProvider";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import useM3 from "../../hooks/useM3";
@@ -18,6 +19,7 @@ const ViewDataPage = () => {
   const consent = location.state?.consent;
 
   const { getRequestData } = useM3();
+ const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
   const [records, setRecords] = useState<any[]>([]);
 
@@ -25,7 +27,9 @@ const ViewDataPage = () => {
 
   useEffect(() => {
     const loadRecords = async () => {
+        try {
       if (!consentId) return;
+       setGlobalLoading(true);
 
       const response = await getRequestData(consentId);
 
@@ -34,8 +38,19 @@ const ViewDataPage = () => {
       console.log(records);
 
       setRecords(response.data);
+      
+  } catch (error) {
 
-      setLoading(false);
+    console.log(error);
+    setRecords([]);
+
+  } finally {
+
+    setLoading(false);
+    setGlobalLoading(false);
+
+  }
+
     };
 
     loadRecords();
