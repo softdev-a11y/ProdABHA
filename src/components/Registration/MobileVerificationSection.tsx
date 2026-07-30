@@ -24,6 +24,7 @@ const MobileVerificationSection = ({ transactionId, aadhaarMobile, onComplete }:
   const [step, setStep] = useState<"INPUT" | "OTP" | "DONE">("INPUT");
 
   const [mobile, setMobile] = useState(aadhaarMobile || "");
+  const [accepted, setAccepted] = useState(false);
   const [otpMobile, setOtpMobile] = useState(Array(6).fill(""));
 
   const [timer, setTimer] = useState(30);
@@ -275,10 +276,20 @@ const MobileVerificationSection = ({ transactionId, aadhaarMobile, onComplete }:
               </div>
             </div>
           )}
+                <label className="flex items-start gap-2 text-xs text-gray-600 mt-3">
+        <input
+          type="checkbox"
+          checked={accepted}
+          onChange={(e) => setAccepted(e.target.checked)}
+          className="mt-1"
+        />
+
+        I consent to the use of my mobile number for ABHA creation and future communications.
+      </label>
 
           {/* Send OTP */}
           <button
-            disabled={!isValidMobile}
+            disabled={!isValidMobile || !accepted}
             onClick={() => {
               handleMobileSendOtp()
             }}

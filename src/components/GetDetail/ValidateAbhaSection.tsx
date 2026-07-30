@@ -16,6 +16,7 @@ const ValidateAbhaSection = ({ onComplete }: Props) => {
   const [txnId, setTxnId] = useState("");
 
   const [abhaUser, setAbhaUser] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
 
   const [timer, setTimer] = useState(30);
@@ -140,7 +141,7 @@ const ValidateAbhaSection = ({ onComplete }: Props) => {
     }
   };
 
-  // 🔥 Verify OTP
+ 
   const handleVerify = async () => {
 
     const finalOtp = otp.join("");
@@ -185,7 +186,7 @@ const ValidateAbhaSection = ({ onComplete }: Props) => {
     }
   };
 
-  // 🔥 Resend
+  //  Resend
   const handleResend = () => {
     if (!canResend) return;
     handleSendOtp();
@@ -216,9 +217,19 @@ const ValidateAbhaSection = ({ onComplete }: Props) => {
               </span>
             </div>
           </div>
+          <label className="flex items-start gap-2 text-xs text-gray-600 mt-3">
+          <input
+            type="checkbox"
+            checked={accepted}
+            onChange={(e) => setAccepted(e.target.checked)}
+            className="mt-1"
+          />
+
+          I consent to the use of my ABHA Address for verification and future communications.
+        </label>
 
           <button
-            disabled={!abhaUser}
+            disabled={!abhaUser || !accepted}
             onClick={handleSendOtp}
             className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md disabled:opacity-50 cursor-pointer"
           >
