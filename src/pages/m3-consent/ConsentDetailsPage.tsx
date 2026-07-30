@@ -179,22 +179,22 @@ console.log(consent);
                 HI Types
               </p>
 
-          <div className="mt-2 flex flex-wrap gap-2">
-  {consent.hiTypesJson ? (
-    JSON.parse(consent.hiTypesJson).map((type: string) => (
-      <span
-        key={type}
-        className="rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700"
-      >
-        {type}
-      </span>
-    ))
-  ) : (
-    <span className="text-sm text-slate-500">
-      No HI Types Selected
-    </span>
-  )}
-</div>
+           <div className="mt-2 flex flex-wrap gap-2">
+              {consent.hiTypesJson ? (
+                JSON.parse(consent.hiTypesJson).map((type: string) => (
+                  <span
+                    key={type}
+                    className="rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700"
+                  >
+                    {type}
+                  </span>
+                ))
+              ) : (
+                <span className="text-sm text-slate-500">
+                  No HI Types Selected
+                </span>
+              )}
+            </div>
             </div>
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">

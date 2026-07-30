@@ -29,11 +29,22 @@ const RequestTable = ({
   const formatDate = (date: string | null) => {
     if (!date) return "-";
 
-    return new Date(date).toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
+    // return new Date(date).toLocaleDateString("en-GB", {
+    //   day: "2-digit",
+    //   month: "short",
+    //   year: "numeric",
+    // });
+
+    return new Date(`${date}Z`).toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata",
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  // hour: "2-digit",
+                  // minute: "2-digit",
+                  // hour12: true,
+                })
+
   };
 
   const getStatusColor = (status: string) => {
@@ -72,7 +83,7 @@ const RequestTable = ({
 
       {
         accessorKey: "patientAbhaAddress",
-        header: "ABHA ID",
+        header: "abha address",
       },
       {
         accessorKey: "status",
@@ -96,6 +107,12 @@ const RequestTable = ({
       {
         accessorKey: "approvedAtUtc",
         header: "Consent Granted On",
+        cell: ({ row }) =>
+          formatDate(row.original.approvedAtUtc),
+      },
+      {
+        accessorKey: "revokedAtUtc",
+        header: "Revoked On",
         cell: ({ row }) =>
           formatDate(row.original.approvedAtUtc),
       },
