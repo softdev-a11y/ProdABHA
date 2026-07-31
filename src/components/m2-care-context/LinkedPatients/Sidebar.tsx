@@ -3,6 +3,7 @@
     Users,
     History,
     X,
+    Link,
     PanelLeftClose,
     PanelLeftOpen,
   } from "lucide-react";
@@ -148,6 +149,12 @@
                 icon: History,
                 label: "Linked History",
                 path: "/linkedhistory",
+              },
+
+              {
+                icon: Link,
+                label: "Deep Link Notification",
+                path: "/deeplinknotification",
               },
             ].map((item, index) => {
 

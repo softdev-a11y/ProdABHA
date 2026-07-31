@@ -23,6 +23,7 @@
   import SearchPatientPage from "../pages/m3-consent/SearchPatientPage";
   import ViewDataPage from "../pages/m3-consent/ViewDataPage";
   import ViewHealthRecordPage from "../pages/m3-consent/ViewHealthRecordPage";
+  import DeepLinkNotificationPage from "../pages/m2-care/DeepLinkNotificationPage";
 
   const AppRoutes = () => {
     return (
@@ -134,6 +135,14 @@
               element={
                 <ProtectedRoutes>
                   <SuccessPage />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/deeplinknotification"
+              element={
+                <ProtectedRoutes>
+                  <DeepLinkNotificationPage />
                 </ProtectedRoutes>
               }
             />
