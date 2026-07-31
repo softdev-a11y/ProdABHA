@@ -1,143 +1,206 @@
-import { useContext, useEffect, useState } from "react";
-import { LoaderContext } from "../../context/LoaderProvider";
-import { Search, RefreshCw } from "lucide-react";
+  import { useContext, useEffect, useState } from "react";
+  import { LoaderContext } from "../../context/LoaderProvider";
+  import { Search, RefreshCw } from "lucide-react";
 
-import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
-import RequestTable from "../../components/m3-consent/request-list/RequestTable";
-import useM3 from "../../hooks/useM3";
-import { useUnit } from "../../context/UnitContext";
+  import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
+  import RequestTable from "../../components/m3-consent/request-list/RequestTable";
+  import useM3 from "../../hooks/useM3";
+  import { useUnit } from "../../context/UnitContext";
 
-const RequestListPage = () => {
-  const { getConsentRequestList } = useM3();
-  const { selectedUnit } = useUnit();
-  const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
+  const RequestListPage = () => {
+    const { getConsentRequestList } = useM3();
+    const { selectedUnit } = useUnit();
+    const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
-  const [status, setStatus] = useState("All");
-  const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [requests, setRequests] = useState<any[]>([]);
-
-  const loadRequests = async () => {
-    try {
-      setLoading(true);
-      setGlobalLoading(true);
-
-    const response = await getConsentRequestList( selectedUnit);
-
-      if (response?.success) {
-        setRequests(response.data || []);
-      } else {
-        setRequests([]);
-      }
-    } catch (error) {
-      console.log(error);
-      setRequests([]);
-    } finally {
-      setLoading(false);
-      setGlobalLoading(false);
-    }
+    const [status, setStatus] = useState("All");
+    const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
+    const today = new Date().toISOString().split("T")[0];
+    const [fromDate, setFromDate] = useState(today);
+    const [toDate, setToDate] = useState(today);
+    const [requests, setRequests] = useState<any[]>([]);
+    const formatDate = (date: string) => {
+    return date.replaceAll("-", "");
   };
+
+    const loadRequests = async () => {
+      try {
+        setLoading(true);
+        setGlobalLoading(true);
+
+    const response = await getConsentRequestList(
+    selectedUnit,
+    formatDate(fromDate),
+    formatDate(toDate)
+  );
+
+        if (response?.success) {
+          setRequests(response.data || []);
+        } else {
+          setRequests([]);
+        }
+      } catch (error) {
+        console.log(error);
+        setRequests([]);
+      } finally {
+        setLoading(false);
+        setGlobalLoading(false);
+      }
+    };
 
   useEffect(() => {
     loadRequests();
   }, []);
 
-  const filteredData = requests.filter((item: any) => {
-    const matchesSearch =
-      item.patientAbhaAddress
-        ?.toLowerCase()
-        .includes(search.toLowerCase()) ||
-      item.status
-        ?.toLowerCase()
-        .includes(search.toLowerCase());
+    const filteredData = requests.filter((item: any) => {
+      const matchesSearch =
+        item.patientAbhaAddress
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+        item.status
+          ?.toLowerCase()
+          .includes(search.toLowerCase());
 
-    const matchesStatus =
-      status === "All" ||
-      item.status?.toLowerCase() === status.toLowerCase();
+      const matchesStatus =
+        status === "All" ||
+        item.status?.toLowerCase() === status.toLowerCase();
 
-    return matchesSearch && matchesStatus;
-  });
+      return matchesSearch && matchesStatus;
+    });
+    const handleReset = () => {
+      setSearch("");
+      setStatus("All");
+      setFromDate(today);
+      setToDate(today);
+      loadRequests();
+    };
 
-  return (
-    <ConsentLayout hideOperatorPanel>
-      <div className="space-y-4 sm:space-y-5">
+    return (
+      <ConsentLayout hideOperatorPanel>
+        <div className="space-y-4 sm:space-y-5">
 
-        {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Header */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-          <div>
-            <h1 className="text-2xl font-semibold text-slate-800">
-              Request List
-            </h1>
+            <div>
+              <h1 className="text-2xl font-semibold text-slate-800">
+                Request List
+              </h1>
 
-            <p className="mt-1 text-sm text-slate-500">
-              View and manage all consent requests.
-            </p>
+              <p className="mt-1 text-sm text-slate-500">
+                View and manage all consent requests.
+              </p>
+            </div>
+
+            <button
+              onClick={loadRequests}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
+            >
+              <RefreshCw
+                size={16}
+                className={loading ? "animate-spin" : ""}
+              />
+              Refresh
+            </button>
+
           </div>
 
-          <button
-            onClick={loadRequests}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2 text-sm font-medium hover:bg-slate-50"
-          >
-            <RefreshCw
-              size={16}
-              className={loading ? "animate-spin" : ""}
-            />
-            Refresh
-          </button>
+          {/* Filters */}
+          <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
 
-        </div>
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
 
-        {/* Filters */}
-        <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+              {/* <div className="relative">
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Search
+                  size={18}
+                  className="absolute left-3 top-3.5 text-slate-400"
+                />
 
-            <div className="relative">
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..."
+                  className="h-11 w-full rounded-lg border border-slate-300 pl-10 pr-4 outline-none focus:border-teal-600"
+                />
 
-              <Search
-                size={18}
-                className="absolute left-3 top-3.5 text-slate-400"
-              />
+              </div> */}
+              <div>
+
+              <label className="block text-sm font-medium mb-2">
+                From Date
+              </label>
 
               <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="h-11 w-full rounded-lg border border-slate-300 pl-10 pr-4 outline-none focus:border-teal-600"
+                type="date"
+                value={fromDate}
+                onChange={(e) => setFromDate(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-teal-600"
               />
 
             </div>
 
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-teal-600"
-            >
-              <option>All</option>
-              <option>REVOKED</option>
-              <option>REQUESTED</option>
-              <option>GRANTED</option>
-            </select>
+            <div>
+
+              <label className="block text-sm font-medium mb-2">
+                To Date
+              </label>
+
+              <input
+                type="date"
+                value={toDate}
+                onChange={(e) => setToDate(e.target.value)}
+                className="h-11 w-full rounded-lg border border-slate-300 px-3 outline-none focus:border-teal-600"
+              />
+
+            </div>
+
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="h-11 rounded-lg border border-slate-300 px-3 outline-none focus:border-teal-600"
+              >
+                <option>All</option>
+                <option>REVOKED</option>
+                <option>REQUESTED</option>
+                <option>GRANTED</option>
+              </select>
+               <div className="flex gap-2">
+
+              <button
+                onClick={loadRequests}
+                className="h-11 px-6 rounded-lg bg-teal-600 text-white hover:bg-teal-700"
+              >
+                Search
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="h-11 px-6 rounded-lg border border-slate-300 hover:bg-slate-100"
+              >
+                Reset
+              </button>
+
+            </div>
+
+            </div>
+
+          </div>
+
+          {/* Table */}
+
+          <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
+
+            <RequestTable
+              data={filteredData}
+              loading={loading}
+            />
 
           </div>
 
         </div>
+      </ConsentLayout>
+    );
+  };
 
-        {/* Table */}
-
-        <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
-
-          <RequestTable
-            data={filteredData}
-            loading={loading}
-          />
-
-        </div>
-
-      </div>
-    </ConsentLayout>
-  );
-};
-
-export default RequestListPage;
+  export default RequestListPage;

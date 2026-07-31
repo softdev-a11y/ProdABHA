@@ -1,5 +1,6 @@
 import {
   SearchPatientsService,
+  SearchPatientsByDateRangeService,
   GetConsentRequestListService,
   GetConsentDetailsService,
   GetRequestDataService,
@@ -26,13 +27,40 @@ const searchPatients = async (
   }
 };
 
-const getConsentRequestList = async (
-  unitCode: string
+const searchPatientsByDateRange = async (
+  unitCode: string,
+  startDate: string,
+  endDate: string
 ) => {
   try {
-    const response = await GetConsentRequestListService(
-      unitCode
-    );
+
+    const response =
+      await SearchPatientsByDateRangeService(
+        unitCode,
+        startDate,
+        endDate
+      );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
+const getConsentRequestList = async (
+  unitCode: string,
+  startDate: string,
+  endDate: string
+) => {
+  try {
+    const response =await GetConsentRequestListService(
+  unitCode,
+  startDate,
+  endDate
+);
     return response.data;
   } catch (error) {
     console.log(error);
@@ -94,6 +122,7 @@ const requestHealthInformation = async (payload: any) => {
 
 return {
   searchPatients,
+  searchPatientsByDateRange,
   getConsentRequestList,
   getConsentDetails,
   getRequestData,
