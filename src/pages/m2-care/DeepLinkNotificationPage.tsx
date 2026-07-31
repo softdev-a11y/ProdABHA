@@ -15,6 +15,8 @@
 
 
         const [mobileNumber, setMobileNumber] = useState("");
+        const HIP_ID = import.meta.env.VITE_M2_HIP_ID;
+        const HIP_NAME = import.meta.env.VITE_M2_HIP_NAME;
 
     
 
@@ -38,8 +40,8 @@ const handleSendSMS = async () => {
   notification: {
     phoneNo: mobileNumber,
     hip: {
-      id: "IN2010000642_2",
-      name: "Adhvit Innovations Private Limited",
+      id: HIP_ID,
+      name: HIP_NAME,
     },
   },
 
