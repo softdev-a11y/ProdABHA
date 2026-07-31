@@ -12,7 +12,7 @@ const PatientRecordListingPage = () => {
   type SelectedCareContext = {
     hiType: string;
     referenceNumber: string;
-  };
+  }; 
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
