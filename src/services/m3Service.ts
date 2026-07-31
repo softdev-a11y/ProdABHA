@@ -9,11 +9,23 @@ export const SearchPatientsService = (
   );
 };
 
-export const GetConsentRequestListService = (
-  unitCode: string
+export const SearchPatientsByDateRangeService = (
+  unitCode: string,
+  startDate: string,
+  endDate: string
 ) => {
   return m3ApiClient.get(
-    `/api/HiuInternal/consent-requests-list?unitCode=${unitCode}`
+    `/api/HiuInternal/search-patients-by-date-range?unitCode=${unitCode}&startDate=${startDate}&endDate=${endDate}`
+  );
+};
+
+export const GetConsentRequestListService = (
+  unitCode: string,
+  startDate: string,
+  endDate: string
+) => {
+  return m3ApiClient.get(
+    `/api/HiuInternal/consent-requests-list?unitCode=${unitCode}&startDate=${startDate}&endDate=${endDate}`
   );
 };
 

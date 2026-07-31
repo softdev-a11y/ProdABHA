@@ -18,6 +18,7 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
   const [step, setStep] = useState<"INPUT" | "OTP" | "DONE">("INPUT");
 
   const [mobile, setMobile] = useState("");
+  const [accepted, setAccepted] = useState(false);
   const [otp, setOtp] = useState(Array(6).fill(""));
 
   const [timer, setTimer] = useState(30);
@@ -25,12 +26,12 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
   
   const [resendCount, setResendCount] = useState(0);
 
-  // 🔥 Mask mobile
+  //  Mask mobile
   const maskedMobile = mobile
     ? `XXXXXX${mobile.slice(-4)}`
     : "";
 
-  // 🔥 Timer logic (clean)
+  //  Timer logic (clean)
   useEffect(() => {
     if (step !== "OTP") return;
 
@@ -46,7 +47,7 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
     return () => clearInterval(interval);
   }, [timer, step]);
 
-  // 🔥 OTP change
+  //  OTP change
   const handleOtpChange = (val: string, index: number) => {
 
     if (!/^\d?$/.test(val)) return;
@@ -97,7 +98,7 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
     }
   };
 
-  // 🔥 Send OTP
+  //  Send OTP
   const handleSendOtp = async () => {
 
     if (mobile.length !== 10) {
@@ -142,7 +143,7 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
     }
   };
 
-  // 🔥 Verify OTP
+  //  Verify OTP
   const handleVerifyOtp = async () => {
 
     const enteredOtp = otp.join("");
@@ -194,7 +195,7 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
     }
   };
 
-  // 🔥 Resend
+  //  Resend
   const handleResendOTP = () => {
     if (!canResend) return;
 
@@ -234,9 +235,18 @@ const ValidateMobileSection = ({ onComplete }: Props) => {
               />
             </div>
           </div>
+          <label className="flex items-start gap-2 text-xs text-gray-600 mt-3">
+            <input
+              type="checkbox"
+              checked={accepted}
+              onChange={(e) => setAccepted(e.target.checked)}
+              className="mt-1"
+            />
 
+            I consent to the use of my mobile number for ABHA creation and future communications.
+          </label>
           <button
-            disabled={mobile.length !== 10}
+            disabled={mobile.length !== 10 || !accepted}
             onClick={handleSendOtp}
             className="px-4 py-2 bg-blue-600 text-white text-sm rounded-md disabled:opacity-50 cursor-pointer"
           >

@@ -1,20 +1,33 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
 
 interface SearchPatientCardProps {
-  onSearch: (searchText: string) => void;
+  search: string;
+  setSearch: (value: string) => void;
+
+  fromDate: string;
+  setFromDate: (value: string) => void;
+
+  toDate: string;
+  setToDate: (value: string) => void;
+
+  onSearch: () => void;
+  onReset: () => void;
+
   loading: boolean;
 }
 
 const SearchPatientCard = ({
+  search,
+  setSearch,
+  fromDate,
+  setFromDate,
+  toDate,
+  setToDate,
   onSearch,
+  onReset,
   loading,
 }: SearchPatientCardProps) => {
-  const [searchText, setSearchText] = useState("");
 
-  const handleSearch = () => {
-    onSearch(searchText);
-  };
+
 
   return (
     <div className="rounded-lg border border-slate-200 bg-white p-4 sm:p-5 shadow-sm">
@@ -31,44 +44,96 @@ const SearchPatientCard = ({
       </div>
 
       {/* Search Form */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+  <div className="mt-6">
 
-        {/* Search Field */}
-        <div className="md:col-span-10">
-          <label className="mb-2 block text-sm font-medium text-slate-700">
-            Patient Name / MR No
-          </label>
+  <div className="grid lg:grid-cols-[250px_auto_1fr_auto] gap-5 items-end">
 
-          <input
-            type="text"
-            value={searchText}
-            placeholder="Enter Patient Name or MR No"
-            onChange={(e) =>
-              setSearchText(e.target.value)
-            }
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSearch();
-              }
-            }}
-            className="h-11 w-full rounded-lg border border-slate-300 px-4 outline-none focus:border-teal-600"
-          />
-        </div>
+    {/* Search */}
 
-        {/* Search Button */}
-        <div className="md:col-span-2">
-          <button
-            onClick={handleSearch}
-            disabled={loading}
-            className="flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-teal-600 font-medium text-white transition hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            <Search size={18} />
+    <div>
 
-            {loading ? "Searching..." : "Search"}
-          </button>
-        </div>
+      <label className="block text-sm font-medium mb-2">
+        Patient Name / MR No
+      </label>
+
+      <input
+        type="text"
+        placeholder="Enter Patient Name or MR No"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full border rounded-lg px-4 py-3"
+      />
+
+    </div>
+
+    {/* OR */}
+
+    <div className="flex justify-center items-center pb-2">
+
+      <span className="font-semibold text-gray-500">
+        OR
+      </span>
+
+    </div>
+
+    {/* Date Range */}
+
+    <div className="grid grid-cols-2 gap-3">
+
+      <div>
+
+        <label className="block text-sm font-medium mb-2">
+          From Date
+        </label>
+
+        <input
+          type="date"
+          value={fromDate}
+          onChange={(e) => setFromDate(e.target.value)}
+          className="w-full border rounded-lg px-3 py-3"
+        />
 
       </div>
+
+      <div>
+
+        <label className="block text-sm font-medium mb-2">
+          To Date
+        </label>
+
+        <input
+          type="date"
+          value={toDate}
+          onChange={(e) => setToDate(e.target.value)}
+          className="w-full border rounded-lg px-3 py-3"
+        />
+
+      </div>
+
+    </div>
+
+    <div className="flex gap-2">
+
+      <button
+        onClick={onSearch}
+        disabled={loading}
+        className="bg-teal-600 text-white rounded-lg px-6 py-3 hover:bg-teal-700 disabled:opacity-50"
+      >
+        Search
+      </button>
+
+      <button
+        onClick={onReset}
+        className="border border-slate-300 rounded-lg px-6 py-3 hover:bg-slate-100"
+      >
+        Reset
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
 
     </div>
   );
