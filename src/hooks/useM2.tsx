@@ -9,6 +9,7 @@ GetCareContextsService,
    SearchPatientByDateRangeService,
   GetLinkedHistoryService,
   GetLinkedHistoryByDateRangeService,
+  GetUserInitiatedTransactionsByDateRangeService
 } from "../services/m2.service";
 
 export const useM2 = () => {
@@ -208,6 +209,26 @@ const getLinkedHistoryByDateRange = async (
   }
 
 };
+const getUserInitiatedTransactionsByDateRange = async (
+  fromDate: string,
+  toDate: string
+) => {
+  try {
+
+    const response =
+      await GetUserInitiatedTransactionsByDateRangeService(
+        fromDate,
+        toDate
+      );
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
     return {
     generateLinkToken,
     linkCareContext,
@@ -219,5 +240,6 @@ const getLinkedHistoryByDateRange = async (
     searchPatientsByDateRange,
     getLinkedHistory,
     getLinkedHistoryByDateRange,
+    getUserInitiatedTransactionsByDateRange 
     };
 };
