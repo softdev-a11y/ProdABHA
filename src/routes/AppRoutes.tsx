@@ -24,6 +24,7 @@
   import ViewDataPage from "../pages/m3-consent/ViewDataPage";
   import ViewHealthRecordPage from "../pages/m3-consent/ViewHealthRecordPage";
   import DeepLinkNotificationPage from "../pages/m2-care/DeepLinkNotificationPage";
+  import UserInitiatedTransactionsPage from "../pages/m2-care/UserInitiatedTransactionsPage";
 
   const AppRoutes = () => {
     return (
@@ -167,6 +168,14 @@
               element={
                 <ProtectedRoutes>
                   <LinkedHistoryPage />
+                </ProtectedRoutes>
+              }
+            />
+            <Route
+              path="/internal/user-initiated-transactions"
+              element={
+                <ProtectedRoutes>
+                  <UserInitiatedTransactionsPage />
                 </ProtectedRoutes>
               }
             />

@@ -126,3 +126,16 @@ export const GetLinkedHistoryByDateRangeService = (
   );
 
 };
+
+// USER INITIATED TRANSACTIONS BY DATE RANGE
+
+export const GetUserInitiatedTransactionsByDateRangeService = (
+  fromDate: string,
+  toDate: string
+) => {
+
+  return m2ApiClient.get(
+    `/api/HipInternal/user-initiated-transactions/by-date-range?fromDate=${fromDate}&toDate=${toDate}`
+  );
+
+};
