@@ -31,6 +31,49 @@ const PatientRecordListingPage = () => {
   >([]);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
+  const buildPatientPayloadByHiType = () => {
+    const recordLookup = new Map<string, { hiType: string; display: string }>();
+
+    hiTypes.forEach((section: any) => {
+      section.records.forEach((record: any) => {
+        const key = `${section.hiType}::${record.referenceNumber}`;
+        recordLookup.set(key, {
+          hiType: section.hiType,
+          display: record.display,
+        });
+      });
+    });
+
+    const groupedByHiType = selectedCareContexts.reduce(
+      (acc, selected) => {
+        const key = `${selected.hiType}::${selected.referenceNumber}`;
+        const matchedRecord = recordLookup.get(key);
+
+        if (!matchedRecord) return acc;
+
+        if (!acc[selected.hiType]) {
+          acc[selected.hiType] = [];
+        }
+
+        acc[selected.hiType].push({
+          referenceNumber: selected.referenceNumber,
+          display: matchedRecord.display,
+        });
+
+        return acc;
+      },
+      {} as Record<string, Array<{ referenceNumber: string; display: string }>>,
+    );
+
+    return Object.entries(groupedByHiType).map(([hiType, careContexts]) => ({
+      referenceNumber: patientData?.mrno,
+      display: patientData?.patName,
+      hiType,
+      count: careContexts.length,
+      careContexts,
+    }));
+  };
+
   const toggleSelection = (hiType: string, recordId: string) => {
     setSelectedCareContexts((prev) =>
       prev.some(
@@ -98,36 +141,13 @@ const PatientRecordListingPage = () => {
         mobileNumber: patientData?.patMobile,
       };
 
-      const preparedCareContexts = hiTypes
-        .flatMap((section: any) =>
-          section.records.map((record: any) => ({
-            ...record,
-            hiType: section.hiType,
-          })),
-        )
-        .filter((record: any) =>
-          selectedCareContexts.some(
-            (item) =>
-              item.hiType === record.hiType &&
-              item.referenceNumber === record.referenceNumber,
-          ),
-        )
-        .map((record: any) => ({
-          referenceNumber: record.referenceNumber,
-          display: record.display,
-        }));
+      const patientPayload = buildPatientPayloadByHiType();
 
-      const patientPayload = [
-        {
-          referenceNumber: patientData?.mrno,
-          display: patientData?.patName,
-          hiType: "Prescription",
-          count: preparedCareContexts.length,
-
-          careContexts: preparedCareContexts,
-        },
-      ];
-
+      const selectedCareContextCount = patientPayload.reduce(
+        (total, patient) => total + patient.count,
+        0,
+      );
+      console.log("PATIENT PAYLOAD", patientPayload);
       console.log("TOKEN PAYLOAD", tokenPayload);
 
       const patientMobile = String(patientData?.patMobile || "").trim();
@@ -138,7 +158,7 @@ const PatientRecordListingPage = () => {
         tokenPayload,
         patientPayload,
         selectedCareContexts,
-        selectedCareContextCount: preparedCareContexts.length,
+        selectedCareContextCount,
         createdAt: new Date().toISOString(),
       };
 

@@ -31,6 +31,8 @@ type WorkflowErrorState = {
 const POLL_INTERVAL_MS = 3000;
 const LINK_RETRY_INTERVAL_MS = 3000;
 const MAX_LINK_RETRIES = 3;
+const SMS_RETRY_INTERVAL_MS = 2000;
+const MAX_SMS_RETRIES = 3;
 const HIP_ID = (import.meta.env.VITE_M2_HIP_ID || "").trim();
 const HIP_NAME = (import.meta.env.VITE_M2_HIP_NAME || "").trim();
 
@@ -319,7 +321,8 @@ const ProcessingPage = () => {
         return;
       }
 
-      const txnId = tokenResponse?.data?.transactionId;
+      let txnId = tokenResponse?.data?.transactionId;
+      debugger;
 
       if (!txnId) {
         stopWorkflowWithError("transactionCreated", {
@@ -369,8 +372,12 @@ const ProcessingPage = () => {
         linkToken,
         patient: workflowInit.patientPayload,
         transactionId: txnId,
+        patinetName: workflowInit.patientData?.patName,
+        mrno: workflowInit.patientData?.mrno,
+        unitCode: workflowInit.patientData?.unitCode,
       };
-
+      console.log("Link Payload:", linkPayload);
+      debugger;
       updateStep("linkingCareContext", "processing", "Calling link care context API...");
 
       let linkSucceeded = false;
@@ -448,23 +455,52 @@ const ProcessingPage = () => {
           },
         },
         transactionId: linkPayload.transactionId,
+        isDeepLinking:false
       };
+      debugger;
+      let smsResponse: any = null;
+      let smsSucceeded = false;
+      let smsFailureResponse: any = null;
 
-      const smsResponse = await sendSMSRef.current(smsPayload);
+      for (let attempt = 1; attempt <= MAX_SMS_RETRIES; attempt++) {
+        if (isCancelledRef.current) return;
 
-      if (isCancelledRef.current) return;
+        if (attempt > 1) {
+          updateStep(
+            "sendingSms",
+            "processing",
+            `Retry ${attempt - 1} of ${MAX_SMS_RETRIES} in ${SMS_RETRY_INTERVAL_MS / 1000}s`
+          );
+          await wait(SMS_RETRY_INTERVAL_MS);
+        }
 
-      if (!smsResponse || smsResponse?.success === false) {
-        stopWorkflowWithError(
-          "sendingSms",
-          toWorkflowError(
-            smsResponse,
-            "Sending SMS Notification",
-            "Unable to Send SMS Notification",
-            "SMS notification could not be sent."
-          )
+        smsResponse = await sendSMSRef.current(smsPayload);
+
+        if (isCancelledRef.current) return;
+
+        if (smsResponse?.success) {
+          smsSucceeded = true;
+          break;
+        }
+
+        smsFailureResponse = smsResponse;
+      }
+
+      if (!smsSucceeded) {
+        const smsError = toWorkflowError(
+          smsFailureResponse,
+          "Sending SMS Notification",
+          "Unable to Send SMS Notification",
+          "SMS notification could not be sent."
         );
-        return;
+
+        updateStep(
+          "sendingSms",
+          "failed",
+          `${smsError.title || smsError.description} SMS Notification failed after ${MAX_SMS_RETRIES} retry attempts.`
+        );
+      } else {
+        updateStep("sendingSms", "success", "SMS API triggered");
       }
 
       const notifyPayload = {
@@ -503,7 +539,6 @@ const ProcessingPage = () => {
         return;
       }
 
-      updateStep("sendingSms", "success", "SMS API triggered");
       updateStep("smsSent", "processing", "Waiting for SMS status...");
 
       const smsStatus = await pollWorkflow(
