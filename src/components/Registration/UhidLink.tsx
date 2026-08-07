@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, UserPlus, Link2 } from "lucide-react";
 import PatientVerificationModal from "../Modal/PatientVerificationModal";
+import ConfirmationModal from "../ConfirmationModal/ConfirmationModal";
 import useABDM from "../../hooks/useABDM";
 import toast from "react-hot-toast";
 import { formatDOB, calculateAge } from "../../utils/patientHelpers";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   profile: any;
@@ -20,6 +22,7 @@ const UhIdLink = ({
   abhaNumber,
   onComplete,
 }: Props) => {
+  const navigate = useNavigate();
   const { getPatient, getPatinetByMrno, savePatient, UpdateAbhaDetails, error } =
     useABDM();
 
@@ -34,6 +37,9 @@ const UhIdLink = ({
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedAbhaAddress, setSelectedAbhaAddress] = useState("");
+  const [isRegistrationSuccessModalOpen, setIsRegistrationSuccessModalOpen] =
+    useState(false);
+  const [registrationSuccessMessage, setRegistrationSuccessMessage] = useState("");
 
   const abhaAddresses = useMemo(() => {
     const profileAddresses = Array.isArray(profile?.phrAddress)
@@ -71,6 +77,11 @@ console.log("ABHA ADDRESS", abhaAddress);
     () => String(abhaNumber || "").replace(/-/g, "").trim(),
     [abhaNumber],
   );
+
+  const extractMrNoFromMessage = (message: string) => {
+    const match = String(message || "").match(/\bMR\s*No\.?\s*[:.-]?\s*([A-Za-z0-9-]+)/i);
+    return match?.[1] || "";
+  };
 
   useEffect(() => {
     if (abhaAddresses.length === 0) {
@@ -226,33 +237,55 @@ console.log("ABHA ADDRESS", abhaAddress);
   const handleSaveAction = async (payload: any) => {
     try {
       const response = await savePatient(payload);
+
       debugger;
+
       if (!response) {
         toast.error("No response received while saving patient");
         return;
       }
 
       if (!response.success) {
-        toast.error(response.message || error || "Failed to save patient");
+        toast.error(response.message || "Failed to save patient");
         return;
       }
 
-      if (typeof response.data === "string") {
-        try {
-          const parsed = JSON.parse(response.data);
+      // if (typeof response.data === "string") {
+      //   try {
+      //     // const parsed = JSON.parse(response.data);
           
-          if (parsed && parsed.success === false) {
-            toast.error(parsed.message || response.message || "Failed to save patient");
-            return;
-          }
-        } catch (parseErr) {
-          console.error("Save response parse error", parseErr);
-          toast.error("Invalid response received while saving patient");
-          return;
-        }
-      }
+      //     // if (parsed && parsed.success === false) {
+      //     //   toast.error(parsed.message || response.message || "Failed to save patient");
+      //     //   return;
+      //     // }
+      //   } catch (parseErr) {
+      //     console.error("Save response parse error", parseErr);
+      //     toast.error("Invalid response received while saving patient");
+      //     return;
+      //   }
+      // }
 
-      toast.success(response.message || "UHID linked successfully");
+      const successMessage = response.message;
+
+      const mrNo = extractMrNoFromMessage(successMessage);
+
+      const isRegistrationSuccessWithMrNo = /registration\s+successful/i.test(successMessage) && Boolean(mrNo);
+
+      if (response.success && isRegistrationSuccessWithMrNo) {
+        const modalMessage = [
+          successMessage,
+          patientName ? `Patient Name: ${patientName}` : "",
+          `MR No: ${mrNo}`,
+          `Copy MR No: ${mrNo}`,
+        ].join("\n\n");
+
+        setRegistrationSuccessMessage(modalMessage);
+
+        setIsRegistrationSuccessModalOpen(true);
+      }
+      else{
+        toast.error(response.message || "Failed to save patient");    
+      }
 
       onComplete?.(response.data);
     } catch (err) {
@@ -343,45 +376,21 @@ console.log("ABHA ADDRESS", abhaAddress);
         return;
       }
 
-      if(!updateResponse.data){
-        toast.error(updateResponse.message || "Invalid response received while linking UHID");
-        return;
-      }
+      // if(!updateResponse.data){
+      //   toast.error(updateResponse.message || "Invalid response received while linking UHID");
+      //   return;
+      // }
 
       if(updateResponse.success){
-
-        let parsed: any;
-
-        try {
-          parsed = JSON.parse(updateResponse.data);
-        } catch (parseErr) {
-          console.error("Link response parse error", parseErr);
-          toast.error("Unable to process link response");
-          return;
-        }
-
-        if(!parsed){
-          toast.error("Invalid response received while linking UHID");
-          return;
-        }
-
-        if(parsed.success){
-          
-          toast.success(parsed.message || updateResponse.message || "linked successfully");
-
-          onComplete?.(parsed);
-
-        }
-        else{
-          toast.error(parsed.message || updateResponse.message || "Failed to link");
-        }
-
+        toast.success(updateResponse.message);
+        onComplete?.(updateResponse.data);
       }
       else{
-        toast.error(updateResponse.message || "Failed to link"); 
+        toast.error(updateResponse.message || "Failed to link");
       }
 
-    } catch (err) {
+    } 
+    catch (err) {
       console.error(err);
       toast.error("Failed to link patient");
     }
@@ -561,6 +570,17 @@ console.log("ABHA ADDRESS", abhaAddress);
         }
    }}
 />
+
+    <ConfirmationModal
+      isOpen={isRegistrationSuccessModalOpen}
+      title="Registration Successful"
+      message={registrationSuccessMessage}
+      confirmText="OK"
+      onConfirm={() => {
+        setIsRegistrationSuccessModalOpen(false);
+        navigate("/module");
+      }}
+    />
     </div>
   );
 };
