@@ -9,7 +9,9 @@ GetCareContextsService,
    SearchPatientByDateRangeService,
   GetLinkedHistoryService,
   GetLinkedHistoryByDateRangeService,
-  GetUserInitiatedTransactionsByDateRangeService
+  GetUserInitiatedTransactionsByDateRangeService,
+   CreateCounterService,
+  GetCountersService
 } from "../services/m2.service";
 
 export const useM2 = () => {
@@ -229,6 +231,43 @@ const getUserInitiatedTransactionsByDateRange = async (
 
   }
 };
+
+const createCounter = async (
+  counterCode: string,
+  counterName: string
+) => {
+  try {
+
+    const response =
+      await CreateCounterService({
+        counterCode,
+        counterName
+      });
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
+
+
+const getCounters = async () => {
+  try {
+
+    const response =
+      await GetCountersService();
+
+    return response.data;
+
+  } catch (error) {
+
+    console.log(error);
+
+  }
+};
     return {
     generateLinkToken,
     linkCareContext,
@@ -240,6 +279,8 @@ const getUserInitiatedTransactionsByDateRange = async (
     searchPatientsByDateRange,
     getLinkedHistory,
     getLinkedHistoryByDateRange,
-    getUserInitiatedTransactionsByDateRange 
+    getUserInitiatedTransactionsByDateRange,
+    createCounter,
+    getCounters
     };
 };
