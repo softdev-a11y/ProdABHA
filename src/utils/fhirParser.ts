@@ -3,7 +3,31 @@ import type { ParsedFhirResources } from '../types/m3.types';
 export const getFhirEntries = (bundle: any) => {
   if (!bundle) return [];
 
-  return bundle.entry?.[0]?.resource?.entry ?? [];
+  if (!Array.isArray(bundle.entry)) {
+    return [];
+  }
+
+  const flatEntries: any[] = [];
+
+  bundle.entry.forEach((entry: any) => {
+    const resource = entry?.resource;
+
+    if (!resource) {
+      return;
+    }
+
+    if (
+      resource.resourceType === 'Bundle' &&
+      Array.isArray(resource.entry)
+    ) {
+      flatEntries.push(...resource.entry);
+      return;
+    }
+
+    flatEntries.push({ resource });
+  });
+
+  return flatEntries;
 };
 
 

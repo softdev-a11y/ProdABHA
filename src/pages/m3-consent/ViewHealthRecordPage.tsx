@@ -35,17 +35,35 @@ import ResourceRenderer from "../../components/m3-consent/resource-renderer/Reso
           );
 
           console.log("Health Record Response", response);
-        console.log(response.data.bundleJson);
         console.log(typeof response.data.bundleJson);
 
         const parsedBundle = JSON.parse(response.data.bundleJson);
 
 
-        console.log(parsedBundle);
+        const parsedResources = parseFhirBundle(parsedBundle);
 
+        const resourceTypes = Object.keys(parsedResources);
+        console.log("FHIR resource types:", resourceTypes);
 
-        const parsedResources =
-          parseFhirBundle(parsedBundle);
+        (parsedResources.DocumentReference ?? []).forEach(
+          (document: any, index: number) => {
+            const attachments = Array.isArray(document?.content)
+              ? document.content
+              : [];
+
+            attachments.forEach((contentItem: any, attachmentIndex: number) => {
+              const attachment = contentItem?.attachment;
+
+              console.log("DocumentReference", {
+                index,
+                id: document?.id ?? "-",
+                attachmentIndex,
+                contentType: attachment?.contentType ?? "-",
+                hasData: Boolean(attachment?.data),
+              });
+            });
+          }
+        );
 
         setResources(parsedResources);
 
