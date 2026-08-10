@@ -411,9 +411,20 @@ const AbdmCounterPage = () => {
                         </td>
 
                         <td className="px-5 py-4">
-                          {formatDate(
+                          {/* {formatDate(
                             counter.createdOnUtc
-                          )}
+                          )} */}
+
+                          {new Date(`${counter.createdOnUtc}Z`).toLocaleString("en-IN", {
+                              timeZone: "Asia/Kolkata",
+                              day: "2-digit",
+                              month: "2-digit",
+                              year: "numeric",
+                              hour: "2-digit",
+                              minute: "2-digit",
+                              hour12: true,
+                          })}
+
                         </td>
 
                         <td className="px-5 py-4 text-center">
