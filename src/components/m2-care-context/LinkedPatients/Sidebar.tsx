@@ -6,6 +6,8 @@
     Link,
     PanelLeftClose,
     PanelLeftOpen,
+     FileText,
+     QrCode,
   } from "lucide-react";
 
   import { NavLink } from "react-router-dom";
@@ -155,6 +157,17 @@
                 icon: Link,
                 label: "Deep Link Notification",
                 path: "/deeplinknotification",
+              },
+              {
+                icon: FileText,
+                label: "User Initiated Transactions",
+                path: "/internal/user-initiated-transactions",
+              },
+
+              {
+                icon: QrCode,
+                label: "ABDM Counter",
+                path: "/internal/abdm-counter",
               },
             ].map((item, index) => {
 

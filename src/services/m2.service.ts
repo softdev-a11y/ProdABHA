@@ -139,3 +139,30 @@ export const GetUserInitiatedTransactionsByDateRangeService = (
   );
 
 };
+
+// CREATE COUNTER
+
+export const CreateCounterService = (
+  data: {
+    counterCode: string;
+    counterName: string;
+  }
+) => {
+
+  return m2ApiClient.post(
+    "/api/abdm/counter",
+    data
+  );
+
+};
+
+
+// GET ALL COUNTERS
+
+export const GetCountersService = () => {
+
+  return m2ApiClient.get(
+    "/api/abdm/counter"
+  );
+
+};
