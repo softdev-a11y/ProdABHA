@@ -83,6 +83,15 @@ console.log("ABHA ADDRESS", abhaAddress);
     return match?.[1] || "";
   };
 
+  const getProfileFullName = () => {
+    const fullName = [profile?.firstName, profile?.middleName, profile?.lastName]
+      .filter((part: any) => typeof part === "string" && part.trim())
+      .join(" ")
+      .trim();
+
+    return fullName || patientName;
+  };
+
   useEffect(() => {
     if (abhaAddresses.length === 0) {
       setSelectedAbhaAddress("");
@@ -359,7 +368,8 @@ console.log("ABHA ADDRESS", abhaAddress);
       const payload = {
         abhaNumber:normalizedAbhaNumber,
         abhaaddress:selectedAbhaAddress,
-        mrno:selected
+        mrno:selected,
+        patName: getProfileFullName()
       };
 
       console.log('payload',payload);

@@ -10,6 +10,7 @@ export const loginService = async (data:ILoginForm) => {
 
 export const getUnitsService = async () => {
     const response = await apiClient.get('/Auth/GetUnits');
+    debugger;
     return response.data;
 } 
 
