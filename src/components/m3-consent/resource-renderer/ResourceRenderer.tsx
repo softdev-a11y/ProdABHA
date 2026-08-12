@@ -1,6 +1,7 @@
 import PatientCard from "../patient/PatientCard";
 import EncounterCard from "../encounter/EncounterCard";
 import PractitionerCard from "../practitioner/PractitionerCard";
+import CompositionCard from "../composition/CompositionCard";
 import ConditionTable from "../condition/ConditionTable";
 import InvestigationTable from "../investigation/InvestigationTable";
 import OrganizationCard from "../organization/OrganizationCard";
@@ -16,6 +17,7 @@ interface Props {
 const ResourceRenderer = ({ resources }: Props) => {
   return (
     <div className="space-y-6">
+      
       {resources.Patient?.length > 0 && (
         <PatientCard patient={resources.Patient[0]} />
       )}
@@ -45,6 +47,14 @@ const ResourceRenderer = ({ resources }: Props) => {
       {resources.DiagnosticReport?.length > 0 && (
         <DiagnosticReportTable diagnosticReports={resources.DiagnosticReport} />
       )}
+      
+      {resources.Composition?.length > 0 && (
+        <CompositionCard
+          compositions={resources.Composition}
+          resources={resources}
+        />
+      )}
+
       {resources.DocumentReference?.length > 0 && (
         <DocumentReferenceTable documents={resources.DocumentReference} />
       )}
