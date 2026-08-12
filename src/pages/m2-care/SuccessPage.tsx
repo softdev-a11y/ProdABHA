@@ -5,6 +5,7 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { formatDate } from "../../utils/formatDate";
 
 const SuccessPage = () => {
 
@@ -18,13 +19,7 @@ const [collapsed, setCollapsed] = useState(false);
   const successData = (location.state as any) || null;
 
 const linkedDateTime = successData?.linkedAt
-  ? new Date(successData.linkedAt).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+  ? formatDate(successData.linkedAt)
   : "--";
 
   return (

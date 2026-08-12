@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ColumnDef } from "@tanstack/react-table";
 import TanStackTable from "../shared/TanStackTable";
+import { formatDateToLocalTime } from "../../../utils/formatDate";
 
 interface RequestItem {
   id: number;
@@ -24,31 +25,6 @@ interface RequestTableProps {
 
 const RequestTable = ({ data, loading }: RequestTableProps) => {
   const navigate = useNavigate();
-
-  const formatDate = (date: string | null) => {
-    if (!date) return "-";
-
-    return new Date(`${date}Z`).toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const formatDateExpiry = (date: string | null) => {
-    if (!date) return "-";
-
-    return new Date(`${date}Z`).toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
-  };
 
   const isConsentExpired = (expiryDate: string | null) => {
     if (!expiryDate) return false;
@@ -115,22 +91,22 @@ const RequestTable = ({ data, loading }: RequestTableProps) => {
       {
         accessorKey: "createdAtUtc",
         header: "Consent Created On",
-        cell: ({ row }) => formatDate(row.original.createdAtUtc),
+        cell: ({ row }) => formatDateToLocalTime(row.original.createdAtUtc, false),
       },
       {
         accessorKey: "approvedAtUtc",
         header: "Consent Granted On",
-        cell: ({ row }) => formatDate(row.original.approvedAtUtc),
+        cell: ({ row }) => formatDateToLocalTime(row.original.approvedAtUtc, false),
       },
       {
         accessorKey: "rejectedAtUtc",
         header: "Revoked On",
-        cell: ({ row }) => formatDate(row.original.rejectedAtUtc),
+        cell: ({ row }) => formatDateToLocalTime(row.original.rejectedAtUtc, false),
       },
       {
         accessorKey: "dataEraseAtUtc",
         header: "Consent Expired On",
-        cell: ({ row }) => formatDateExpiry(row.original.dataEraseAtUtc),
+        cell: ({ row }) => formatDateToLocalTime(row.original.dataEraseAtUtc),
       },
       {
         id: "action",

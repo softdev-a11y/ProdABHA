@@ -4,105 +4,97 @@ import { useLocation, useNavigate } from "react-router-dom";
 import useM3 from "../../hooks/useM3";
 import ConsentLayout from "../../components/m3-consent/layout/ConsentLayout";
 import toast from "react-hot-toast";
+import { formatDateToLocalTime } from "../../utils/formatDate";
 
 const ConsentDetailsPage = () => {
   const navigate = useNavigate();
 
   const location = useLocation();
 
-const { getConsentDetails, requestHealthInformation } = useM3();
-const { setLoading: setGlobalLoading }: any =  useContext(LoaderContext);
+  const { getConsentDetails, requestHealthInformation } = useM3();
+  const { setLoading: setGlobalLoading }: any = useContext(LoaderContext);
 
-const requestId = location.state?.requestId;
+  const requestId = location.state?.requestId;
 
-const [consent, setConsent] = useState<any>(null);
+  const [consent, setConsent] = useState<any>(null);
 
-const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
-
-const handleRequestData = async () => {
-  try {
+  const handleRequestData = async () => {
+    try {
       setGlobalLoading(true);
-    const payload = {
-      consent: {
-        id: consent.consentId,
-      },
-   dateRange: {
-  from: consent.permissionFromUtc + "Z",
-  to: consent.permissionToUtc + "Z",
-},
-    };
+      const payload = {
+        consent: {
+          id: consent.consentId,
+        },
+        dateRange: {
+          from: consent.permissionFromUtc + "Z",
+          to: consent.permissionToUtc + "Z",
+        },
+      };
 
-    console.log("CONSENT OBJECT", consent);
-    console.log("REQUEST PAYLOAD", payload);
+      console.log("CONSENT OBJECT", consent);
+      console.log("REQUEST PAYLOAD", payload);
 
-    const response =
-      await requestHealthInformation(payload);
+      const response = await requestHealthInformation(payload);
 
-    if (response?.success) {
-      toast.success(response.message);
-    } else {
-      toast.error(response?.message || "Request failed");
-    }
-  } catch (error) {
-    console.log(error);
-    toast.error("Failed to request health information.");
-  }
-  finally {
-  setGlobalLoading(false);
-}
-};
-
-useEffect(() => {
-
-    const loadConsent = async () => {
-        try {
-        if (!requestId) return;
-          setGlobalLoading(true);
-
-        const response =
-        await getConsentDetails(requestId);
-
-       setConsent(response.data);
-         } catch (error) {
-
-    console.log(error);
-
-  } finally {
-        setLoading(false);
-        setGlobalLoading(false);
+      if (response?.success) {
+        toast.success(response.message);
+      } else {
+        toast.error(response?.message || "Request failed");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to request health information.");
+    } finally {
+      setGlobalLoading(false);
     }
   };
 
+  useEffect(() => {
+    const loadConsent = async () => {
+      try {
+        if (!requestId) return;
+        setGlobalLoading(true);
+
+        const response = await getConsentDetails(requestId);
+
+        setConsent(response.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+        setGlobalLoading(false);
+      }
+    };
+
     loadConsent();
+  }, [requestId]);
 
-}, [requestId, ]);
+  const isGranted = consent?.status === "GRANTED";
 
-const isGranted = consent?.status === "GRANTED";
+  const isConsentValid =
+    consent && new Date(consent.dataEraseAtUtc) > new Date();
 
-const isConsentValid =
-  consent &&
-  new Date(consent.dataEraseAtUtc) > new Date();
+  const canRequestData = isGranted && isConsentValid;
 
-const canRequestData =
-  isGranted && isConsentValid;
-
-if (loading) {
+  if (loading) {
     return (
       <ConsentLayout>
         <div className="mx-auto w-full max-w-7xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-          <p className="text-sm font-medium text-slate-600">Loading consent details...</p>
+          <p className="text-sm font-medium text-slate-600">
+            Loading consent details...
+          </p>
         </div>
       </ConsentLayout>
     );
-}
+  }
 
-console.log(consent);
+  console.log(consent);
 
   return (
     <ConsentLayout>
       <div className="mx-auto w-full max-w-7xl rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 lg:p-6 shadow-sm">
-
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold leading-tight text-slate-800 sm:text-3xl">
@@ -115,21 +107,19 @@ console.log(consent);
         </div>
 
         {/* Patient Details */}
-       <div className="mt-8">
-
+        <div className="mt-8">
           <h2 className="mb-4 text-lg font-semibold text-slate-800 sm:text-xl">
             Patient Details
           </h2>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-                Patient Name 
+                Patient Name
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800 break-words">
-               {consent.patName}
+                {consent.patName}
               </p>
             </div>
 
@@ -162,27 +152,23 @@ console.log(consent);
                 {consent.patientAbhaAddress}
               </p>
             </div>
-
           </div>
-
         </div>
 
         {/* Consent Details */}
-       <div className="mt-8">
-
+        <div className="mt-8">
           <h2 className="mb-4 text-lg font-semibold text-slate-800 sm:text-xl">
             Consent Details
           </h2>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
                 Purpose
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800 break-words">
-              {consent.purposeText}
+                {consent.purposeText}
               </p>
             </div>
 
@@ -191,22 +177,22 @@ console.log(consent);
                 HI Types
               </p>
 
-           <div className="mt-2 flex flex-wrap gap-2">
-              {consent.hiTypesJson ? (
-                JSON.parse(consent.hiTypesJson).map((type: string) => (
-                  <span
-                    key={type}
-                    className="rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700"
-                  >
-                    {type}
+              <div className="mt-2 flex flex-wrap gap-2">
+                {consent.hiTypesJson ? (
+                  JSON.parse(consent.hiTypesJson).map((type: string) => (
+                    <span
+                      key={type}
+                      className="rounded-full bg-teal-100 px-2.5 py-1 text-xs font-medium text-teal-700"
+                    >
+                      {type}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-sm text-slate-500">
+                    No HI Types Selected
                   </span>
-                ))
-              ) : (
-                <span className="text-sm text-slate-500">
-                  No HI Types Selected
-                </span>
-              )}
-            </div>
+                )}
+              </div>
             </div>
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
@@ -215,16 +201,8 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-              {/* {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")} */}
-              {new Date(`${consent.permissionFromUtc}Z`).toLocaleString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  //hour: "2-digit",
-                  //minute: "2-digit",
-                  //hour12: true,
-                })}
+                {/* {new Date(consent.permissionFromUtc).toLocaleDateString("en-GB")} */}
+                {formatDateToLocalTime(consent.permissionFromUtc, false)}
               </p>
             </div>
 
@@ -234,16 +212,8 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-              {/* {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")} */}
-               {new Date(`${consent.permissionToUtc}Z`).toLocaleString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  // hour: "2-digit",
-                  // minute: "2-digit",
-                  // hour12: true,
-                })}
+                {/* {new Date(consent.permissionToUtc).toLocaleDateString("en-GB")} */}
+                {formatDateToLocalTime(consent.permissionToUtc, false)}
               </p>
             </div>
 
@@ -253,7 +223,7 @@ console.log(consent);
               </p>
 
               <span className="mt-2 inline-block rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
-            {consent.status}
+                {consent.status}
               </span>
             </div>
 
@@ -263,43 +233,32 @@ console.log(consent);
               </p>
 
               <p className="mt-2 text-sm font-semibold text-slate-800">
-             {new Date(consent.createdAtUtc).toLocaleDateString("en-GB")}
+                {new Date(consent.createdAtUtc).toLocaleDateString("en-GB")}
               </p>
             </div>
 
             <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
               <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Consent Valid Upto 
+                Consent Valid Upto
               </p>
 
-             <p className="mt-2 text-sm font-semibold text-slate-800">
-                {new Date(`${consent.dataEraseAtUtc}Z`).toLocaleString("en-IN", {
-                  timeZone: "Asia/Kolkata",
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: true,
-                })}
+              <p className="mt-2 text-sm font-semibold text-slate-800">
+                {formatDateToLocalTime(consent.dataEraseAtUtc)}
               </p>
             </div>
-
           </div>
-
         </div>
 
         {/* Buttons  */}
         <div className="mt-8 flex flex-col-reverse gap-3 border-t border-slate-200 pt-5 sm:flex-row sm:justify-end">
-
           <button
             onClick={() => navigate("/m3/request-list")}
-           className="w-full rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
+            className="w-full rounded-lg border border-slate-300 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 sm:w-auto"
           >
             Back
           </button>
 
-        <button
+          <button
             disabled={!canRequestData}
             onClick={handleRequestData}
             className={`w-full sm:w-auto rounded-lg px-5 py-2.5 text-sm text-white ${
@@ -311,32 +270,30 @@ console.log(consent);
             Request Data
           </button>
 
-      <button
-  disabled={!isGranted}
-  onClick={() =>
-    navigate("/m3/view-data", {
-      state: {
-        consentId: consent.consentId,
-        consent: consent,
-      },
-    })
-  }
-  className={`w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white sm:w-auto ${
-    isGranted
-      ? "bg-teal-600 hover:bg-teal-700"
-      : "bg-slate-300 cursor-not-allowed"
-  }`}
->
-  View Data
-</button>
-{!isGranted && (
-  <p className="mt-2 self-start text-xs text-slate-500 sm:self-center sm:mr-auto">
-    Health records will be available after the patient grants consent.
-  </p>
-)}
-
+          <button
+            disabled={!isGranted}
+            onClick={() =>
+              navigate("/m3/view-data", {
+                state: {
+                  consentId: consent.consentId,
+                  consent: consent,
+                },
+              })
+            }
+            className={`w-full rounded-lg px-5 py-2.5 text-sm font-medium text-white sm:w-auto ${
+              isGranted
+                ? "bg-teal-600 hover:bg-teal-700"
+                : "bg-slate-300 cursor-not-allowed"
+            }`}
+          >
+            View Data
+          </button>
+          {!isGranted && (
+            <p className="mt-2 self-start text-xs text-slate-500 sm:self-center sm:mr-auto">
+              Health records will be available after the patient grants consent.
+            </p>
+          )}
         </div>
-
       </div>
     </ConsentLayout>
   );

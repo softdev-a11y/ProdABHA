@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
 import { LoaderContext } from "../../context/LoaderProvider";
 import { useM2 } from "../../hooks/useM2";
+import { formatDateToLocalTime } from "../../utils/formatDate";
 
 interface Counter {
   counterId: number;
@@ -159,16 +160,6 @@ const AbdmCounterPage = () => {
     }
 
   };
-
-
-  const formatDate = (
-    date: string
-  ) => {
-
-    return new Date(date).toLocaleString();
-
-  };
-
 
   return (
 
@@ -411,19 +402,7 @@ const AbdmCounterPage = () => {
                         </td>
 
                         <td className="px-5 py-4">
-                          {/* {formatDate(
-                            counter.createdOnUtc
-                          )} */}
-
-                          {new Date(`${counter.createdOnUtc}Z`).toLocaleString("en-IN", {
-                              timeZone: "Asia/Kolkata",
-                              day: "2-digit",
-                              month: "2-digit",
-                              year: "numeric",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                              hour12: true,
-                          })}
+                          {formatDateToLocalTime(counter.createdOnUtc)}
 
                         </td>
 
