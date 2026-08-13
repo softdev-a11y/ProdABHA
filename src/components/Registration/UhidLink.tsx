@@ -369,10 +369,11 @@ console.log("ABHA ADDRESS", abhaAddress);
         abhaNumber:normalizedAbhaNumber,
         abhaaddress:selectedAbhaAddress,
         mrno:selected,
+        patFname: profile?.firstName || "",
         patName: getProfileFullName(),
         patDob: formatDOB(profile?.profile?.dob)
       };
-
+      debugger;
       console.log('payload',payload);
 
       const updateResponse = await UpdateAbhaDetails(payload);
