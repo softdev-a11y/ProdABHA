@@ -163,7 +163,7 @@ const linkedDateTime = successData?.linkedAt
 
               <button
                 onClick={() =>
-                  navigate("/dashboard")
+                  navigate("/linkedpatients")
                 }
                 className="w-full lg:w-auto px-6 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition"
               >

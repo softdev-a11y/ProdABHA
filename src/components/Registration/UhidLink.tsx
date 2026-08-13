@@ -369,7 +369,8 @@ console.log("ABHA ADDRESS", abhaAddress);
         abhaNumber:normalizedAbhaNumber,
         abhaaddress:selectedAbhaAddress,
         mrno:selected,
-        patName: getProfileFullName()
+        patName: getProfileFullName(),
+        patDob: formatDOB(profile?.profile?.dob)
       };
 
       console.log('payload',payload);

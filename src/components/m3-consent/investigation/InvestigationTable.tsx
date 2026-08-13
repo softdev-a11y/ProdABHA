@@ -30,7 +30,7 @@ const InvestigationTable = ({ investigations }: Props) => {
         header: "Requested On",
             cell: ({ row }) => {
         const date = row.original.authoredOn;
-
+              
         if (!date) {
             return "-";
         }

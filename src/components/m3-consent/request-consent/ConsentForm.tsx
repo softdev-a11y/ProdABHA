@@ -2,12 +2,13 @@ import { useState } from "react";
 
 interface Props {
   patient: any;
-  onSubmit: (payload: any) => void;
+  onSubmit: (payload: any) => void | Promise<void>;
   onBack: () => void;
 }
 
 const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
   const [hiTypes, setHiTypes] = useState<string[]>([]);
+  const [hiTypesError, setHiTypesError] = useState("");
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -82,6 +83,8 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
   const [dataEraseTime, setDataEraseTime] = useState("23:59");
 
   const handleHiTypeChange = (type: string) => {
+    setHiTypesError("");
+
     if (hiTypes.includes(type)) {
       setHiTypes(hiTypes.filter((item) => item !== type));
     } else {
@@ -90,12 +93,12 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
   };
 
   const handleSubmit = () => {
+    if (hiTypes.length === 0) {
+      setHiTypesError("Please select at least one HI type.");
+      return;
+    }
 
     const localDateTime = new Date(`${dataEraseAt}T${dataEraseTime}:00`);
-
-    console.log("Local Date Time", localDateTime.toISOString());
-
-    debugger;
 
     const payload = {
       consent: {
@@ -150,8 +153,7 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
         careContexts: [],
       },
     };
-    console.log("Patient Object", patient);
-    console.log("Payload", payload);
+
     onSubmit(payload);
   };
 
@@ -274,6 +276,10 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
                 </label>
               ))}
             </div>
+
+            {hiTypesError && (
+              <p className="mt-1 text-xs text-red-600">{hiTypesError}</p>
+            )}
           </div>
 
           {/* From Date */}

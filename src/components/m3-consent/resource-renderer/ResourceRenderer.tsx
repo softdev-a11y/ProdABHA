@@ -21,7 +21,7 @@ const ResourceRenderer = ({ resources }: Props) => {
       {resources.Patient?.length > 0 && (
         <PatientCard patient={resources.Patient[0]} />
       )}
-
+      
       {resources.Encounter?.length > 0 && (
         <EncounterCard encounters={resources.Encounter} />
       )}
@@ -29,21 +29,27 @@ const ResourceRenderer = ({ resources }: Props) => {
       {resources.Practitioner?.length > 0 && (
         <PractitionerCard practitioners={resources.Practitioner} />
       )}
+
       {resources.Condition?.length > 0 && (
         <ConditionTable conditions={resources.Condition} />
       )}
+      
       {resources.ServiceRequest?.length > 0 && (
         <InvestigationTable investigations={resources.ServiceRequest} />
       )}
+
       {resources.Organization?.length > 0 && (
         <OrganizationCard organizations={resources.Organization} />
       )}
+
       {resources.Observation?.length > 0 && (
         <ObservationTable observations={resources.Observation} />
       )}
+
       {resources.MedicationRequest?.length > 0 && (
         <MedicationTable medications={resources.MedicationRequest} />
       )}
+
       {resources.DiagnosticReport?.length > 0 && (
         <DiagnosticReportTable diagnosticReports={resources.DiagnosticReport} />
       )}
@@ -58,6 +64,7 @@ const ResourceRenderer = ({ resources }: Props) => {
       {resources.DocumentReference?.length > 0 && (
         <DocumentReferenceTable documents={resources.DocumentReference} />
       )}
+
     </div>
   );
 };

@@ -146,6 +146,7 @@ export const CreateCounterService = (
   data: {
     counterCode: string;
     counterName: string;
+    unitCode: string;
   }
 ) => {
 
@@ -159,10 +160,10 @@ export const CreateCounterService = (
 
 // GET ALL COUNTERS
 
-export const GetCountersService = () => {
+export const GetCountersService = (unitCode: string) => {
 
   return m2ApiClient.get(
-    "/api/abdm/counter"
+    `/api/abdm/counter?unitCode=${encodeURIComponent(unitCode)}`
   );
 
 };

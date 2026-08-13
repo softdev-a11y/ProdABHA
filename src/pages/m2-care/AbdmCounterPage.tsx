@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import Sidebar from "../../components/m2-care-context/LinkedPatients/Sidebar";
 import { LoaderContext } from "../../context/LoaderProvider";
 import { useM2 } from "../../hooks/useM2";
+import { useUnit } from "../../context/UnitContext";
 import { formatDateToLocalTime } from "../../utils/formatDate";
 
 interface Counter {
@@ -27,6 +28,7 @@ const AbdmCounterPage = () => {
 
   const { setLoading }: any =
     useContext(LoaderContext);
+  const { selectedUnit } = useUnit();
 
   const [counterCode, setCounterCode] =
     useState("");
@@ -50,12 +52,18 @@ const AbdmCounterPage = () => {
   // GET COUNTERS
   const loadCounters = async () => {
 
+    if (!selectedUnit) {
+      setCounters([]);
+      toast.error("Please select unit.");
+      return;
+    }
+
     try {
 
       setLoading(true);
 
       const response =
-        await getCounters();
+        await getCounters(selectedUnit);
 
       if (response?.success) {
 
@@ -91,11 +99,20 @@ const AbdmCounterPage = () => {
 
     loadCounters();
 
-  }, []);
+  }, [selectedUnit]);
 
 
   // CREATE COUNTER
   const handleCreateCounter = async () => {
+
+    if (!selectedUnit) {
+
+      toast.error(
+        "Please select unit."
+      );
+
+      return;
+    }
 
     if (!counterCode.trim()) {
 
@@ -122,7 +139,8 @@ const AbdmCounterPage = () => {
       const response =
         await createCounter(
           counterCode.trim(),
-          counterName.trim()
+          counterName.trim(),
+          selectedUnit
         );
 
       if (response?.success) {

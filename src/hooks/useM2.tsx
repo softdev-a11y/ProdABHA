@@ -234,14 +234,16 @@ const getUserInitiatedTransactionsByDateRange = async (
 
 const createCounter = async (
   counterCode: string,
-  counterName: string
+  counterName: string,
+  unitCode: string
 ) => {
   try {
-
+    
     const response =
       await CreateCounterService({
         counterCode,
-        counterName
+        counterName,
+        unitCode
       });
 
     return response.data;
@@ -254,11 +256,11 @@ const createCounter = async (
 };
 
 
-const getCounters = async () => {
+const getCounters = async (unitCode: string) => {
   try {
 
     const response =
-      await GetCountersService();
+      await GetCountersService(unitCode);
 
     return response.data;
 
