@@ -189,9 +189,9 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       patlname: profileData?.lastName || "",
 
-      patdob: formatDOB(profileData?.dateOfBirth),
+      patdob: formatDOB(profileData?.profile?.dob), // IMP 
 
-      patsex: profileData?.gender || "",
+      patsex: profileData?.gender || "", // IMP 
 
       patmobile: profileData?.mobile || "",
 
@@ -277,10 +277,27 @@ console.log("ABHA ADDRESS", abhaAddress);
       const successMessage = response.message;
 
       const mrNo = extractMrNoFromMessage(successMessage);
-
+      debugger;
       const isRegistrationSuccessWithMrNo = /registration\s+successful/i.test(successMessage) && Boolean(mrNo);
 
       if (response.success && isRegistrationSuccessWithMrNo) {
+        const updatePayload = {
+          abhaNumber: normalizedAbhaNumber,
+          abhaaddress: selectedAbhaAddress,
+          mrno: mrNo,
+          patFname: profile?.firstName || "",
+          patName: getProfileFullName(),
+          patDob: formatDOB(profile?.profile?.dob),
+        };
+
+        const updateResponse = await UpdateAbhaDetails(updatePayload);
+        debugger;
+        if (!updateResponse || !updateResponse.success) {
+          toast.error(
+            updateResponse?.message || error || "Registration done but ABHA link update failed",
+          );
+        }
+
         const modalMessage = [
           successMessage,
           patientName ? `Patient Name: ${patientName}` : "",
@@ -296,7 +313,7 @@ console.log("ABHA ADDRESS", abhaAddress);
         toast.error(response.message || "Failed to save patient");    
       }
 
-      onComplete?.(response.data);
+      //onComplete?.(response.data);
     } catch (err) {
       console.error(err);
       toast.error(error || "Something went wrong while saving patient");
@@ -364,7 +381,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       //console.log("payload", payload);
 
       //await handleSaveAction(payload);
-
+      // IMP Fields 
       const payload = {
         abhaNumber:normalizedAbhaNumber,
         abhaaddress:selectedAbhaAddress,

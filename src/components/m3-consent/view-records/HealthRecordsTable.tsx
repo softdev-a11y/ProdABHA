@@ -11,6 +11,7 @@ interface HealthRecord {
   dateRangeToUtc: string;
   requestStatus: string;
   processingStatus?: string; // optional
+  errorMessage?: string;
 }
 
 interface Props {
@@ -44,6 +45,10 @@ const HealthRecordsTable = ({ records, onView  }: Props) => {
   //   },
   // ];
 const data = records;
+
+  const getStatus = (record: HealthRecord) =>
+    (record.processingStatus ?? record.requestStatus ?? "").toUpperCase();
+
   const columns = useMemo<ColumnDef<HealthRecord>[]>(
     () => [
 {
@@ -84,21 +89,41 @@ const data = records;
     row.original.processingStatus ?? "-",
 },
 {
+  id: "errorMessage",
+  header: "Error Message",
+  cell: ({ row }) => {
+    const status = getStatus(row.original);
+    if (status !== "FAILED") {
+      return "-";
+    }
+
+    return row.original.errorMessage ?? "-";
+  },
+},
+{
   id: "action",
   header: "Action",
-  cell: ({ row }) => (
-    <button
-      onClick={() =>
-        onView(row.original.healthInfoTransactionId)
-      }
-    className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700"
-  >
-    View
-  </button>
-),
+  cell: ({ row }) => {
+    const status = getStatus(row.original);
+
+    if (status !== "COMPLETED") {
+      return "-";
+    }
+
+    return (
+      <button
+        onClick={() =>
+          onView(row.original.healthInfoTransactionId)
+        }
+        className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700"
+      >
+        View
+      </button>
+    );
+  },
       },
     ],
-    []
+    [onView]
   );
 
   return (

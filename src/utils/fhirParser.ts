@@ -22,7 +22,7 @@ const collectEntries = (bundle: any): any[] => {
       return;
     }
 
-    flatEntries.push({ resource });
+    flatEntries.push({ resource, fullUrl: entry?.fullUrl });
   });
 
   return flatEntries;
@@ -42,6 +42,27 @@ export const parseFhirBundle = (
   const entries = getFhirEntries(bundle);
 
   const resources: ParsedFhirResources = {};
+  const seenResourceKeys = new Set<string>();
+  const duplicateCounts = new Map<string, number>();
+
+  const getResourceIdentity = (entry: any) => {
+    const resource = entry?.resource;
+    const resourceType = resource?.resourceType;
+
+    if (!resourceType) {
+      return null;
+    }
+
+    if (resource?.id) {
+      return `${resourceType}/${resource.id}`;
+    }
+
+    if (entry?.fullUrl) {
+      return `${resourceType}@${entry.fullUrl}`;
+    }
+
+    return null;
+  };
 
   entries.forEach((entry: any) => {
 
@@ -55,9 +76,37 @@ export const parseFhirBundle = (
       resources[resource.resourceType] = [];
     }
 
+    const identity = getResourceIdentity(entry);
+
+    if (identity && seenResourceKeys.has(identity)) {
+      duplicateCounts.set(
+        identity,
+        (duplicateCounts.get(identity) ?? 1) + 1
+      );
+      return;
+    }
+
+    if (identity) {
+      seenResourceKeys.add(identity);
+      duplicateCounts.set(identity, 1);
+    }
+
     resources[resource.resourceType].push(resource);
 
   });
+
+  const duplicatedResources = Array.from(duplicateCounts.entries()).filter(
+    ([, count]) => count > 1
+  );
+
+  if (duplicatedResources.length > 0) {
+    console.warn("Duplicate exists in incoming FHIR Bundle.", {
+      duplicates: duplicatedResources.map(([identity, count]) => ({
+        identity,
+        occurrences: count,
+      })),
+    });
+  }
 
   return resources;
 

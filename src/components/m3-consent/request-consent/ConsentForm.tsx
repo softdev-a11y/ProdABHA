@@ -97,7 +97,7 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
       setHiTypesError("Please select at least one HI type.");
       return;
     }
-
+    const now = new Date();
     const localDateTime = new Date(`${dataEraseAt}T${dataEraseTime}:00`);
 
     const payload = {
@@ -139,7 +139,9 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
 
           dateRange: {
             from: `${fromDate}T00:00:00.000Z`,
-            to: `${toDate}T00:00:00.000Z`,
+            //to: `${toDate}T00:00:00.000Z`,
+            //to: `${toDate}T17:59:59.000Z`,
+            to: now.toISOString()
           },
 
           dataEraseAt: localDateTime.toISOString(),
@@ -248,7 +250,7 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
               className="h-10 w-full rounded-lg border border-slate-300 px-3"
             >
               {PURPOSES.map((item) => (
-                <option key={item.code} value={item.code}>
+                <option key={`${item.code}-${item.text}`} value={item.code}>
                   {item.text}
                 </option>
               ))}
