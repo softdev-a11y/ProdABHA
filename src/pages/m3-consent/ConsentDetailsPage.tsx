@@ -152,6 +152,30 @@ const ConsentDetailsPage = () => {
                 {consent.patientAbhaAddress}
               </p>
             </div>
+
+            {consent.hospitalName && (
+              <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                  Hospital / Health Facility
+                </p>
+
+                <p className="mt-2 text-sm font-semibold text-slate-800 break-words">
+                  {consent.hospitalName}
+                </p>
+              </div>
+            )}
+
+            {consent.hipId && (
+              <div className="min-h-[90px] rounded-xl border border-slate-200 bg-slate-50 p-4 text-left">
+                <p className="text-xs font-medium uppercase tracking-wide text-slate-500">
+                  HIP ID
+                </p>
+
+                <p className="mt-2 text-sm font-semibold text-slate-800 break-all">
+                  {consent.hipId}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 

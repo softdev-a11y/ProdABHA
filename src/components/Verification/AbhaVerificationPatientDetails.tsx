@@ -2,6 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import toast from "react-hot-toast";
 import useMaster from "../../hooks/useMaster";
+import DatePicker from "react-multi-date-picker";
+import Modal from "../shared/Modal";
+import AadharSection from "../Registration/AadharSection";
+import { ShieldCheck } from "lucide-react";
 
 type Props = {
   profile: any;
@@ -20,6 +24,12 @@ const normalizeDateInput = (value: string) => {
   if (!value) return "";
 
   const raw = String(value).trim();
+
+  const ddmmyyyy = raw.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (ddmmyyyy) {
+    const [, dd, mm, yyyy] = ddmmyyyy;
+    return `${yyyy}-${mm}-${dd}`;
+  }
 
   if (/^\d{8}$/.test(raw)) {
     const yyyy = raw.slice(0, 4);
@@ -218,6 +228,28 @@ const AbhaVerificationPatientDetails = ({
     }));
   };
 
+  const formatAadharForSection = (value: string) => {
+    const digits = String(value || "").replace(/\D/g, "").slice(0, 12);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+
+  const openAadharVerificationModal = () => {
+    const cleanAadhar = String(formData?.aadhar || "").replace(/\D/g, "");
+    const cleanMobile = String(formData?.mobile || "").replace(/\D/g, "");
+
+    if (!/^\d{12}$/.test(cleanAadhar)) {
+      toast.error("Please enter valid 12 digit Aadhaar number");
+      return;
+    }
+
+    if (!/^\d{10}$/.test(cleanMobile)) {
+      toast.error("Please enter valid 10 digit mobile number");
+      return;
+    }
+
+    setAadharVerificationModal(true);
+  };
+
   const isFormValid = () => {
     const mandatoryValues = [
       formData?.firstName,
@@ -250,7 +282,20 @@ const AbhaVerificationPatientDetails = ({
     return true;
   };
 
+  const formatDateToDDMMYYYY = (value: string) => {
+    if (!value) return "";
+
+    const [yyyy, mm, dd] = value.split("-");
+
+    return `${dd}-${mm}-${yyyy}`;
+  };
+
   const handleContinue = () => {
+    if (!isAadharVerified) {
+      toast.error("Please complete Aadhaar verification first");
+      return;
+    }
+
     if (!formData?.firstName?.trim()) {
       toast.error("Please enter first name");
       return;
@@ -320,16 +365,16 @@ const AbhaVerificationPatientDetails = ({
     const selectedCountry = countryOptions.find(
       (item: SelectOption) => item.value === formData.countryId,
     );
-
+    debugger;
     onComplete?.({
       ...formData,
       abhaAddress: "",
-      dob: formData.dateOfBirth,
+      dob: formatDateToDDMMYYYY(formData.dateOfBirth),
       profile: {
         ...sourceProfile,
         ...formData,
-        dob: formData.dateOfBirth,
-        dateOfBirth: formData.dateOfBirth,
+        dob: formatDateToDDMMYYYY(formData.dateOfBirth),
+        dateOfBirth:formatDateToDDMMYYYY(formData.dateOfBirth),
         country: selectedCountry?.label || sourceProfile?.country || "",
         address: {
           line: formData.addressLine,
@@ -349,7 +394,81 @@ const AbhaVerificationPatientDetails = ({
     });
   };
 
+
+  const [aadharVerificationModal, setAadharVerificationModal] = useState(false);
+  const [isAadharVerified, setIsAadharVerified] = useState(false); 
+    // ✅ Aadhaar Done
+  const onCompleteAadharVerification = (
+    data: any,
+    txn: string,
+    mobile: string,
+    aadhar: string,
+  ) => {
+    console.log("1profile", data);
+    console.log("2txn", txn);
+    console.log("3mobile", mobile);
+    console.log("4aadhar", aadhar);
+
+    const profileData = data?.profile || {};
+
+    const stateName = String(profileData?.stateName || "").toLowerCase().replace(/\s/g, "");
+    const districtName = String(profileData?.districtName || "").toLowerCase().replace(/\s/g, "");
+    const cityName = String(profileData?.cityName || "").toLowerCase().replace(/\s/g, "");
+
+    const matchedState = states.find(
+      (item: any) => item.text?.toLowerCase()?.replace(/\s/g, "") === stateName,
+    );
+    const matchedDistrict = districts.find(
+      (item: any) => item.text?.toLowerCase()?.replace(/\s/g, "") === districtName,
+    );
+    const matchedCity = cities.find(
+      (item: any) => item.text?.toLowerCase()?.replace(/\s/g, "") === cityName,
+    );
+    const defaultCountry = countries.find((item: any) =>
+      item.text?.toLowerCase()?.includes("india"),
+    );
+
+    setFormData((prev: any) => ({
+      ...prev,
+      firstName: profileData?.firstName || prev.firstName || "",
+      middleName: profileData?.middleName || prev.middleName || "",
+      lastName: profileData?.lastName || prev.lastName || "",
+      dateOfBirth: normalizeDateInput(profileData?.dob || profileData?.dateOfBirth || prev.dateOfBirth || ""),
+      gender: normalizeGender(profileData?.gender || prev.gender || ""),
+      mobile: mobile || profileData?.mobile || prev.mobile || "",
+      aadhar: aadhar?.replace(/\D/g, "") || prev.aadhar || "",
+      abhaNumber:
+        data?.abhaNumber || profileData?.abhaNumber || profileData?.ABHANumber || prev.abhaNumber || "",
+      // abhaAddress:
+      //   data?.abhaAddress ||
+      //   profileData?.abhaAddress ||
+      //   (Array.isArray(profileData?.phrAddress) ? profileData.phrAddress[0] : "") ||
+      //   prev.abhaAddress ||
+      //   "",
+      abhaAddress:
+        Array.isArray(profileData?.phrAddress) && profileData.phrAddress.length > 0
+          ? profileData.phrAddress.join(",")
+          : prev.abhaAddress || "",
+      email: profileData?.email || prev.email || "",
+      addressLine: profileData?.address || prev.addressLine || "",
+      pinCode: profileData?.pinCode || prev.pinCode || "",
+      stateId: matchedState?.value || prev.stateId || "",
+      districtId: matchedDistrict?.value || prev.districtId || "",
+      cityId: matchedCity?.value || prev.cityId || "",
+      countryId: prev.countryId || defaultCountry?.value || "",
+      abhaStatus: profileData?.abhaStatus || prev.abhaStatus || "",
+      phrAddress: Array.isArray(profileData?.phrAddress)
+        ? profileData.phrAddress
+        : prev.phrAddress,
+    }));
+
+    setIsAadharVerified(true);
+    setAadharVerificationModal(false);
+    
+  };
+
   return (
+    <>
     <div className="bg-white border-gray-200">
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -394,13 +513,42 @@ const AbhaVerificationPatientDetails = ({
             onChange={(value: string) => updateField("lastName", value)}
           />
 
-          <InputField
+          {/* <InputField
             label="DOB"
             value={formData?.dateOfBirth}
             type="date"
             readOnly={isLocked}
             onChange={(value: string) => updateField("dateOfBirth", value)}
-          />
+          /> */}
+
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+            <label className="md:w-40 text-sm font-medium text-gray-700">DOB</label>
+
+            <DatePicker
+              value={formData?.dateOfBirth ? new Date(formData.dateOfBirth) : null}
+              onChange={(date: any) => {
+                // Store as YYYY-MM-DD internally
+                const formattedDate = date ? date.format("YYYY-MM-DD") : "";
+                updateField("dateOfBirth", formattedDate);
+              }}
+              readOnly={isLocked}
+              maxDate={new Date()}
+              format="DD-MM-YYYY"  // Only for display
+              inputClass="flex-1 border border-gray-300 rounded-md px-3 py-2"
+            />
+
+            {/* <input
+              type={type}
+              readOnly={readOnly}
+              value={value || ""}
+              maxLength={maxLength}
+              onChange={(e) => onChange?.(e.target.value)}
+              className={`flex-1 border border-gray-300 rounded-md px-3 py-2 ${
+                readOnly ? "bg-gray-100" : "bg-white"
+              }`}
+            /> */}
+          </div>
+
 
           <DropdownField
             label="Gender"
@@ -433,15 +581,41 @@ const AbhaVerificationPatientDetails = ({
             onChange={(value: string) => updateField("email", value)}
           />
 
-          <InputField
-            label="Aadhaar Number"
-            value={formData?.aadhar}
-            readOnly={isLocked}
-            maxLength={12}
-            onChange={(value: string) =>
-              updateField("aadhar", value.replace(/\D/g, ""))
-            }
-          />
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+            <label className="md:w-40 text-sm font-medium text-gray-700">Aadhaar Number</label>
+
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                readOnly={isAadharVerified}
+                value={formData?.aadhar || ""}
+                maxLength={12}
+                onChange={(e) => updateField("aadhar", e.target.value.replace(/\D/g, ""))}
+                className={`w-full border border-gray-300 rounded-md px-3 py-2 pr-10 ${
+                  isLocked ? "bg-gray-100" : "bg-white"
+                }`}
+              />
+
+              <button
+                type="button"
+                onClick={openAadharVerificationModal}
+                className={`absolute inset-y-0 right-2 my-auto h-7 w-7 flex items-center justify-center ${
+                  isAadharVerified
+                    ? "text-green-600 hover:text-green-700"
+                    : "text-blue-600 hover:text-blue-700"
+                }`}
+                title={isAadharVerified ? "Aadhaar verified" : "Verify Aadhaar"}
+                aria-label="Verify Aadhaar"
+              >
+                <ShieldCheck size={18} />
+              </button>
+            </div>
+          </div>
+
+            
+
+          
+
         </div>
 
         <TextAreaField
@@ -500,13 +674,30 @@ const AbhaVerificationPatientDetails = ({
         <button
           type="button"
           onClick={handleContinue}
-          disabled={!isFormValid() || isLocked}
+          disabled={!isFormValid() || isLocked || !isAadharVerified}
           className="px-4 py-2 bg-blue-600 text-white rounded-md disabled:opacity-50"
         >
           Continue
         </button>
       </form>
     </div>
+
+    <Modal
+      isOpen={aadharVerificationModal}
+      children={
+        <AadharSection
+          isCheckUserExistence={false}
+          aadharNumberStr={formatAadharForSection(formData?.aadhar || "")}
+          mobileStr={String(formData?.mobile || "").replace(/\D/g, "").slice(0, 10)}
+          onComplete={onCompleteAadharVerification}
+        />
+      }
+      showCloseBtn={true}
+      title="Aadhaar Verification"
+      onClose={()=>{ setAadharVerificationModal(false); }}
+    />
+
+    </>
   );
 };
 

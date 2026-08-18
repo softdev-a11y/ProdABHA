@@ -29,7 +29,7 @@
 
     const AppRoutes = () => {
       return (
-        <BrowserRouter>
+        <BrowserRouter basename="/ABDMFrontendReact">
           <Routes>
             <Route path="/" element={<LoginPage />} />
 

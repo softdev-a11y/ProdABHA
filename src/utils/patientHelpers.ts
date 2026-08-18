@@ -1,6 +1,6 @@
 export const formatDOB = (dob: string) => {
   if (!dob) return "";
-
+  debugger;
   // Remove dashes if present
   const formatted = dob.replaceAll("-", "");
 
@@ -18,23 +18,20 @@ export const formatDOB = (dob: string) => {
 
 export const calculateAge = (dob: string) => {
   if (!dob) return "";
-  
-  const birthDate = new Date(dob);
+
+  // DOB format: DD-MM-YYYY
+  const [day, month, year] = dob.split("-").map(Number);
+
+  const birthDate = new Date(year, month - 1, day);
   const today = new Date();
 
-  let age =
-    today.getFullYear() -
-    birthDate.getFullYear();
+  let age = today.getFullYear() - birthDate.getFullYear();
 
-  const monthDiff =
-    today.getMonth() -
-    birthDate.getMonth();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
 
   if (
     monthDiff < 0 ||
-    (monthDiff === 0 &&
-      today.getDate() <
-        birthDate.getDate())
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
   ) {
     age--;
   }

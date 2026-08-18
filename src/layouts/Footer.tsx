@@ -11,7 +11,7 @@ const Footer = () => {
 
         {/* Right */}
         <p className="text-center md:text-right text-gray-500">
-          Ayushman Bharat Digital Mission
+          {/* Ayushman Bharat Digital Mission */}
         </p>
 
       </div>

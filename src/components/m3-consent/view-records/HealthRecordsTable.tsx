@@ -19,111 +19,83 @@ interface Props {
   onView: (healthTransactionId: string) => void;
 }
 
-const HealthRecordsTable = ({ records, onView  }: Props) => {
-
-  // const data: HealthRecord[] = [
-  //   {
-  //     id: 1,
-  //     recordType: "Prescription",
-  //     doctor: "Dr. Rajesh Kumar",
-  //     hospital: "Care Hospital",
-  //     date: "08 Jul 2026",
-  //   },
-  //   {
-  //     id: 2,
-  //     recordType: "Diagnostic Report",
-  //     doctor: "Dr. Priya Sharma",
-  //     hospital: "Care Hospital",
-  //     date: "07 Jul 2026",
-  //   },
-  //   {
-  //     id: 3,
-  //     recordType: "OP Consultation",
-  //     doctor: "Dr. Sandeep",
-  //     hospital: "Care Hospital",
-  //     date: "05 Jul 2026",
-  //   },
-  // ];
-const data = records;
+const HealthRecordsTable = ({ records, onView }: Props) => {
+  
+  const data = records;
 
   const getStatus = (record: HealthRecord) =>
     (record.processingStatus ?? record.requestStatus ?? "").toUpperCase();
 
   const columns = useMemo<ColumnDef<HealthRecord>[]>(
     () => [
-{
-  accessorKey: "requestStatus",
-  header: "Status",
-  cell: ({ row }) => (
-    <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
-      {row.original.requestStatus}
-    </span>
-  ),
-},
-{
-  accessorKey: "dateRangeFromUtc",
-  header: "From Date",
-  cell: ({ row }) =>
-    new Date(row.original.dateRangeFromUtc)
-      .toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }),
-},
-{
-  accessorKey: "dateRangeToUtc",
-  header: "To Date",
-  cell: ({ row }) =>
-    new Date(row.original.dateRangeToUtc)
-      .toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }),
-},
-{
-  accessorKey: "processingStatus",
-  header: "Processing",
-  cell: ({ row }) =>
-    row.original.processingStatus ?? "-",
-},
-{
-  id: "errorMessage",
-  header: "Error Message",
-  cell: ({ row }) => {
-    const status = getStatus(row.original);
-    if (status !== "FAILED") {
-      return "-";
-    }
+      {
+        accessorKey: "requestStatus",
+        header: "Status",
+        cell: ({ row }) => (
+          <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-700">
+            {row.original.requestStatus}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "dateRangeFromUtc",
+        header: "From Date",
+        cell: ({ row }) =>
+          new Date(row.original.dateRangeFromUtc).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+      },
+      {
+        accessorKey: "dateRangeToUtc",
+        header: "To Date",
+        cell: ({ row }) =>
+          new Date(row.original.dateRangeToUtc).toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+      },
+      {
+        accessorKey: "processingStatus",
+        header: "Processing",
+        cell: ({ row }) => row.original.processingStatus ?? "-",
+      },
+      {
+        id: "errorMessage",
+        header: "Message",
+        cell: ({ row }) => {
+          const status = getStatus(row.original);
+          if (status !== "FAILED") {
+            return "-";
+          }
 
-    return row.original.errorMessage ?? "-";
-  },
-},
-{
-  id: "action",
-  header: "Action",
-  cell: ({ row }) => {
-    const status = getStatus(row.original);
+          return row.original.errorMessage ?? "-";
+        },
+      },
+      {
+        id: "action",
+        header: "Action",
+        cell: ({ row }) => {
+          const status = getStatus(row.original);
 
-    if (status !== "COMPLETED") {
-      return "-";
-    }
+          if (status !== "COMPLETED") {
+            return "-";
+          }
 
-    return (
-      <button
-        onClick={() =>
-          onView(row.original.healthInfoTransactionId)
-        }
-        className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700"
-      >
-        View
-      </button>
-    );
-  },
+          return (
+            <button
+              onClick={() => onView(row.original.healthInfoTransactionId)}
+              className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700"
+            >
+              View
+            </button>
+          );
+        },
       },
     ],
-    [onView]
+    [onView],
   );
 
   return (
@@ -132,10 +104,7 @@ const data = records;
         Health Records
       </h2>
 
-      <TanStackTable
-        data={data}
-        columns={columns}
-      />
+      <TanStackTable data={data} columns={columns} />
     </div>
   );
 };

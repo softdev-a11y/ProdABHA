@@ -175,7 +175,7 @@ console.log("ABHA ADDRESS", abhaAddress);
     const profileData = patientData || {};
 
     const address = patientData?.address || {};
-
+    debugger;
     return {
       // Existing patient only
       mrNo: tranMode === 2 ? patientData?.mrNo : null,
@@ -189,7 +189,7 @@ console.log("ABHA ADDRESS", abhaAddress);
 
       patlname: profileData?.lastName || "",
 
-      patdob: formatDOB(profileData?.profile?.dob), // IMP 
+      patdob: formatDOB(profileData?.dob), // IMP 
 
       patsex: profileData?.gender || "", // IMP 
 
@@ -232,7 +232,7 @@ console.log("ABHA ADDRESS", abhaAddress);
       // =========================
       // SYSTEM FIELDS
       // =========================
-      patage: calculateAge(profileData?.dateOfBirth),
+      patage: calculateAge(profileData?.dob),
 
       userID: localStorage.getItem("user"),
 

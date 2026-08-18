@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import useM3 from "../../../hooks/useM3";
 
 interface Props {
   patient: any;
@@ -7,8 +8,11 @@ interface Props {
 }
 
 const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
+  const { getHospitals } = useM3();
   const [hiTypes, setHiTypes] = useState<string[]>([]);
   const [hiTypesError, setHiTypesError] = useState("");
+  const [hospitals, setHospitals] = useState<any[]>([]);
+  const [selectedHospital, setSelectedHospital] = useState<any>(null);
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -82,6 +86,20 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
   const [dataEraseAt, setDataEraseAt] = useState(eraseDateString);
   const [dataEraseTime, setDataEraseTime] = useState("23:59");
 
+  // Load hospitals when component mounts
+  useEffect(() => {
+    const loadHospitals = async () => {
+      if (!patient?.unitCode) {
+        setHospitals([]);
+        return;
+      }
+      const hospitalsList = await getHospitals(patient.unitCode);
+      setHospitals(Array.isArray(hospitalsList) ? hospitalsList : []);
+    };
+
+    loadHospitals();
+  }, [patient?.unitCode, getHospitals]);
+
   const handleHiTypeChange = (type: string) => {
     setHiTypesError("");
 
@@ -100,6 +118,26 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
     const now = new Date();
     const localDateTime = new Date(`${dataEraseAt}T${dataEraseTime}:00`);
 
+    const patientObj: any = {
+      id: patient?.abhaAddress || "", // "dhananjay07@sbx",
+      mrno: patient?.mrno?.trim(),
+      patName: patient?.patName?.trim(),
+      unitCode: patient?.unitCode?.trim(),
+      patientAbhaNumber: patient?.abhaNumber?.trim(),
+    };
+
+    // Add hospitalName if hospital is selected
+    if (selectedHospital?.hospitalName) {
+      patientObj.hospitalName = selectedHospital.hospitalName;
+    }
+
+    const hipObj: any = {};
+
+    // Only add hip.id if hospital is selected
+    if (selectedHospital?.hipId) {
+      hipObj.id = selectedHospital.hipId;
+    }
+
     const payload = {
       consent: {
         purpose: {
@@ -108,16 +146,8 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
           refUri: purpose.refUri,
         },
 
-        patient: {
-          id: patient?.abhaAddress || "", // "dhananjay07@sbx",
-          mrno: patient?.mrno?.trim(),
-          patName: patient?.patName?.trim(),
-          unitCode: patient?.unitCode?.trim(),
-          patientAbhaNumber: patient?.abhaNumber?.trim(),
-        },
-        hip: {
-          id: "",
-        },
+        patient: patientObj,
+        ...(Object.keys(hipObj).length > 0 && { hip: hipObj }),
 
         hiu: {
           id: HIU_ID,
@@ -139,8 +169,6 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
 
           dateRange: {
             from: `${fromDate}T00:00:00.000Z`,
-            //to: `${toDate}T00:00:00.000Z`,
-            //to: `${toDate}T17:59:59.000Z`,
             to: now.toISOString()
           },
 
@@ -219,6 +247,31 @@ const ConsentForm = ({ patient, onSubmit, onBack }: Props) => {
               readOnly
               className="h-10 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm text-slate-600 mb-1">
+              Hospital / Health Facility
+              <span className="text-slate-400 text-xs"> (Optional)</span>
+            </label>
+
+            <select
+              value={selectedHospital?.hospitalId || ""}
+              onChange={(e) => {
+                const selected = hospitals.find(
+                  (h: any) => h.hospitalId === parseInt(e.target.value)
+                );
+                setSelectedHospital(selected || null);
+              }}
+              className="h-10 w-full rounded-lg border border-slate-300 px-3 text-sm"
+            >
+              <option value="">Select Hospital (Optional)</option>
+              {hospitals.map((hospital: any) => (
+                <option key={hospital.hospitalId} value={hospital.hospitalId}>
+                  {hospital.hospitalName}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </div>

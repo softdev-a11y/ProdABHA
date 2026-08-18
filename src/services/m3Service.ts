@@ -62,3 +62,9 @@ export const ViewHealthRecordService = (
     `/api/HiuInternal/view-data/${healthInfoTransactionId}`
   );
 };
+
+export const GetHospitalsService = (unitCode: string) => {
+  return m3ApiClient.get(
+    `/api/internal/hiu-hospital/list?unitCode=${unitCode}`
+  );
+};

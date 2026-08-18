@@ -7,6 +7,7 @@ import {
   SubmitConsentRequestService,
   RequestHealthInformationService,
   ViewHealthRecordService,
+  GetHospitalsService,
 } from "../services/m3Service";
 
 const useM3 = () => {
@@ -120,6 +121,19 @@ const requestHealthInformation = async (payload: any) => {
   }
 };
 
+const getHospitals = async (unitCode: string) => {
+  try {
+    if (!unitCode || !String(unitCode).trim()) {
+      return [];
+    }
+    const response = await GetHospitalsService(unitCode);
+    return response.data || [];
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+};
+
 return {
   searchPatients,
   searchPatientsByDateRange,
@@ -129,6 +143,7 @@ return {
   submitConsentRequest,
   viewHealthRecord,
   requestHealthInformation,
+  getHospitals,
 };
 };
 

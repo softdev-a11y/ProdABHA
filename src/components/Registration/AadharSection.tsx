@@ -12,9 +12,12 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
   onComplete?: (data:any,transactionId:string,mobile:string,aadhar:string) => void;
+  aadharNumberStr?: string;
+  mobileStr?: string;
+  isCheckUserExistence?: boolean;  // Optional prop to check user existence
 };
 
-const AadharSection = ({ onComplete }: Props) => {
+const AadharSection = ({ onComplete, aadharNumberStr, mobileStr, isCheckUserExistence = true }: Props) => {
 
   const [OTP_RESEND_LIMIT] = useState(import.meta.env.VITE_OTP_RESEND_LIMIT)
 
@@ -28,10 +31,9 @@ const AadharSection = ({ onComplete }: Props) => {
   });  // For Opening Confirmation Modal
   
 
-
   const [step, setStep] = useState<"INPUT" | "OTP" | "DONE">("INPUT");
-
-  const [aadhar, setAadhar] = useState("");
+  debugger;
+  const [aadhar, setAadhar] = useState(aadharNumberStr || "");
   const [accepted, setAccepted] = useState(false);
 
   const [otpAadhar, setOtpAadhar] = useState(Array(6).fill(""));
@@ -42,7 +44,7 @@ const AadharSection = ({ onComplete }: Props) => {
   const [canResend,setCanResend] = useState(false);
 
   const [txnId, setTxnId] = useState(""); // Store transaction ID for OTP verification and resending
-  const [mobile, setMobile] = useState("");
+  const [mobile, setMobile] = useState(mobileStr || "");
 
 
   const [abhaAddress,setAbhaAddress] = useState("");
@@ -157,7 +159,7 @@ const AadharSection = ({ onComplete }: Props) => {
     try{
 
       const parsed = JSON.parse(response.data);
-
+      console.log('parsed', parsed);
       if(parsed.success){
         
         toast.success("Aadhaar verified successfully!");
@@ -167,7 +169,7 @@ const AadharSection = ({ onComplete }: Props) => {
         const abhaNumber = parsed.abhaNumber;
         const normalizedMessage = parsed.message?.trim()?.toLowerCase();
 
-        if(abhaAddress && abhaNumber){ 
+        if(isCheckUserExistence && abhaAddress && abhaNumber){ 
           
           try{
             
