@@ -19,8 +19,8 @@ const decodeBase64ToBlobUrl = (
     throw new Error("Missing Base64 data");
   }
 
-  // Basic validation to avoid attempting to decode non-Base64 payloads.
   const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+
   if (!base64Regex.test(normalized)) {
     throw new Error("Invalid Base64 format");
   }
@@ -33,6 +33,7 @@ const decodeBase64ToBlobUrl = (
   }
 
   const blob = new Blob([bytes], { type: contentType });
+
   return URL.createObjectURL(blob);
 };
 
@@ -43,11 +44,14 @@ const DocumentReferenceTable = ({ documents }: Props) => {
     const url = attachment?.url;
 
     try {
-      if (isPdfContentType(contentType) && data) {
+      // FHIR Attachment.data can contain Base64 content
+      // with its actual contentType, not only PDF.
+      if (data && contentType) {
         const blobUrl = decodeBase64ToBlobUrl(
           data,
-          "application/pdf"
+          contentType
         );
+
         window.open(blobUrl, "_blank", "noopener,noreferrer");
         return;
       }
@@ -113,7 +117,9 @@ const DocumentReferenceTable = ({ documents }: Props) => {
               index,
             }))
             .filter(
-              (item: any) => item.attachment && typeof item.attachment === "object"
+              (item: any) =>
+                item.attachment &&
+                typeof item.attachment === "object"
             );
 
           if (attachmentItems.length === 0) {
@@ -124,19 +130,32 @@ const DocumentReferenceTable = ({ documents }: Props) => {
             <div className="flex flex-col gap-2">
               {attachmentItems.map((item: any) => {
                 const attachment = item.attachment;
-                const contentType = attachment?.contentType ?? "";
+                const contentType =
+                  attachment?.contentType ?? "";
+
                 const title =
                   attachment?.title ??
                   `Attachment ${item.index + 1}`;
-                const hasData = Boolean(attachment?.data);
-                const hasUrl = Boolean(attachment?.url);
-                const isPdf = isPdfContentType(contentType);
+
+                const hasData =
+                  Boolean(attachment?.data);
+
+                const hasUrl =
+                  Boolean(attachment?.url);
+
+                const isPdf =
+                  isPdfContentType(contentType);
 
                 let actionLabel = "Unsupported";
                 let disabled = true;
 
-                if (isPdf && hasData) {
-                  actionLabel = "View PDF";
+                // Base64 data can represent any supported
+                // FHIR Attachment content type.
+                if (hasData && contentType) {
+                  actionLabel = isPdf
+                    ? "View PDF"
+                    : "View Document";
+
                   disabled = false;
                 } else if (hasUrl) {
                   actionLabel = "View Document";
@@ -157,7 +176,9 @@ const DocumentReferenceTable = ({ documents }: Props) => {
                     <button
                       type="button"
                       disabled={disabled}
-                      onClick={() => handleViewAttachment(attachment)}
+                      onClick={() =>
+                        handleViewAttachment(attachment)
+                      }
                       className="rounded-md bg-teal-600 px-3 py-2 text-xs font-semibold text-white hover:bg-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {actionLabel}
